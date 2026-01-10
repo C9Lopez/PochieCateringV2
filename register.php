@@ -264,6 +264,18 @@ include 'includes/header.php';
             color: var(--primary);
             text-decoration: underline;
         }
+        .modal { z-index: 1070 !important; }
+        .modal-backdrop { z-index: 1060 !important; }
+        .modal-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0d1b2a 100%);
+            color: white;
+            padding: 20px 30px;
+            border-bottom: none;
+        }
+        .modal-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.25rem; }
+        .modal-header .btn-close { filter: brightness(0) invert(1); opacity: 1; }
+        .modal-body { padding: 30px; font-size: 14px; line-height: 1.8; color: #475569; }
+        .policy-content { white-space: pre-wrap; font-family: 'Poppins', sans-serif; }
     </style>
 
 <div class="auth-page-wrapper">
@@ -417,19 +429,21 @@ include 'includes/header.php';
 
 <!-- Data Privacy Modal -->
 <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
             <div class="modal-header">
-                <h5 class="modal-title" id="privacyModalLabel">Data Privacy Policy</h5>
+                <h5 class="modal-title" id="privacyModalLabel">
+                    <i class="bi bi-shield-lock me-2"></i>Data Privacy Policy
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="policy-content" style="white-space: pre-wrap;">
+                <div class="policy-content">
                     <?= $settings['privacy_policy'] ?? 'No privacy policy has been set.' ?>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -437,19 +451,21 @@ include 'includes/header.php';
 
 <!-- Terms of Use Modal -->
 <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
             <div class="modal-header">
-                <h5 class="modal-title" id="termsModalLabel">Terms of Use</h5>
+                <h5 class="modal-title" id="termsModalLabel">
+                    <i class="bi bi-file-text me-2"></i>Terms of Use
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="policy-content" style="white-space: pre-wrap;">
+                <div class="policy-content">
                     <?= $settings['terms_of_use'] ?? 'No terms of use have been set.' ?>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer border-0 bg-light">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

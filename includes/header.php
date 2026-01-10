@@ -49,7 +49,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
         .top-bar i { color: var(--primary); }
         
         header.sticky-top {
-            z-index: 1060;
+            z-index: 1020;
         }
         
         .navbar {
@@ -57,7 +57,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             padding: 12px 0;
-            z-index: 1050 !important;
+            z-index: 1010 !important;
         }
         
         .navbar-brand {
