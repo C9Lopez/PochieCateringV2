@@ -1,9 +1,10 @@
 <?php
+error_reporting(0);
+session_start();
+header('Content-Type: application/json');
+
 require_once 'config/database.php';
 require_once 'config/functions.php';
-session_start();
-
-header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
