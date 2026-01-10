@@ -1,6 +1,5 @@
-const CACHE_NAME = 'catering-pwa-v3';
+const CACHE_NAME = 'catering-pwa-v4';
 const ASSETS_TO_CACHE = [
-  'index.php',
   'manifest.json',
   'globe.svg',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
@@ -31,17 +30,26 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  self.clients.claim();
 });
 
 // Fetch Event
 self.addEventListener('fetch', (event) => {
+  // Network First strategy for navigation and dynamic pages
+  if (event.request.mode === 'navigate' || event.request.url.includes('.php')) {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+
+  // Cache First strategy for static assets
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('index.php');
-        }
-      });
+      return response || fetch(event.request);
     })
   );
 });

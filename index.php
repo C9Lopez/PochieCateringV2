@@ -7,9 +7,9 @@ $siteEmail = $settings['site_email'] ?? 'info@filipinocatering.com';
 $sitePhone = $settings['site_phone'] ?? '+63 912 345 6789';
 $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
 
-$packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY base_price LIMIT 3");
-$menuItems = $conn->query("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN menu_categories c ON m.category_id = c.id WHERE m.is_featured = 1 AND m.is_available = 1 LIMIT 6");
-$promotionsResult = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (end_date IS NULL OR DATE(end_date) >= CURDATE()) AND (start_date IS NULL OR DATE(start_date) <= CURDATE()) ORDER BY created_at DESC");
+$packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY created_at DESC LIMIT 3");
+$menuItems = $conn->query("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN menu_categories c ON m.category_id = c.id WHERE m.is_featured = 1 AND m.is_available = 1 ORDER BY m.id DESC LIMIT 8");
+$promotionsResult = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (end_date IS NULL OR end_date >= CURDATE()) AND (start_date IS NULL OR start_date <= CURDATE()) ORDER BY created_at DESC");
 $promotions = [];
 $today = date('Y-m-d');
 if ($promotionsResult) {
