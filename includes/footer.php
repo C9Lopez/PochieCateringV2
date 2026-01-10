@@ -1,40 +1,23 @@
-    <footer class="footer mt-5">
+    <footer style="background: #000000; color: #ffffff; padding: 60px 0 40px; font-family: 'Poppins', sans-serif;">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5 class="mb-3">🍲 <?= $settings['site_name'] ?? 'Pochie Catering Services' ?></h5>
-                    <p class="text-white-50">Authentic Filipino catering services for all your special occasions. From intimate gatherings to grand celebrations.</p>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h6 class="mb-3">Quick Links</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="<?= url('index.php') ?>" class="text-white-50 text-decoration-none">Home</a></li>
-                        <li class="mb-2"><a href="<?= url('menu.php') ?>" class="text-white-50 text-decoration-none">Menu</a></li>
-                        <li class="mb-2"><a href="<?= url('packages.php') ?>" class="text-white-50 text-decoration-none">Packages</a></li>
-                        <li class="mb-2"><a href="<?= url('book.php') ?>" class="text-white-50 text-decoration-none">Book Now</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h6 class="mb-3">Contact Us</h6>
-                    <ul class="list-unstyled text-white-50">
-                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i><?= $settings['site_address'] ?? 'Manila, Philippines' ?></li>
-                        <li class="mb-2"><i class="bi bi-telephone me-2"></i><?= $settings['site_phone'] ?? '09123456789' ?></li>
-                        <li class="mb-2"><i class="bi bi-envelope me-2"></i><?= $settings['site_email'] ?? 'info@filipinocatering.com' ?></li>
-                    </ul>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h6 class="mb-3">Follow Us</h6>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="text-white-50 fs-4"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-white-50 fs-4"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-white-50 fs-4"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-white-50 fs-4"><i class="bi bi-youtube"></i></a>
+                <div class="col-12 text-start">
+                    <p class="mb-2" style="font-size: 14px; font-weight: 500; opacity: 0.9;">
+                        &copy; 2026 Pochie Catering Services. All rights reserved.
+                    </p>
+                    <p class="mb-4" style="font-size: 14px; opacity: 0.7; line-height: 1.8; max-width: 900px;">
+                        Pochie Catering Services provides access to professional catering solutions and delicious Filipino cuisine. 
+                        Pochie Catering Services is a registered business under the ownership of Pochollo Glen Gutierrez and does not provide legal advice, 
+                        except where authorized through its owner Pochollo Glen Gutierrez. Use of our products and services is governed by our 
+                        <a href="#" style="color: #ffffff; text-decoration: underline; opacity: 0.8;">Terms of Use</a> and 
+                        <a href="#" style="color: #ffffff; text-decoration: underline; opacity: 0.8;">Privacy Policy</a>.
+                    </p>
+                    <div class="d-flex align-items-center mt-3">
+                        <a href="#" style="color: #ffffff; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 2px; opacity: 0.9;">Your privacy choices</a>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/California_Privacy_Options_Icon.svg/1024px-California_Privacy_Options_Icon.svg.png" 
+                             alt="Privacy Choices" style="height: 14px; margin-left: 10px; opacity: 0.9;">
                     </div>
                 </div>
-            </div>
-            <hr class="my-4 border-secondary">
-            <div class="text-center text-white-50">
-                <small>&copy; 2026 Pochie Catering Services. All rights reserved. <br> Owner: Pochollo Glen Gutierrez</small>
             </div>
         </div>
     </footer>
