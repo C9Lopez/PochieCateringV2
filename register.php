@@ -22,11 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $phone = sanitize($conn, $_POST['phone']);
         $ageConfirm = isset($_POST['age_confirm']) ? 1 : 0;
         $privacyConsent = isset($_POST['privacy_consent']) ? 1 : 0;
+        $termsConsent = isset($_POST['terms_consent']) ? 1 : 0;
         
         if (!$ageConfirm) {
             $error = 'You must be 18 years old or above to register';
         } elseif (!$privacyConsent) {
             $error = 'You must agree to the Data Privacy Policy to continue';
+        } elseif (!$termsConsent) {
+            $error = 'You must agree to the Terms of Use to continue';
         } elseif ($password !== $confirmPassword) {
             $error = 'Passwords do not match';
         } elseif (strlen($password) < 6) {
@@ -317,6 +320,10 @@ $siteName = $settings['site_name'] ?? 'Filipino Catering';
             background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
             border-color: #93c5fd;
         }
+        .consent-box.terms-box {
+            background: linear-gradient(135deg, #f0fdfa 0%, #f0f9ff 100%);
+            border-color: #5eead4;
+        }
         .consent-title {
             font-weight: 600;
             color: var(--dark);
@@ -456,6 +463,22 @@ $siteName = $settings['site_name'] ?? 'Filipino Catering';
                             <input class="form-check-input" type="checkbox" name="privacy_consent" id="privacyConsent" required>
                             <label class="form-check-label" for="privacyConsent">
                                 Nabasa ko at sumasang-ayon ako sa <a href="#" class="privacy-link" data-bs-toggle="modal" data-bs-target="#privacyModal">Data Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="consent-box terms-box">
+                        <div class="consent-title">
+                            <i class="bi bi-file-text"></i>
+                            Terms of Use
+                        </div>
+                        <div class="consent-text">
+                            Sa pamamagitan ng paggamit ng aming serbisyo, sumasang-ayon ka sa aming mga tuntunin at kundisyon sa pag-order, pagbabayad, at pagkansela ng mga serbisyo ng catering.
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="terms_consent" id="termsConsent" required>
+                            <label class="form-check-label" for="termsConsent">
+                                Nabasa ko at sumasang-ayon ako sa <a href="#" class="privacy-link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Use</a>
                             </label>
                         </div>
                     </div>
@@ -602,6 +625,43 @@ $siteName = $settings['site_name'] ?? 'Filipino Catering';
                     
                     <h6 class="fw-bold mt-4">Makipag-ugnayan</h6>
                     <p>Para sa mga katanungan tungkol sa aming patakaran sa privacy, maaari kang makipag-ugnayan sa amin sa pamamagitan ng aming contact page.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="termsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--secondary) 0%, #0d1b2a 100%); color: white;">
+                    <h5 class="modal-title"><i class="bi bi-file-text me-2"></i>Terms of Use</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="font-size: 14px; line-height: 1.8;">
+                    <h6 class="fw-bold text-uppercase" style="color: var(--primary);">Mga Tuntunin sa Paggamit (Terms of Use)</h6>
+                    <p>Maligayang pagdating sa aming serbisyo ng catering. Sa paggamit ng aming website at serbisyo, sumasang-ayon ka sa mga sumusunod na tuntunin:</p>
+                    
+                    <h6 class="fw-bold mt-4">1. Pag-book at Pag-order</h6>
+                    <p>Ang lahat ng bookings ay dapat gawin nang hindi bababa sa pitong (7) araw bago ang event. Ang pagkumpirma ng booking ay depende sa availability ng aming serbisyo.</p>
+                    
+                    <h6 class="fw-bold mt-4">2. Patakaran sa Pagbabayad</h6>
+                    <ul>
+                        <li>Kinakailangan ang 50% down payment upang kumpirmahin ang booking.</li>
+                        <li>Ang balanse ay dapat bayaran bago o sa araw ng event.</li>
+                        <li>Tumatanggap kami ng cash, GCash, at bank transfer.</li>
+                    </ul>
+                    
+                    <h6 class="fw-bold mt-4">3. Pagkansela at Refund</h6>
+                    <p>Ang pagkansela ng booking ay dapat gawin limang (5) araw bago ang event para sa partial refund ng down payment. Ang mga pagkansela na lampas sa panahong ito ay maaaring magresulta sa forfeiture ng down payment.</p>
+                    
+                    <h6 class="fw-bold mt-4">4. Responsibilidad ng Customer</h6>
+                    <p>Ang customer ang responsable sa pagbibigay ng tamang impormasyon tungkol sa event (petsa, oras, lokasyon, at bilang ng bisita).</p>
+                    
+                    <h6 class="fw-bold mt-4">5. Pagbabago sa Tuntunin</h6>
+                    <p>Inirereserba namin ang karapatang magbago ng mga tuntuning ito anumang oras nang walang paunang abiso.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
