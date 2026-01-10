@@ -48,11 +48,15 @@ if (isLoggedIn() && getUserRole() === 'customer') {
         }
         .top-bar i { color: var(--primary); }
         
+        header.sticky-top {
+            z-index: 1060;
+        }
+        
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            padding: 15px 0;
+            padding: 12px 0;
             z-index: 1050 !important;
         }
         

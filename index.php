@@ -377,37 +377,29 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
     </style>
 </head>
   <body>
-    <div class="top-bar shadow-sm">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div>
-                <i class="bi bi-clock me-2"></i>
-                <span id="ph-time-display">Loading time...</span>
-            </div>
-            <div class="d-none d-md-block">
-                <i class="bi bi-geo-alt me-1"></i> <?= htmlspecialchars($siteAddress) ?>
+    <header class="sticky-top shadow-sm">
+        <div class="top-bar">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-clock me-2"></i>
+                    <span id="ph-time-display">Loading time...</span>
+                </div>
+                <div class="d-none d-md-block">
+                    <i class="bi bi-geo-alt me-1"></i> <?= htmlspecialchars($siteAddress) ?>
+                </div>
             </div>
         </div>
-    </div>
-    <nav class="navbar navbar-expand-lg fixed-top" style="top: 35px;">
-
-        <div class="container">
-            <a class="navbar-brand" href="<?= url('index.php') ?>">🍲 <?= htmlspecialchars($siteName) ?></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="<?= url('index.php') ?>"><i class="bi bi-house me-1"></i>Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url('menu.php') ?>"><i class="bi bi-menu-button-wide me-1"></i>Menu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?= url('packages.php') ?>"><i class="bi bi-gift me-1"></i>Packages</a></li>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="<?= url('index.php') ?>">🍲 <?= htmlspecialchars($siteName) ?></a>
+                
+                <div class="d-flex align-items-center order-lg-last">
                     <?php if (isLoggedIn()): ?>
                         <?php $currentUser = getCurrentUser($conn); ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= url('book.php') ?>"><i class="bi bi-calendar-plus me-1"></i>Book Now</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle me-1"></i><?= htmlspecialchars($currentUser['first_name'] ?? 'User') ?>
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle fs-5 me-1"></i>
+                                <span class="d-none d-sm-inline"><?= htmlspecialchars($currentUser['first_name'] ?? 'User') ?></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="<?= url('my-bookings.php') ?>"><i class="bi bi-calendar-check me-2"></i>My Bookings</a></li>
@@ -422,15 +414,34 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="<?= url('logout.php') ?>"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                             </ul>
-                        </li>
+                        </div>
                     <?php else: ?>
-                        <li class="nav-item"><a class="nav-link" href="<?= url('login.php') ?>"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a></li>
-                        <li class="nav-item"><a class="btn btn-primary ms-2" href="<?= url('register.php') ?>">Register</a></li>
+                        <div class="auth-buttons d-flex align-items-center">
+                            <a href="<?= url('login.php') ?>" class="nav-link d-none d-sm-block me-2">Login</a>
+                            <a href="<?= url('register.php') ?>" class="btn btn-primary btn-sm px-3">Sign Up</a>
+                        </div>
                     <?php endif; ?>
-                </ul>
+                    
+                    <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="<?= url('index.php') ?>"><i class="bi bi-house me-1"></i>Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= url('menu.php') ?>"><i class="bi bi-menu-button-wide me-1"></i>Menu</a></li>
+                        <li class="nav-item"><a class="nav-link" href="<?= url('packages.php') ?>"><i class="bi bi-gift me-1"></i>Packages</a></li>
+                        <?php if (isLoggedIn()): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?= url('book.php') ?>"><i class="bi bi-calendar-plus me-1"></i>Book Now</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
     
     <section class="hero">
         <div class="container">
