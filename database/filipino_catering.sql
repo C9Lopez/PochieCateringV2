@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 10, 2026 at 06:21 PM
+-- Generation Time: Jan 10, 2026 at 06:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -242,7 +242,19 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `action`, `description`, `ip_addre
 (199, 1, 'Update Terms of Use', 'Updated the Terms of Use content', '::1', '2026-01-10 17:11:57'),
 (200, 1, 'Update Privacy Policy', 'Updated the Data Privacy Policy content', '::1', '2026-01-10 17:12:01'),
 (201, 1, 'logout', 'User logged out', '::1', '2026-01-10 17:12:11'),
-(202, 1, 'login', 'User logged in', '::1', '2026-01-10 17:14:13');
+(202, 1, 'login', 'User logged in', '::1', '2026-01-10 17:14:13'),
+(203, 1, 'Update Settings', 'Updated general system settings', '::1', '2026-01-10 17:28:28'),
+(204, 1, 'Update Settings', 'Updated general system settings', '::1', '2026-01-10 17:31:42'),
+(205, 1, 'logout', 'User logged out', '::1', '2026-01-10 17:47:55'),
+(206, 1, 'login', 'User logged in', '::1', '2026-01-10 17:48:19'),
+(207, 1, 'booking_created', 'Created booking #BK2026011126B6', '::1', '2026-01-10 17:53:08'),
+(208, 1, 'Updated Promotion', 'Updated promotion: 50% OFF VOUCHER DISCOUNT', '::1', '2026-01-10 17:54:27'),
+(209, 1, 'Updated Promotion', 'Updated promotion: 50% OFF VOUCHER DISCOUNT', '::1', '2026-01-10 17:54:37'),
+(210, 1, 'Updated Promotion', 'Updated promotion: 50% OFF VOUCHER DISCOUNT', '::1', '2026-01-10 17:54:54'),
+(211, 1, 'Update Settings', 'Updated general system settings', '::1', '2026-01-10 17:55:12'),
+(212, 1, 'Update Settings', 'Updated general system settings', '::1', '2026-01-10 17:55:22'),
+(213, 1, 'logout', 'User logged out', '::1', '2026-01-10 17:56:43'),
+(214, 1, 'login', 'User logged in', '::1', '2026-01-10 17:57:53');
 
 -- --------------------------------------------------------
 
@@ -276,7 +288,8 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`id`, `booking_number`, `customer_id`, `package_id`, `event_type`, `event_date`, `event_time`, `venue_address`, `number_of_guests`, `special_requests`, `total_amount`, `status`, `payment_status`, `payment_method`, `assigned_staff_id`, `notes`, `created_at`, `updated_at`) VALUES
-(5, 'BK20251210382B', NULL, 5, 'Corporate', '2025-12-13', '22:22:00', 'asdasd', 20, 'dasdasd', 23710.00, 'new', 'unpaid', NULL, NULL, NULL, '2025-12-10 01:21:52', '2025-12-10 01:21:52');
+(5, 'BK20251210382B', NULL, 5, 'Corporate', '2025-12-13', '22:22:00', 'asdasd', 20, 'dasdasd', 23710.00, 'new', 'unpaid', NULL, NULL, NULL, '2025-12-10 01:21:52', '2025-12-10 01:21:52'),
+(17, 'BK2026011126B6', 1, 2, 'Birthday', '2026-01-14', '07:30:00', 'dsa', 50, 'dasd', 17780.00, 'negotiating', 'unpaid', NULL, NULL, NULL, '2026-01-10 17:53:08', '2026-01-10 17:53:47');
 
 -- --------------------------------------------------------
 
@@ -304,7 +317,15 @@ INSERT INTO `booking_menu_items` (`id`, `booking_id`, `menu_item_id`, `quantity`
 (59, 5, 31, 6, 70.00),
 (61, 5, 8, 5, 380.00),
 (62, 5, 11, 5, 450.00),
-(63, 5, 9, 6, 520.00);
+(63, 5, 9, 6, 520.00),
+(209, 17, 18, 3, 250.00),
+(210, 17, 19, 5, 280.00),
+(211, 17, 17, 5, 280.00),
+(212, 17, 30, 3, 100.00),
+(213, 17, 31, 3, 70.00),
+(214, 17, 8, 3, 380.00),
+(215, 17, 11, 3, 450.00),
+(216, 17, 9, 3, 520.00);
 
 -- --------------------------------------------------------
 
@@ -329,7 +350,9 @@ CREATE TABLE `chat_messages` (
 INSERT INTO `chat_messages` (`id`, `booking_id`, `sender_id`, `message`, `image`, `is_read`, `created_at`) VALUES
 (17, 5, NULL, 'Hello po', NULL, 1, '2025-12-10 01:22:10'),
 (18, 5, NULL, 'Hellow', NULL, 1, '2025-12-10 01:22:40'),
-(19, 5, 1, '', '6938cb6b38c94_Gemini_Generated_Image_1szpzp1szpzp1szp.png', 1, '2025-12-10 01:22:51');
+(19, 5, 1, '', '6938cb6b38c94_Gemini_Generated_Image_1szpzp1szpzp1szp.png', 1, '2025-12-10 01:22:51'),
+(36, 17, 1, 'Hello', NULL, 0, '2026-01-10 17:53:19'),
+(37, 17, 1, '', '69629213e32b4_grok-image-79569daa-4caf-4592-bf72-0e39be7f9181.png', 0, '2026-01-10 17:53:23');
 
 -- --------------------------------------------------------
 
@@ -352,7 +375,8 @@ CREATE TABLE `email_verifications` (
 
 INSERT INTO `email_verifications` (`id`, `email`, `code`, `expires_at`, `used`, `created_at`) VALUES
 (15, 'ljayson785@gmail.com', '151819', '2025-12-10 01:39:38', 0, '2025-12-10 00:29:38'),
-(24, 'bongbongcastro19@gmail.com', '896890', '2025-12-10 01:54:55', 1, '2025-12-10 00:44:55');
+(24, 'bongbongcastro19@gmail.com', '896890', '2025-12-10 01:54:55', 1, '2025-12-10 00:44:55'),
+(25, 'Don@test.com', '767164', '2026-01-11 02:07:33', 0, '2026-01-10 17:57:33');
 
 -- --------------------------------------------------------
 
@@ -482,7 +506,9 @@ INSERT INTO `notifications` (`id`, `user_id`, `title`, `message`, `type`, `is_re
 (29, 1, 'Booking Submitted', 'Your booking #BK20260111DBBF has been submitted. We\'ll review it shortly.', 'success', 0, '/catering/booking-details.php?id=15', '2026-01-10 17:04:08'),
 (30, 1, 'New Booking', 'New booking #BK20260111DBBF received', 'info', 0, '/catering/admin/booking-details.php?id=15', '2026-01-10 17:04:08'),
 (31, 1, 'Booking Submitted', 'Your booking #BK202601116BFB has been submitted. We\'ll review it shortly.', 'success', 0, '/catering/booking-details.php?id=16', '2026-01-10 17:11:13'),
-(32, 1, 'New Booking', 'New booking #BK202601116BFB received', 'info', 0, '/catering/admin/booking-details.php?id=16', '2026-01-10 17:11:13');
+(32, 1, 'New Booking', 'New booking #BK202601116BFB received', 'info', 0, '/catering/admin/booking-details.php?id=16', '2026-01-10 17:11:13'),
+(33, 1, 'Booking Submitted', 'Your booking #BK2026011126B6 has been submitted. We\'ll review it shortly.', 'success', 0, '/catering/booking-details.php?id=17', '2026-01-10 17:53:08'),
+(34, 1, 'New Booking', 'New booking #BK2026011126B6 received', 'info', 0, '/catering/admin/booking-details.php?id=17', '2026-01-10 17:53:08');
 
 -- --------------------------------------------------------
 
@@ -586,7 +612,7 @@ CREATE TABLE `promotions` (
 --
 
 INSERT INTO `promotions` (`id`, `title`, `description`, `discount_percentage`, `image`, `start_date`, `end_date`, `is_active`, `created_by`, `created_at`, `updated_at`) VALUES
-(3, '50% OFF VOUCHER DISCOUNT', '50% OFF VOUCHER DISCOUNT', 50, '6962827ec77d5_85a9430e-0288-410e-8726-7c40abbe6513.jpg', '2026-01-09', '2026-01-12', 1, 1, '2026-01-10 16:46:54', '2026-01-10 17:10:23');
+(3, '50% OFF VOUCHER DISCOUNT', '50% OFF VOUCHER DISCOUNT', 50, '6962827ec77d5_85a9430e-0288-410e-8726-7c40abbe6513.jpg', '2026-01-09', '2026-01-12', 1, 1, '2026-01-10 16:46:54', '2026-01-10 17:54:59');
 
 -- --------------------------------------------------------
 
@@ -617,7 +643,9 @@ INSERT INTO `settings` (`id`, `setting_key`, `setting_value`, `updated_at`) VALU
 (13, 'bank_account_name', '', '2025-12-09 22:25:12'),
 (14, 'bank_account_number', '', '2025-12-09 22:25:12'),
 (31, 'terms_of_use', 'Maligayang pagdating sa aming serbisyo ng catering. Sa paggamit ng aming website at serbisyo, sumasang-ayon ka sa mga sumusunod na tuntunin:\r\n\r\n1. Pag-book at Pag-order\r\nAng lahat ng bookings ay dapat gawin nang hindi bababa sa pitong (7) araw bago ang event. Ang pagkumpirma ng booking ay depende sa availability ng aming serbisyo.\r\n\r\n2. Patakaran sa Pagbabayad\r\n- Kinakailangan ang 50% down payment upang kumpirmahin ang booking.\r\n- Ang balanse ay dapat bayaran bago o sa araw ng event.\r\n- Tumatanggap kami ng cash, GCash, at bank transfer.\r\n\r\n3. Pagkansela at Refund\r\nAng pagkansela ng booking ay dapat gawin limang (5) araw bago ang event para sa partial refund ng down payment. Ang mga pagkansela na lampas sa panahong ito ay maaaring magresulta sa forfeiture ng down payment.\r\n\r\n4. Responsibilidad ng Customer\r\nAng customer ang responsable sa pagbibigay ng tamang impormasyon tungkol sa event (petsa, oras, lokasyon, at bilang ng bisita).\r\n\r\n5. Pagbabago sa Tuntunin\r\nInirereserba namin ang karapatang magbago ng mga tuntuning ito anumang oras nang walang paunang abiso.\r\n\r\n\r\nKINGINA TEST UPDATE222', '2026-01-10 17:11:57'),
-(32, 'privacy_policy', 'Patakaran sa Pagkapribado ng Data\r\n\r\nAlinsunod sa Republic Act No. 10173 o ang Data Privacy Act of 2012 ng Pilipinas, kami ay nakatuon sa pagprotekta ng iyong personal na impormasyon.\r\n\r\nMga Impormasyong Kinokolekta:\r\n- Pangalan (First name at Last name)\r\n- Email address\r\n- Contact number\r\n- Detalye ng booking at event\r\n\r\nPaggamit ng Impormasyon:\r\nAng iyong personal na impormasyon ay gagamitin lamang para sa:\r\n- Pagproseso at pamamahala ng iyong catering booking\r\n- Pakikipag-ugnayan tungkol sa iyong order\r\n- Pagbibigay ng customer support\r\n- Pagpapadala ng mga update at promotional offers (kung aprubado mo)\r\n\r\nProteksyon ng Data:\r\nKami ay gumagamit ng naaangkop na mga hakbang sa seguridad upang protektahan ang iyong personal na impormasyon mula sa hindi awtorisadong pag-access, pagbabago, o pagsisiwalat.\r\n\r\nMga Karapatan Mo:\r\nIkaw ay may karapatang:\r\n- Humiling ng access sa iyong personal data\r\n- Humiling ng pagwawasto ng mga maling impormasyon\r\n- Humiling ng pagtanggal ng iyong data\r\n- Bawiin ang iyong pahintulot anumang oras\r\n\r\nTEST UPDATED TO ALL 222', '2026-01-10 17:12:01');
+(32, 'privacy_policy', 'Patakaran sa Pagkapribado ng Data\r\n\r\nAlinsunod sa Republic Act No. 10173 o ang Data Privacy Act of 2012 ng Pilipinas, kami ay nakatuon sa pagprotekta ng iyong personal na impormasyon.\r\n\r\nMga Impormasyong Kinokolekta:\r\n- Pangalan (First name at Last name)\r\n- Email address\r\n- Contact number\r\n- Detalye ng booking at event\r\n\r\nPaggamit ng Impormasyon:\r\nAng iyong personal na impormasyon ay gagamitin lamang para sa:\r\n- Pagproseso at pamamahala ng iyong catering booking\r\n- Pakikipag-ugnayan tungkol sa iyong order\r\n- Pagbibigay ng customer support\r\n- Pagpapadala ng mga update at promotional offers (kung aprubado mo)\r\n\r\nProteksyon ng Data:\r\nKami ay gumagamit ng naaangkop na mga hakbang sa seguridad upang protektahan ang iyong personal na impormasyon mula sa hindi awtorisadong pag-access, pagbabago, o pagsisiwalat.\r\n\r\nMga Karapatan Mo:\r\nIkaw ay may karapatang:\r\n- Humiling ng access sa iyong personal data\r\n- Humiling ng pagwawasto ng mga maling impormasyon\r\n- Humiling ng pagtanggal ng iyong data\r\n- Bawiin ang iyong pahintulot anumang oras\r\n\r\nTEST UPDATED TO ALL 222', '2026-01-10 17:12:01'),
+(48, 'facebook_url', '', '2026-01-10 17:28:28'),
+(53, 'site_logo', '696292807ed42_85a9430e-0288-410e-8726-7c40abbe6513.jpg', '2026-01-10 17:55:12');
 
 -- --------------------------------------------------------
 
@@ -814,31 +842,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=203;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
 
 --
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `booking_menu_items`
 --
 ALTER TABLE `booking_menu_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=209;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=217;
 
 --
 -- AUTO_INCREMENT for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `email_verifications`
 --
 ALTER TABLE `email_verifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `menu_categories`
@@ -856,7 +884,7 @@ ALTER TABLE `menu_items`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `packages`
@@ -892,7 +920,7 @@ ALTER TABLE `promotions`
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `terms_history`
