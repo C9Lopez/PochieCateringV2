@@ -19,10 +19,10 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
                 <p style="font-size: 14px; opacity: 0.8; line-height: 1.6; margin-bottom: 20px;">
                     Experience the authentic taste of Filipino cuisine. We provide professional catering services for all types of events, ensuring a memorable dining experience for you and your guests.
                 </p>
-                <p style="font-size: 13px; opacity: 0.7;">
+                <!-- <p style="font-size: 13px; opacity: 0.7;">
                     <strong>Registered Owner:</strong><br>
                     Pochollo Glen Gutierrez
-                </p>
+                </p> -->
             </div>
 
             <!-- Quick Links -->
