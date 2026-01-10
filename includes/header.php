@@ -15,7 +15,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $pageTitle ?? $settings['site_name'] ?? 'Filipino Catering' ?></title>
+    <title><?= $pageTitle ?? $settings['site_name'] ?? 'Pochie Catering Services' ?></title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#f97316">
@@ -313,7 +313,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
 
         <div class="container">
             <a class="navbar-brand" href="<?= url('index.php') ?>">
-                🍲 <?= $settings['site_name'] ?? 'Filipino Catering' ?>
+                🍲 <?= $settings['site_name'] ?? 'Pochie Catering Services' ?>
             </a>
 
             <div class="d-flex align-items-center order-lg-last">

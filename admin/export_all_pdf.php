@@ -3,7 +3,7 @@ require_once '../config/functions.php';
 requireRole(['admin', 'super_admin']);
 
 $settings = getSettings($conn);
-$siteName = $settings['site_name'] ?? 'Filipino Catering';
+$siteName = $settings['site_name'] ?? 'Pochie Catering Services';
 
 // Fetch all data for backup/export
 // 1. Stats

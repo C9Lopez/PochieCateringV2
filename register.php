@@ -283,7 +283,7 @@ include 'includes/header.php';
         <div class="register-card">
             <div class="register-header">
                 <div class="logo">🍲</div>
-                <h1><?= htmlspecialchars($settings['site_name'] ?? 'Filipino Catering') ?></h1>
+                <h1><?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?></h1>
                 <p><?= $step == 1 ? 'Create your account' : ($step == 2 ? 'Verify your email' : 'Registration complete') ?></p>
             </div>
             <div class="register-body">

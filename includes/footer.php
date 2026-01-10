@@ -2,7 +2,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
-                    <h5 class="mb-3">🍲 <?= $settings['site_name'] ?? 'Filipino Catering' ?></h5>
+                    <h5 class="mb-3">🍲 <?= $settings['site_name'] ?? 'Pochie Catering Services' ?></h5>
                     <p class="text-white-50">Authentic Filipino catering services for all your special occasions. From intimate gatherings to grand celebrations.</p>
                 </div>
                 <div class="col-md-2 mb-4">
@@ -34,7 +34,7 @@
             </div>
             <hr class="my-4 border-secondary">
             <div class="text-center text-white-50">
-                <small>&copy; <?= date('Y') ?> <?= $settings['site_name'] ?? 'Filipino Catering' ?>. All rights reserved.</small>
+                <small>&copy; 2026 Pochie Catering Services. All rights reserved. <br> Owner: Pochollo Glen Gutierrez</small>
             </div>
         </div>
     </footer>

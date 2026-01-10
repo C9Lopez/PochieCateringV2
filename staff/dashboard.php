@@ -30,7 +30,7 @@ $thisWeekBookings = $conn->query("SELECT COUNT(*) as count FROM bookings
                                   AND status NOT IN ('completed', 'cancelled')")->fetch_assoc()['count'];
 
 $settings = getSettings($conn);
-$siteName = $settings['site_name'] ?? 'Filipino Catering';
+$siteName = $settings['site_name'] ?? 'Pochie Catering Services';
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>

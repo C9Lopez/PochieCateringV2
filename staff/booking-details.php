@@ -72,7 +72,7 @@ $chatMessages = $conn->query("SELECT cm.*, u.first_name, u.last_name, u.role FRO
 markMessagesAsRead($conn, $bookingId, $staffId);
 
 $settings = getSettings($conn);
-$siteName = $settings['site_name'] ?? 'Filipino Catering';
+$siteName = $settings['site_name'] ?? 'Pochie Catering Services';
 $currentPage = basename($_SERVER['PHP_SELF']);
 $staffNotifs = getStaffNotificationCounts($conn, $staffId);
 $unreadBookingsStaff = getBookingsWithUnreadMessages($conn, $staffId, 'staff');

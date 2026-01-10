@@ -71,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="card-body">
                             <h6>Payment Methods Accepted:</h6>
                             <ul class="mb-0">
-                                <li><strong>GCash:</strong> 09123456789 (Filipino Catering)</li>
-                                <li><strong>Bank Transfer:</strong> BDO 1234-5678-9012 (Filipino Catering)</li>
+                                <li><strong>GCash:</strong> 09123456789 (Pochie Catering Services)</li>
+                                <li><strong>Bank Transfer:</strong> BDO 1234-5678-9012 (Pochie Catering Services)</li>
                                 <li><strong>Maya:</strong> 09123456789</li>
                             </ul>
                         </div>

@@ -1,7 +1,7 @@
 <?php
 $currentPage = basename($_SERVER['PHP_SELF']);
 $sidebarSettings = getSettings($conn);
-$sidebarSiteName = $sidebarSettings['site_name'] ?? 'Filipino Catering';
+$sidebarSiteName = $sidebarSettings['site_name'] ?? 'Pochie Catering Services';
 $adminNotifs = getAdminNotificationCounts($conn);
 $unreadBookingsAdmin = getBookingsWithUnreadMessages($conn, $_SESSION['user_id'], 'admin');
 ?>

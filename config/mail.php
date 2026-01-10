@@ -45,7 +45,7 @@ function sendVerificationEmail($email, $code, $name) {
         $mail->addAddress($email, $name);
         $mail->isHTML(false);
         $mail->Subject = 'Your Verification Code: ' . $code;
-        $mail->Body = 'Hello ' . $name . ',' . "\r\n\r\n" . 'Your verification code is: ' . $code . "\r\n\r\n" . 'This code will expire in 10 minutes.' . "\r\n\r\n" . '- Filipino Catering';
+        $mail->Body = 'Hello ' . $name . ',' . "\r\n\r\n" . 'Your verification code is: ' . $code . "\r\n\r\n" . 'This code will expire in 10 minutes.' . "\r\n\r\n" . '- Pochie Catering Services';
         
         $mail->send();
         return true;
@@ -62,7 +62,7 @@ function sendPasswordResetEmail($email, $code, $name) {
         $mail->addAddress($email, $name);
         $mail->isHTML(false);
         $mail->Subject = 'Password Reset Code: ' . $code;
-        $mail->Body = 'Hello ' . $name . ',' . "\r\n\r\n" . 'Your password reset code is: ' . $code . "\r\n\r\n" . 'This code will expire in 10 minutes.' . "\r\n\r\n" . '- Filipino Catering';
+        $mail->Body = 'Hello ' . $name . ',' . "\r\n\r\n" . 'Your password reset code is: ' . $code . "\r\n\r\n" . 'This code will expire in 10 minutes.' . "\r\n\r\n" . '- Pochie Catering Services';
         
         $mail->send();
         return true;

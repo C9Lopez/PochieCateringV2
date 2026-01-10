@@ -103,7 +103,7 @@ include 'includes/header.php';
         <div class="login-card">
             <div class="login-header">
                 <div class="logo">🍲</div>
-                <h1><?= htmlspecialchars($settings['site_name'] ?? 'Filipino Catering') ?></h1>
+                <h1><?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?></h1>
                 <p>Sign in to your account</p>
             </div>
             <div class="login-body">

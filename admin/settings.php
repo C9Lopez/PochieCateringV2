@@ -118,7 +118,7 @@ $termsHistory = $conn->query("
                         <div class="card-body">
                             <div class="mb-3">
                                 <label class="form-label">Site Name</label>
-                                <input type="text" name="site_name" class="form-control" value="<?= htmlspecialchars($settings['site_name'] ?? 'Filipino Catering') ?>">
+                                <input type="text" name="site_name" class="form-control" value="<?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?>">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Contact Email</label>

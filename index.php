@@ -2,7 +2,7 @@
 require_once 'config/functions.php';
 
 $settings = getSettings($conn);
-$siteName = $settings['site_name'] ?? 'Filipino Catering';
+$siteName = $settings['site_name'] ?? 'Pochie Catering Services';
 $siteEmail = $settings['site_email'] ?? 'info@filipinocatering.com';
 $sitePhone = $settings['site_phone'] ?? '+63 912 345 6789';
 $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
@@ -731,7 +731,7 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                 </div>
             </div>
             <div class="footer-bottom text-center text-white-50">
-                <p class="mb-0">&copy; <?= date('Y') ?> <?= htmlspecialchars($siteName) ?>. All rights reserved.</p>
+                <p class="mb-0">&copy; 2026 Pochie Catering Services. All rights reserved. <br> Owner: Pochollo Glen Gutierrez</p>
             </div>
         </div>
     </footer>

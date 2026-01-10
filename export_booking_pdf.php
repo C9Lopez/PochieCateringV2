@@ -4,7 +4,7 @@ requireLogin();
 
 $bookingId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $settings = getSettings($conn);
-$siteName = $settings['site_name'] ?? 'Filipino Catering';
+$siteName = $settings['site_name'] ?? 'Pochie Catering Services';
 
 // Fetch detailed booking data
 $stmt = $conn->prepare("SELECT b.*, p.name as package_name, p.base_price, p.description as package_description, p.inclusions,
