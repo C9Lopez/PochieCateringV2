@@ -9,8 +9,15 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
 
 $packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY base_price LIMIT 3");
 $menuItems = $conn->query("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN menu_categories c ON m.category_id = c.id WHERE m.is_featured = 1 AND m.is_available = 1 LIMIT 6");
+$promotionsResult = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (end_date IS NULL OR DATE(end_date) >= CURDATE()) AND (start_date IS NULL OR DATE(start_date) <= CURDATE()) ORDER BY created_at DESC");
+$promotions = [];
 $today = date('Y-m-d');
-$promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (end_date IS NULL OR end_date >= '$today') AND (start_date IS NULL OR start_date <= '$today') ORDER BY created_at DESC");
+if ($promotionsResult) {
+    while ($promo = $promotionsResult->fetch_assoc()) {
+        if ($promo['end_date'] && $promo['end_date'] < $today) continue;
+        $promotions[] = $promo;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -561,7 +568,7 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (en
     </section>
     <?php endif; ?>
     
-    <?php if ($promotions && $promotions->num_rows > 0): ?>
+    <?php if (!empty($promotions)): ?>
     <section class="promo-section">
         <div class="container">
             <div class="text-center mb-5">
@@ -569,12 +576,12 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (en
                 <p class="section-subtitle">Exclusively prepared for your special occasions</p>
             </div>
             
-            <?php if ($promotions->num_rows > 3): ?>
+            <?php if (count($promotions) > 3): ?>
             <!-- Carousel for many promotions -->
             <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-indicators">
                     <?php 
-                    $total = $promotions->num_rows;
+                    $total = count($promotions);
                     for($i = 0; $i < ceil($total/3); $i++): 
                     ?>
                     <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="<?= $i ?>" class="<?= $i === 0 ? 'active' : '' ?>"></button>
@@ -583,8 +590,7 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (en
                 <div class="carousel-inner p-4">
                     <?php 
                     $count = 0;
-                    mysqli_data_seek($promotions, 0);
-                    while($promo = $promotions->fetch_assoc()): 
+                    foreach($promotions as $promo): 
                         if ($count % 3 === 0):
                     ?>
                     <div class="carousel-item <?= $count === 0 ? 'active' : '' ?>">
@@ -628,7 +634,7 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (en
                     ?>
                         </div>
                     </div>
-                    <?php endif; endwhile; ?>
+                    <?php endif; endforeach; ?>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon"></span>
@@ -640,16 +646,13 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (en
             <?php else: ?>
             <!-- Grid for few promotions -->
             <div class="row g-4 justify-content-center">
-                <?php 
-                mysqli_data_seek($promotions, 0);
-                while($promo = $promotions->fetch_assoc()): 
-                ?>
+                <?php foreach($promotions as $promo): ?>
                 <div class="col-md-6 col-lg-4">
                     <div class="promo-card">
                         <div class="promo-img">
                             <?php if ($promo['image']): ?>
                                 <img src="<?= url('uploads/promotions/' . $promo['image']) ?>" alt="<?= htmlspecialchars($promo['title']) ?>">
-                            <?php else: ?>
+<?php else: ?>
                                 <div class="fs-1">🎁</div>
                             <?php endif; ?>
                             <?php if ($promo['discount_percentage'] > 0): ?>
@@ -676,7 +679,7 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (en
                         </div>
                     </div>
                 </div>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </div>
             <?php endif; ?>
         </div>
