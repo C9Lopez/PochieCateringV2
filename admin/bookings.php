@@ -21,46 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_booking'])) {
     $messageType = 'success';
 }
 
-// Handle export bookings
-if (isset($_GET['export'])) {
-    $exportSql = "SELECT b.booking_number, b.event_type, b.event_date, b.event_time, b.venue_address, 
-                  b.number_of_guests, b.total_amount, b.status, b.payment_status, b.special_requests, b.created_at,
-                  u.first_name, u.last_name, u.email, u.phone, p.name as package_name
-                  FROM bookings b 
-                  LEFT JOIN users u ON b.customer_id = u.id 
-                  LEFT JOIN packages p ON b.package_id = p.id 
-                  ORDER BY b.created_at DESC";
-    $exportResult = $conn->query($exportSql);
-    
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename=bookings_backup_' . date('Y-m-d_His') . '.csv');
-    
-    $output = fopen('php://output', 'w');
-    fputcsv($output, ['Booking #', 'Customer Name', 'Email', 'Phone', 'Package', 'Event Type', 'Event Date', 'Event Time', 'Venue', 'Guests', 'Total Amount', 'Status', 'Payment Status', 'Special Requests', 'Booking Date']);
-    
-    while ($row = $exportResult->fetch_assoc()) {
-        fputcsv($output, [
-            $row['booking_number'],
-            $row['first_name'] . ' ' . $row['last_name'],
-            $row['email'],
-            $row['phone'],
-            $row['package_name'],
-            $row['event_type'],
-            $row['event_date'],
-            $row['event_time'],
-            $row['venue_address'],
-            $row['number_of_guests'],
-            $row['total_amount'],
-            $row['status'],
-            $row['payment_status'],
-            $row['special_requests'],
-            $row['created_at']
-        ]);
-    }
-    fclose($output);
-    exit();
-}
-
 $statusFilter = $_GET['status'] ?? '';
 $searchQuery = $_GET['search'] ?? '';
 $userId = $_SESSION['user_id'];
@@ -121,9 +81,6 @@ $bookings = $conn->query($sql);
         
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3>Manage Bookings</h3>
-            <a href="<?= adminUrl('bookings.php?export=1') ?>" class="btn btn-success">
-                <i class="bi bi-download me-1"></i>Export CSV Backup
-            </a>
         </div>
         
         <div class="card mb-4">
