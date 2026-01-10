@@ -21,11 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $lastName = sanitize($conn, $_POST['last_name']);
         $phone = sanitize($conn, $_POST['phone']);
         $ageConfirm = isset($_POST['age_confirm']) ? 1 : 0;
-        $privacyTermsConsent = isset($_POST['terms_privacy_consent']) ? 1 : 0;
+        $privacyConsent = isset($_POST['privacy_consent']) ? 1 : 0;
         
         if (!$ageConfirm) {
             $error = 'You must be 18 years old or above to register';
-        } elseif (!$privacyTermsConsent) {
+        } elseif (!$privacyConsent) {
             $error = 'You must agree to the Data Privacy Policy and Terms of Use to continue';
         } elseif ($password !== $confirmPassword) {
             $error = 'Passwords do not match';
@@ -134,62 +134,137 @@ $pageTitle = 'Register';
 include 'includes/header.php';
 ?>
 
-<style>
-    .auth-page-wrapper {
-        min-height: calc(100vh - 120px);
-        background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(234, 88, 12, 0.9)), url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1920') center/cover;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-    }
-    .register-container { width: 100%; max-width: 520px; }
-    .register-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        overflow: hidden;
-    }
-    .register-header {
-        background: linear-gradient(135deg, var(--secondary) 0%, #0d1b2a 100%);
-        padding: 30px;
-        text-align: center;
-        color: white;
-    }
-    .register-header .logo { font-size: 36px; margin-bottom: 8px; }
-    .register-header h1 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
-    .register-header p { opacity: 0.9; font-size: 14px; }
-    .register-body { padding: 30px; }
-    .form-group { margin-bottom: 20px; }
-    .form-label { font-weight: 500; color: var(--dark); margin-bottom: 6px; display: block; font-size: 14px; }
-    .btn-register {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-        border: none;
-        border-radius: 12px;
-        color: white;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    .btn-register:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); }
-    .step-indicator { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-    .step {
-        width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0;
-        display: flex; align-items: center; justify-content: center; font-weight: 600; color: #64748b;
-    }
-    .step.active { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; }
-    .step.completed { background: var(--accent); color: white; }
-    .verification-input { display: flex; gap: 10px; justify-content: center; }
-    .verification-input input {
-        width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: 700;
-        border: 2px solid #e2e8f0; border-radius: 10px;
-    }
-    .consent-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
-    .consent-title { font-weight: 600; color: var(--dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-</style>
+    <style>
+        .auth-page-wrapper {
+            min-height: calc(100vh - 120px);
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(234, 88, 12, 0.9)), url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1920') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .register-container { width: 100%; max-width: 520px; }
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .register-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0d1b2a 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .register-header .logo { font-size: 36px; margin-bottom: 8px; }
+        .register-header h1 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+        .register-header p { opacity: 0.9; font-size: 14px; }
+        .register-body { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { font-weight: 500; color: var(--dark); margin-bottom: 6px; display: block; font-size: 14px; }
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        }
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-register:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); }
+        .step-indicator { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .step {
+            width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0;
+            display: flex; align-items: center; justify-content: center; font-weight: 600; color: #64748b;
+        }
+        .step.active { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; }
+        .step.completed { background: var(--accent); color: white; }
+        .verification-input { display: flex; gap: 10px; justify-content: center; }
+        .verification-input input {
+            width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: 700;
+            border: 2px solid #e2e8f0; border-radius: 10px;
+        }
+        .verification-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .consent-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .consent-box.age-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 100%);
+            border-color: #fcd34d;
+        }
+        .consent-box.privacy-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+            border-color: #93c5fd;
+        }
+        .consent-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .consent-title i {
+            color: var(--primary);
+        }
+        .consent-text {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .form-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .form-check-label {
+            font-size: 14px;
+            color: var(--dark);
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .privacy-link {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+    </style>
 
 <div class="auth-page-wrapper">
     <div class="register-container">
@@ -251,20 +326,34 @@ include 'includes/header.php';
                         <input type="password" name="confirm_password" class="form-control" required minlength="6">
                     </div>
                     
-                    <div class="consent-box">
+                    <div class="consent-box age-box">
                         <div class="consent-title">
-                            <i class="bi bi-shield-check text-primary"></i> Registration Consent
+                            <i class="bi bi-shield-exclamation"></i>
+                            Age Verification
                         </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" name="age_confirm" id="ageConfirm" required>
-                            <label class="form-check-label" for="ageConfirm" style="font-size: 14px;">
-                                I confirm that I am <strong>18 years old or above</strong> (Age Consent)
-                            </label>
+                        <div class="consent-text">
+                            Ayon sa Republic Act No. 10173 o Data Privacy Act ng Pilipinas, ang pagkolekta ng personal na impormasyon mula sa mga menor de edad ay nangangailangan ng pahintulot ng magulang. Ang website na ito ay para sa mga may edad na 18 taong gulang pataas lamang.
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms_privacy_consent" id="termsPrivacyConsent" required>
-                            <label class="form-check-label" for="termsPrivacyConsent" style="font-size: 14px;">
-                                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal" class="text-primary text-decoration-none fw-bold">Data Privacy Policy</a> and <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" class="text-primary text-decoration-none fw-bold">Terms of Use</a>
+                            <input class="form-check-input" type="checkbox" name="age_confirm" id="ageConfirm" required>
+                            <label class="form-check-label" for="ageConfirm">
+                                Kinukumpirma ko na ako ay 18 taong gulang o higit pa
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="consent-box privacy-box">
+                        <div class="consent-title">
+                            <i class="bi bi-file-lock"></i>
+                            Data Privacy Consent
+                        </div>
+                        <div class="consent-text">
+                            Alinsunod sa Republic Act No. 10173 (Data Privacy Act of 2012), ang iyong personal na impormasyon ay kokolektahin at gagamitin lamang para sa mga layunin ng aming serbisyo ng catering. Ang iyong data ay mapoprotektahan at hindi ibabahagi sa mga third party nang walang iyong pahintulot.
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="privacy_consent" id="privacyConsent" required>
+                            <label class="form-check-label" for="privacyConsent">
+                                Nabasa ko at sumasang-ayon ako sa <a href="#" class="privacy-link" data-bs-toggle="modal" data-bs-target="#privacyModal">Data Privacy Policy</a> at <a href="#" class="privacy-link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Use</a>
                             </label>
                         </div>
                     </div>
