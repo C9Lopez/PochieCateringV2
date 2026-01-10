@@ -58,7 +58,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
         .top-bar i { color: var(--primary); }
         
         header.sticky-top {
-            z-index: 1020;
+            z-index: 1100;
         }
         
         .navbar {
@@ -66,7 +66,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             padding: 12px 0;
-            z-index: 1010 !important;
+            z-index: 1100 !important;
         }
         
         .navbar-brand {
@@ -286,10 +286,23 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             color: #94a3b8;
         }
         
-        .notification-empty i {
-            font-size: 40px;
-            margin-bottom: 10px;
-            display: block;
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background: white;
+                padding: 15px;
+                border-radius: 12px;
+                margin-top: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+            
+            .dropdown-menu-mobile-fix {
+                position: absolute !important;
+                right: auto !important;
+                left: 0 !important;
+                transform: none !important;
+                width: calc(100vw - 30px) !important;
+                max-width: 300px !important;
+            }
         }
     </style>
 </head>
@@ -326,7 +339,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
                                 <span class="notification-badge"><?= $customerNotifs['total'] > 9 ? '9+' : $customerNotifs['total'] ?></span>
                                 <?php endif; ?>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                            <ul class="dropdown-menu dropdown-menu-end notification-dropdown dropdown-menu-mobile-fix">
                                 <li class="notification-header">
                                     <i class="bi bi-bell me-2"></i>Notifications
                                 </li>
@@ -363,7 +376,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
                             <i class="bi bi-person-circle fs-5 me-1"></i>
                             <span class="d-none d-sm-inline"><?= htmlspecialchars($currentUser['first_name'] ?? 'User') ?></span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-mobile-fix">
                             <li><a class="dropdown-item" href="<?= url('my-bookings.php') ?>"><i class="bi bi-calendar-check me-2"></i>My Bookings</a></li>
                             <li><a class="dropdown-item" href="<?= url('profile.php') ?>"><i class="bi bi-person me-2"></i>Profile</a></li>
                             <?php if (in_array(getUserRole(), ['admin', 'super_admin'])): ?>
