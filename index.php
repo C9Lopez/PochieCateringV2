@@ -354,20 +354,6 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
         }
         .cta-section h2 { font-size: 42px; font-weight: 700; margin-bottom: 20px; }
         
-        footer {
-            background: #0f172a;
-            color: white;
-            padding: 50px 0 30px;
-        }
-        footer h5 { font-weight: 600; margin-bottom: 20px; font-family: 'Playfair Display', serif; }
-        footer a { color: rgba(255, 255, 255, 0.7); text-decoration: none; }
-        footer a:hover { color: var(--primary); }
-        .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
-            margin-top: 30px;
-        }
-        
         .dropdown-menu {
             border: none;
             box-shadow: 0 10px 40px rgba(0,0,0,0.15);
