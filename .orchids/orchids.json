@@ -1,0 +1,7 @@
+{
+  "projectId": "35faae60-4673-4312-930e-cdbbd6f11e41",
+  "createdAt": 1736545798000,
+  "startupCommands": [
+    "G:\\xampp\\php\\php.exe -S localhost:8000"
+  ]
+}
