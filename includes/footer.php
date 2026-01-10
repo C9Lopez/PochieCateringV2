@@ -83,13 +83,6 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
                         <span class="mx-2" style="opacity: 0.3;">|</span>
                         <a href="<?= url('privacy.php') ?>" style="color: rgba(255,255,255,0.8); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.2);">Privacy Policy</a>
                     </p>
-                    <div class="mt-2 d-flex justify-content-center align-items-center gap-2" style="font-size: 13px;">
-                        <a href="<?= url('privacy.php#choices') ?>" style="color: rgba(255,255,255,0.7); text-decoration: none;">Your privacy choices</a>
-                        <a href="<?= url('privacy.php#choices') ?>">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/California_Privacy_Options_Icon.svg/1024px-California_Privacy_Options_Icon.svg.png" 
-                                 alt="Privacy Choices" style="height: 14px; cursor: pointer; opacity: 0.8;">
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
