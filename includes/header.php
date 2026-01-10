@@ -39,6 +39,15 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             font-family: 'Playfair Display', serif;
         }
         
+        .top-bar {
+            background: #0f172a;
+            color: white;
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .top-bar i { color: var(--primary); }
+        
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -271,8 +280,20 @@ if (isLoggedIn() && getUserRole() === 'customer') {
         }
     </style>
 </head>
-<body>
+  <body>
+    <div class="top-bar shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-clock me-2"></i>
+                <span id="ph-time-display">Loading time...</span>
+            </div>
+            <div class="d-none d-md-block">
+                <i class="bi bi-geo-alt me-1"></i> <?= htmlspecialchars($settings['site_address'] ?? 'Philippines') ?>
+            </div>
+        </div>
+    </div>
     <nav class="navbar navbar-expand-lg sticky-top">
+
         <div class="container">
             <a class="navbar-brand" href="<?= url('index.php') ?>">
                 🍲 <?= $settings['site_name'] ?? 'Filipino Catering' ?>

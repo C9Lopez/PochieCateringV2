@@ -59,6 +59,30 @@
                 if (result.isConfirmed) callback();
             });
         }
+
+        function updatePHTime() {
+            const now = new Date();
+            const options = { 
+                timeZone: 'Asia/Manila',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            const formatter = new Intl.DateTimeFormat('en-PH', options);
+            const display = document.getElementById('ph-time-display');
+            if (display) {
+                display.textContent = formatter.format(now) + ' (PHT)';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePHTime();
+            setInterval(updatePHTime, 1000);
+        });
     </script>
 </body>
 </html>

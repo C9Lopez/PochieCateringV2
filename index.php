@@ -34,6 +34,15 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
         body { font-family: 'Poppins', sans-serif; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
         
+        .top-bar {
+            background: #0f172a;
+            color: white;
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .top-bar i { color: var(--primary); }
+        
         .navbar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -367,8 +376,20 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
         }
     </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg fixed-top">
+  <body>
+    <div class="top-bar shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-clock me-2"></i>
+                <span id="ph-time-display">Loading time...</span>
+            </div>
+            <div class="d-none d-md-block">
+                <i class="bi bi-geo-alt me-1"></i> <?= htmlspecialchars($siteAddress) ?>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg fixed-top" style="top: 35px;">
+
         <div class="container">
             <a class="navbar-brand" href="<?= url('index.php') ?>">🍲 <?= htmlspecialchars($siteName) ?></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -1028,10 +1049,33 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
             setTimeout(() => toast.remove(), 3000);
         }
         
-        document.addEventListener('DOMContentLoaded', function() {
-            checkCookieConsent();
-            loadCookiePreferences();
-        });
+          document.addEventListener('DOMContentLoaded', function() {
+              checkCookieConsent();
+              loadCookiePreferences();
+              
+              function updateTime() {
+                  const now = new Date();
+                  const options = { 
+                      timeZone: 'Asia/Manila',
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: true
+                  };
+                  const formatter = new Intl.DateTimeFormat('en-PH', options);
+                  const display = document.getElementById('ph-time-display');
+                  if (display) {
+                      display.textContent = formatter.format(now) + ' (PHT)';
+                  }
+              }
+              setInterval(updateTime, 1000);
+              updateTime();
+          });
+
     </script>
 </body>
 </html>
