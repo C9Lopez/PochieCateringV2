@@ -288,10 +288,20 @@ if (isLoggedIn() && getUserRole() === 'customer') {
     <header class="sticky-top shadow-sm">
       <div class="top-bar">
           <div class="container d-flex justify-content-between align-items-center">
-              <div>
-                  <i class="bi bi-clock me-2"></i>
-                  <span id="ph-time-display">Loading time...</span>
-              </div>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-clock me-2"></i>
+                    <span id="ph-time-display" class="me-2">Loading time...</span>
+                    <select id="timezone-selector" class="form-select form-select-sm bg-dark text-white border-secondary py-0 px-2" style="width: auto; height: 24px; font-size: 11px; cursor: pointer;">
+                        <option value="Asia/Manila">PH (PHT)</option>
+                        <option value="America/New_York">US (EST)</option>
+                        <option value="Europe/London">UK (GMT)</option>
+                        <option value="Asia/Tokyo">JP (JST)</option>
+                        <option value="Australia/Sydney">AU (AEST)</option>
+                        <option value="Asia/Dubai">AE (GST)</option>
+                        <option value="Europe/Paris">FR (CET)</option>
+                        <option value="Asia/Singapore">SG (SGT)</option>
+                    </select>
+                </div>
               <div class="d-none d-md-block">
                   <i class="bi bi-geo-alt me-1"></i> <?= htmlspecialchars($settings['site_address'] ?? 'Philippines') ?>
               </div>

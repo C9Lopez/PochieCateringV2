@@ -60,10 +60,25 @@
             });
         }
 
-        function updatePHTime() {
+        function updateDisplayTime() {
+            const selector = document.getElementById('timezone-selector');
+            let timezone = localStorage.getItem('selected_timezone') || 'Asia/Manila';
+            
+            if (selector) {
+                if (!selector.dataset.initialized) {
+                    selector.value = timezone;
+                    selector.addEventListener('change', function() {
+                        localStorage.setItem('selected_timezone', this.value);
+                        updateDisplayTime();
+                    });
+                    selector.dataset.initialized = 'true';
+                }
+                timezone = selector.value;
+            }
+
             const now = new Date();
             const options = { 
-                timeZone: 'Asia/Manila',
+                timeZone: timezone,
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -73,15 +88,20 @@
                 second: '2-digit',
                 hour12: true
             };
-            const formatter = new Intl.DateTimeFormat('en-PH', options);
-            const display = document.getElementById('ph-time-display');
-            if (display) {
-                display.textContent = formatter.format(now) + ' (PHT)';
+            
+            try {
+                const formatter = new Intl.DateTimeFormat('en-US', options);
+                const display = document.getElementById('ph-time-display');
+                if (display) {
+                    display.textContent = formatter.format(now);
+                }
+            } catch (e) {
+                console.error('Timezone error:', e);
             }
         }
         document.addEventListener('DOMContentLoaded', function() {
-            updatePHTime();
-            setInterval(updatePHTime, 1000);
+            updateDisplayTime();
+            setInterval(updateDisplayTime, 1000);
         });
     </script>
 </body>
