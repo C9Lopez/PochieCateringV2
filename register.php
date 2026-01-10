@@ -251,15 +251,16 @@ include 'includes/header.php';
                         <input type="password" name="confirm_password" class="form-control" required minlength="6">
                     </div>
                     
-                    <div class="form-group mb-3">
-                        <div class="form-check">
+                    <div class="consent-box">
+                        <div class="consent-title">
+                            <i class="bi bi-shield-check text-primary"></i> Registration Consent
+                        </div>
+                        <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" name="age_confirm" id="ageConfirm" required>
                             <label class="form-check-label" for="ageConfirm" style="font-size: 14px;">
                                 I confirm that I am <strong>18 years old or above</strong> (Age Consent)
                             </label>
                         </div>
-                    </div>
-                    <div class="form-group mb-4">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="terms_privacy_consent" id="termsPrivacyConsent" required>
                             <label class="form-check-label" for="termsPrivacyConsent" style="font-size: 14px;">
