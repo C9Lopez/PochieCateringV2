@@ -9,7 +9,8 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
 
 $packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY base_price LIMIT 3");
 $menuItems = $conn->query("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN menu_categories c ON m.category_id = c.id WHERE m.is_featured = 1 AND m.is_available = 1 LIMIT 6");
-$promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (end_date IS NULL OR end_date >= CURDATE()) ORDER BY created_at DESC");
+$today = date('Y-m-d');
+$promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (end_date IS NULL OR end_date >= '$today') AND (start_date IS NULL OR start_date <= '$today') ORDER BY created_at DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">

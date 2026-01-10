@@ -5,7 +5,8 @@ require_once 'includes/header.php';
 // Handle Claimed Promotion
 if (isset($_GET['claim_promo'])) {
     $promoId = (int)$_GET['claim_promo'];
-    $promoQuery = $conn->query("SELECT * FROM promotions WHERE id = $promoId AND is_active = 1");
+    $today = date('Y-m-d');
+    $promoQuery = $conn->query("SELECT * FROM promotions WHERE id = $promoId AND is_active = 1 AND (end_date IS NULL OR end_date >= '$today') AND (start_date IS NULL OR start_date <= '$today')");
     if ($promoQuery && $promoQuery->num_rows > 0) {
         $promo = $promoQuery->fetch_assoc();
         $_SESSION['claimed_promo'] = [
