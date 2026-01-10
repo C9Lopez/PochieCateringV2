@@ -7,18 +7,27 @@ $messageType = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['save_settings'])) {
-        $settings = [
+        $settingsData = [
             'site_name' => sanitize($conn, $_POST['site_name']),
             'site_email' => sanitize($conn, $_POST['site_email']),
             'site_phone' => sanitize($conn, $_POST['site_phone']),
             'site_address' => sanitize($conn, $_POST['site_address']),
+            'facebook_url' => sanitize($conn, $_POST['facebook_url']),
             'gcash_number' => sanitize($conn, $_POST['gcash_number']),
             'bank_name' => sanitize($conn, $_POST['bank_name']),
             'bank_account_name' => sanitize($conn, $_POST['bank_account_name']),
             'bank_account_number' => sanitize($conn, $_POST['bank_account_number']),
         ];
+
+        // Handle Site Logo Upload
+        if (isset($_FILES['site_logo']) && $_FILES['site_logo']['error'] === 0) {
+            $upload = uploadImage($_FILES['site_logo'], 'uploads/settings');
+            if ($upload['success']) {
+                $settingsData['site_logo'] = $upload['filename'];
+            }
+        }
         
-        foreach ($settings as $key => $value) {
+        foreach ($settingsData as $key => $value) {
             $stmt = $conn->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
             $stmt->bind_param("sss", $key, $value, $value);
             $stmt->execute();
@@ -110,15 +119,29 @@ $termsHistory = $conn->query("
         
         <h3 class="mb-4">System Settings</h3>
         
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="card mb-4">
                         <div class="card-header"><h5 class="mb-0"><i class="bi bi-globe me-2"></i>Site Information</h5></div>
                         <div class="card-body">
                             <div class="mb-3">
+                                <label class="form-label d-block">Current Logo</label>
+                                <?php if (!empty($settings['site_logo'])): ?>
+                                    <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="Logo" class="img-thumbnail mb-2" style="max-height: 80px;">
+                                <?php else: ?>
+                                    <div class="bg-light p-3 rounded mb-2 text-center text-muted" style="max-width: 80px;">No Logo</div>
+                                <?php endif; ?>
+                                <input type="file" name="site_logo" class="form-control" accept="image/*">
+                                <small class="text-muted">Recommended: PNG or SVG with transparent background</small>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Site Name</label>
                                 <input type="text" name="site_name" class="form-control" value="<?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?>">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Facebook Page URL</label>
+                                <input type="url" name="facebook_url" class="form-control" placeholder="https://facebook.com/yourpage" value="<?= htmlspecialchars($settings['facebook_url'] ?? '') ?>">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Contact Email</label>

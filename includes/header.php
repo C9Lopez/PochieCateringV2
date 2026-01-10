@@ -325,8 +325,13 @@ if (isLoggedIn() && getUserRole() === 'customer') {
       <nav class="navbar navbar-expand-lg border-bottom">
 
         <div class="container">
-            <a class="navbar-brand" href="<?= url('index.php') ?>">
-                🍲 <?= $settings['site_name'] ?? 'Pochie Catering Services' ?>
+            <a class="navbar-brand d-flex align-items-center" href="<?= url('index.php') ?>">
+                <?php if (!empty($settings['site_logo'])): ?>
+                    <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="<?= htmlspecialchars($settings['site_name'] ?? 'Logo') ?>" style="max-height: 40px;" class="me-2">
+                <?php else: ?>
+                    <span class="me-2">🍲</span>
+                <?php endif; ?>
+                <?= $settings['site_name'] ?? 'Pochie Catering Services' ?>
             </a>
 
             <div class="d-flex align-items-center order-lg-last">

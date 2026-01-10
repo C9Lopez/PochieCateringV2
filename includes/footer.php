@@ -13,8 +13,13 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
         <div class="row g-4">
             <!-- Brand & About -->
             <div class="col-lg-4 col-md-6">
-                <h5 style="font-family: 'Playfair Display', serif; font-weight: 600; margin-bottom: 20px; color: #f97316;">
-                    🍲 <?= htmlspecialchars($siteName) ?>
+                <h5 class="d-flex align-items-center" style="font-family: 'Playfair Display', serif; font-weight: 600; margin-bottom: 20px; color: #f97316;">
+                    <?php if (!empty($settings['site_logo'])): ?>
+                        <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="Logo" style="max-height: 40px;" class="me-2">
+                    <?php else: ?>
+                        <span class="me-2">🍲</span>
+                    <?php endif; ?>
+                    <?= htmlspecialchars($siteName) ?>
                 </h5>
                 <p style="font-size: 14px; opacity: 0.8; line-height: 1.6; margin-bottom: 20px;">
                     Experience the authentic taste of Filipino cuisine. We provide professional catering services for all types of events, ensuring a memorable dining experience for you and your guests.
@@ -50,7 +55,9 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
                     </li>
                     <li class="mb-3 d-flex align-items-center">
                         <i class="bi bi-envelope me-2 text-primary" style="color: #f97316 !important;"></i>
-                        <?= htmlspecialchars($siteEmail) ?>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=<?= urlencode($siteEmail) ?>" target="_blank" style="color: rgba(255,255,255,0.8); text-decoration: none;">
+                            <?= htmlspecialchars($siteEmail) ?>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -59,15 +66,15 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
             <div class="col-lg-3 col-md-6">
                 <h5 style="font-family: 'Playfair Display', serif; font-weight: 600; margin-bottom: 20px;">Follow Us</h5>
                 <div class="d-flex gap-3">
+                    <?php if (!empty($settings['facebook_url'])): ?>
+                    <a href="<?= htmlspecialchars($settings['facebook_url']) ?>" target="_blank" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: 0.3s;">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <?php else: ?>
                     <a href="#" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: 0.3s;">
                         <i class="bi bi-facebook"></i>
                     </a>
-                    <a href="#" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: 0.3s;">
-                        <i class="bi bi-instagram"></i>
-                    </a>
-                    <a href="#" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: 0.3s;">
-                        <i class="bi bi-twitter-x"></i>
-                    </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

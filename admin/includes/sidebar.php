@@ -8,7 +8,11 @@ $unreadBookingsAdmin = getBookingsWithUnreadMessages($conn, $_SESSION['user_id']
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="logo-wrapper">
-            <span class="logo-icon">🍲</span>
+            <?php if (!empty($sidebarSettings['site_logo'])): ?>
+                <img src="<?= url('uploads/settings/' . $sidebarSettings['site_logo']) ?>" alt="Logo" style="max-height: 40px;" class="me-2">
+            <?php else: ?>
+                <span class="logo-icon">🍲</span>
+            <?php endif; ?>
             <span class="logo-text"><?= htmlspecialchars($sidebarSiteName) ?></span>
         </div>
     </div>
