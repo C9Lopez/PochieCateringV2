@@ -264,7 +264,7 @@ include 'includes/header.php';
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="terms_privacy_consent" id="termsPrivacyConsent" required>
                             <label class="form-check-label" for="termsPrivacyConsent" style="font-size: 14px;">
-                                I agree to the <strong>Data and Terms of Use</strong>
+                                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal" class="text-primary text-decoration-none fw-bold">Data Privacy Policy</a> and <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" class="text-primary text-decoration-none fw-bold">Terms of Use</a>
                             </label>
                         </div>
                     </div>
@@ -322,6 +322,46 @@ include 'includes/header.php';
                 Already have an account? <a href="<?= url('login.php') ?>" class="text-primary fw-bold">Sign in</a>
             </div>
             <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- Data Privacy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyModalLabel">Data Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="policy-content" style="white-space: pre-wrap;">
+                    <?= $settings['privacy_policy'] ?? 'No privacy policy has been set.' ?>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms of Use Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Terms of Use</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="policy-content" style="white-space: pre-wrap;">
+                    <?= $settings['terms_of_use'] ?? 'No terms of use have been set.' ?>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
