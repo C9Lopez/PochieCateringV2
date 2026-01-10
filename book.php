@@ -124,16 +124,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 .legend-available {
     background: #22c55e;
 }
-.legend-occupied {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-    text-decoration: line-through;
-    color: #dc2626;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-</style>
+    .legend-occupied {
+        background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+        text-decoration: line-through;
+        color: #dc2626;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    /* Time Picker Enhancements */
+    .flatpickr-time {
+        height: 50px !important;
+    }
+    .flatpickr-time input {
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+    }
+    .flatpickr-am-pm {
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        color: var(--primary) !important;
+    }
+    .flatpickr-time .numInputWrapper:hover, .flatpickr-am-pm:hover {
+        background: #f8f9fa !important;
+    }
+    @media (max-width: 768px) {
+        .flatpickr-calendar.hasTime {
+            width: 300px !important;
+        }
+        .flatpickr-time input {
+            font-size: 1.5rem !important;
+        }
+    }
+    </style>
 
 <div class="container py-5">
     <div class="text-center mb-5">
@@ -202,8 +226,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label">Event Time *</label>
-                                <input type="time" name="event_time" class="form-control" required>
+                                <label class="form-label">Event Time * <small class="text-muted">(Click to select time)</small></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-clock" style="color: var(--primary);"></i></span>
+                                    <input type="text" name="event_time" id="eventTime" class="form-control border-start-0" required 
+                                           placeholder="Select time..." readonly style="background-color: #fff;">
+                                </div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Number of Guests *</label>
@@ -361,6 +389,18 @@ document.addEventListener('DOMContentLoaded', function() {
         locale: {
             firstDayOfWeek: 0
         }
+    });
+    
+    // Initialize Time Picker
+    const timeFp = flatpickr("#eventTime", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        altInput: true,
+        altFormat: "h:i K",
+        minuteIncrement: 15,
+        time_24hr: false,
+        disableMobile: "true" // Use flatpickr on mobile too for consistency
     });
     
     // Also prevent form submission if occupied date somehow selected
