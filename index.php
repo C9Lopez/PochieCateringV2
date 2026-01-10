@@ -9,7 +9,7 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
 
 $packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY base_price LIMIT 3");
 $menuItems = $conn->query("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN menu_categories c ON m.category_id = c.id WHERE m.is_featured = 1 AND m.is_available = 1 LIMIT 6");
-$promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (start_date IS NULL OR start_date <= CURDATE()) AND (end_date IS NULL OR end_date >= CURDATE()) ORDER BY created_at DESC");
+$promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER BY created_at DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -205,46 +205,130 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (st
         .menu-body small { color: #64748b; }
         .menu-price { color: var(--primary); font-weight: 700; font-size: 18px; }
         
-        .promo-section { background: linear-gradient(135deg, #fff7ed, #ffedd5); }
+        .promo-section { 
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); 
+            position: relative;
+            overflow: hidden;
+        }
+        .promo-section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: rgba(249, 115, 22, 0.05);
+            border-radius: 50%;
+        }
         .promo-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(249, 115, 22, 0.15);
-            transition: all 0.3s;
+            box-shadow: 0 15px 45px rgba(249, 115, 22, 0.1);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             height: 100%;
+            border: 1px solid rgba(249, 115, 22, 0.05);
         }
         .promo-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(249, 115, 22, 0.25);
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px rgba(249, 115, 22, 0.2);
         }
         .promo-img {
-            height: 200px;
+            height: 240px;
             background: linear-gradient(135deg, #fde68a, #fbbf24);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px;
+            font-size: 70px;
             overflow: hidden;
             position: relative;
         }
-        .promo-img img { width: 100%; height: 100%; object-fit: cover; }
+        .promo-img img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.6s ease;
+        }
+        .promo-card:hover .promo-img img {
+            transform: scale(1.1);
+        }
         .promo-badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            color: var(--primary);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+        .promo-badge.sale {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
         }
-        .promo-body { padding: 25px; }
-        .promo-body h4 { font-weight: 700; margin-bottom: 10px; color: var(--dark); }
-        .promo-body p { color: #64748b; line-height: 1.7; }
-        .promo-date { font-size: 13px; color: var(--primary); font-weight: 500; }
+        .promo-body { padding: 30px; }
+        .promo-body h4 { 
+            font-weight: 800; 
+            margin-bottom: 12px; 
+            color: var(--dark);
+            font-size: 22px;
+        }
+        .promo-body p { 
+            color: #64748b; 
+            line-height: 1.8; 
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+        .promo-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .promo-date { 
+            font-size: 13px; 
+            color: #94a3b8; 
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .promo-date i { color: var(--primary); font-size: 16px; }
+        
+        .carousel-indicators [data-bs-target] {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            margin: 0 5px;
+        }
+        .carousel-control-prev, .carousel-control-next {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .carousel-control-prev { left: -25px; }
+        .carousel-control-next { right: -25px; }
+        .promo-section:hover .carousel-control-prev,
+        .promo-section:hover .carousel-control-next {
+            opacity: 1;
+        }
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            filter: invert(1) sepia(100%) saturate(500%) hue-rotate(0deg);
+        }
         
         .cta-section {
             background: linear-gradient(135deg, var(--secondary), #0d1b2a);
@@ -449,35 +533,115 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 AND (st
     <?php if ($promotions && $promotions->num_rows > 0): ?>
     <section class="promo-section">
         <div class="container">
-            <div class="text-center">
-                <h2 class="section-title"><i class="bi bi-megaphone me-2"></i>Promotions & Announcements</h2>
-                <p class="section-subtitle">Check out our latest offers and special deals!</p>
+            <div class="text-center mb-5">
+                <h2 class="section-title"><i class="bi bi-megaphone me-2"></i>Special Offers</h2>
+                <p class="section-subtitle">Exclusively prepared for your special occasions</p>
             </div>
-            <div class="row g-4">
-                <?php while($promo = $promotions->fetch_assoc()): ?>
+            
+            <?php if ($promotions->num_rows > 3): ?>
+            <!-- Carousel for many promotions -->
+            <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <?php 
+                    $total = $promotions->num_rows;
+                    for($i = 0; $i < ceil($total/3); $i++): 
+                    ?>
+                    <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="<?= $i ?>" class="<?= $i === 0 ? 'active' : '' ?>"></button>
+                    <?php endfor; ?>
+                </div>
+                <div class="carousel-inner p-4">
+                    <?php 
+                    $count = 0;
+                    mysqli_data_seek($promotions, 0);
+                    while($promo = $promotions->fetch_assoc()): 
+                        if ($count % 3 === 0):
+                    ?>
+                    <div class="carousel-item <?= $count === 0 ? 'active' : '' ?>">
+                        <div class="row g-4">
+                    <?php endif; ?>
+                            <div class="col-md-4">
+                                <div class="promo-card">
+                                    <div class="promo-img">
+                                        <?php if ($promo['image']): ?>
+                                            <img src="<?= url('uploads/promotions/' . $promo['image']) ?>" alt="<?= htmlspecialchars($promo['title']) ?>">
+                                        <?php else: ?>
+                                            🎉
+                                        <?php endif; ?>
+                                        <span class="promo-badge sale">Limited Offer</span>
+                                    </div>
+                                    <div class="promo-body">
+                                        <h4><?= htmlspecialchars($promo['title']) ?></h4>
+                                        <p><?= nl2br(htmlspecialchars($promo['description'] ?? '')) ?></p>
+                                        <div class="promo-footer">
+                                            <?php if ($promo['end_date']): ?>
+                                                <div class="promo-date">
+                                                    <i class="bi bi-calendar-event"></i> Until <?= date('M d, Y', strtotime($promo['end_date'])) ?>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="promo-date">
+                                                    <i class="bi bi-check-circle"></i> Available Now
+                                                </div>
+                                            <?php endif; ?>
+                                            <a href="<?= url('book.php') ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">Claim Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    <?php 
+                        $count++;
+                        if ($count % 3 === 0 || $count === $total):
+                    ?>
+                        </div>
+                    </div>
+                    <?php endif; endwhile; ?>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+            <?php else: ?>
+            <!-- Grid for few promotions -->
+            <div class="row g-4 justify-content-center">
+                <?php 
+                mysqli_data_seek($promotions, 0);
+                while($promo = $promotions->fetch_assoc()): 
+                ?>
                 <div class="col-md-6 col-lg-4">
                     <div class="promo-card">
                         <div class="promo-img">
                             <?php if ($promo['image']): ?>
                                 <img src="<?= url('uploads/promotions/' . $promo['image']) ?>" alt="<?= htmlspecialchars($promo['title']) ?>">
                             <?php else: ?>
-                                🎉
+                                <div class="fs-1">🎁</div>
                             <?php endif; ?>
-                            <span class="promo-badge">Sale</span>
+                            <span class="promo-badge <?= $promo['end_date'] ? 'sale' : '' ?>">
+                                <?= $promo['end_date'] ? 'Sale' : 'Featured' ?>
+                            </span>
                         </div>
                         <div class="promo-body">
                             <h4><?= htmlspecialchars($promo['title']) ?></h4>
                             <p><?= nl2br(htmlspecialchars($promo['description'] ?? '')) ?></p>
-                            <?php if ($promo['end_date']): ?>
-                                <div class="promo-date">
-                                    <i class="bi bi-clock me-1"></i>Valid until <?= date('F j, Y', strtotime($promo['end_date'])) ?>
-                                </div>
-                            <?php endif; ?>
+                            <div class="promo-footer">
+                                <?php if ($promo['end_date']): ?>
+                                    <div class="promo-date">
+                                        <i class="bi bi-calendar-event"></i> Until <?= date('M d, Y', strtotime($promo['end_date'])) ?>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="promo-date">
+                                        <i class="bi bi-check-circle"></i> Available Now
+                                    </div>
+                                <?php endif; ?>
+                                <a href="<?= url('book.php') ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">Claim Now</a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <?php endwhile; ?>
             </div>
+            <?php endif; ?>
         </div>
     </section>
     <?php endif; ?>
