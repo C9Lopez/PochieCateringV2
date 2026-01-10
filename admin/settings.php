@@ -24,12 +24,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
         }
         
+        logActivity($conn, $_SESSION['user_id'], 'Update Settings', 'Updated general system settings');
         $message = 'Settings saved successfully!';
         $messageType = 'success';
+    }
+
+    if (isset($_POST['update_terms'])) {
+        $terms = $_POST['terms_of_use']; // Don't sanitize too strictly as it might contain HTML or formatted text
+        $userId = $_SESSION['user_id'];
+        
+        // Save to history
+        $stmt = $conn->prepare("INSERT INTO terms_history (type, content, updated_by, status) VALUES ('terms_of_use', ?, ?, 'published')");
+        $stmt->bind_param("si", $terms, $userId);
+        
+        if ($stmt->execute()) {
+            // Update current settings
+            $stmt = $conn->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('terms_of_use', ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+            $stmt->bind_param("ss", $terms, $terms);
+            $stmt->execute();
+            
+            logActivity($conn, $userId, 'Update Terms of Use', 'Updated the Terms of Use content');
+            $message = 'Terms of Use updated and published successfully!';
+            $messageType = 'success';
+        } else {
+            $message = 'Error updating Terms of Use: ' . $conn->error;
+            $messageType = 'danger';
+        }
+    }
+
+    if (isset($_POST['update_privacy'])) {
+        $privacy = $_POST['privacy_policy'];
+        $userId = $_SESSION['user_id'];
+        
+        // Save to history
+        $stmt = $conn->prepare("INSERT INTO terms_history (type, content, updated_by, status) VALUES ('privacy_policy', ?, ?, 'published')");
+        $stmt->bind_param("si", $privacy, $userId);
+        
+        if ($stmt->execute()) {
+            // Update current settings
+            $stmt = $conn->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('privacy_policy', ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+            $stmt->bind_param("ss", $privacy, $privacy);
+            $stmt->execute();
+            
+            logActivity($conn, $userId, 'Update Privacy Policy', 'Updated the Data Privacy Policy content');
+            $message = 'Privacy Policy updated and published successfully!';
+            $messageType = 'success';
+        } else {
+            $message = 'Error updating Privacy Policy: ' . $conn->error;
+            $messageType = 'danger';
+        }
     }
 }
 
 $settings = getSettings($conn);
+
+// Fetch history
+$termsHistory = $conn->query("
+    SELECT th.*, u.first_name, u.last_name 
+    FROM terms_history th 
+    JOIN users u ON th.updated_by = u.id 
+    ORDER BY th.updated_at DESC
+");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -110,8 +165,136 @@ $settings = getSettings($conn);
                 <i class="bi bi-check-lg me-2"></i>Save Settings
             </button>
         </form>
+
+        <hr class="my-5">
+
+        <h3 class="mb-4">Legal & Policies</h3>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <ul class="nav nav-tabs card-header-tabs" id="policyTabs" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" id="terms-tab" data-bs-toggle="tab" data-bs-target="#terms" type="button">Terms of Use</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="privacy-tab" data-bs-toggle="tab" data-bs-target="#privacy" type="button">Privacy Policy</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button">Update Logs</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="policyTabsContent">
+                            <div class="tab-pane fade show active" id="terms" role="tabpanel">
+                                <form method="POST">
+                                    <div class="mb-3">
+                                        <label class="form-label">Terms of Use Content</label>
+                                        <textarea name="terms_of_use" class="form-control" rows="15"><?= htmlspecialchars($settings['terms_of_use'] ?? '') ?></textarea>
+                                    </div>
+                                    <div class="alert alert-info py-2 small">
+                                        <i class="bi bi-info-circle me-2"></i>Ito ang lalabas sa registration page kapag pinindot ang "Terms of Use" link.
+                                    </div>
+                                    <button type="submit" name="update_terms" class="btn btn-success">
+                                        <i class="bi bi-cloud-upload me-2"></i>Publish Updated Terms
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="privacy" role="tabpanel">
+                                <form method="POST">
+                                    <div class="mb-3">
+                                        <label class="form-label">Data Privacy Policy Content</label>
+                                        <textarea name="privacy_policy" class="form-control" rows="15"><?= htmlspecialchars($settings['privacy_policy'] ?? '') ?></textarea>
+                                    </div>
+                                    <div class="alert alert-info py-2 small">
+                                        <i class="bi bi-info-circle me-2"></i>Ito ang lalabas sa registration page kapag pinindot ang "Data Privacy Policy" link.
+                                    </div>
+                                    <button type="submit" name="update_privacy" class="btn btn-success">
+                                        <i class="bi bi-cloud-upload me-2"></i>Publish Updated Privacy Policy
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="history" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date & Time</th>
+                                                <th>Type</th>
+                                                <th>Updated By</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if ($termsHistory && $termsHistory->num_rows > 0): ?>
+                                                <?php while($log = $termsHistory->fetch_assoc()): ?>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="fw-bold"><?= date('M j, Y', strtotime($log['updated_at'])) ?></div>
+                                                            <small class="text-muted"><?= date('g:i A', strtotime($log['updated_at'])) ?></small>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-light text-dark border">
+                                                                <?= $log['type'] === 'terms_of_use' ? 'Terms of Use' : 'Privacy Policy' ?>
+                                                            </span>
+                                                        </td>
+                                                        <td><?= htmlspecialchars($log['first_name'] . ' ' . $log['last_name']) ?></td>
+                                                        <td><span class="badge bg-success">Published</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary" onclick="viewHistory(<?= $log['id'] ?>)">
+                                                                <i class="bi bi-eye"></i> View
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                <?php endwhile; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="5" class="text-center py-4 text-muted">No update logs found.</td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal fade" id="viewHistoryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Version Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="historyContent" style="white-space: pre-wrap; font-size: 14px; background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function viewHistory(id) {
+            // In a real app, you'd fetch this via AJAX. For now, we'll just show a message or find it in the table.
+            fetch(`get_history_detail.php?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('historyContent').innerText = data.content;
+                    new bootstrap.Modal(document.getElementById('viewHistoryModal')).show();
+                });
+        }
+    </script>
 </body>
 </html>

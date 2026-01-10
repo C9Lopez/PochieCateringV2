@@ -572,40 +572,7 @@ $siteName = $settings['site_name'] ?? 'Filipino Catering';
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" style="font-size: 14px; line-height: 1.8;">
-                    <h6 class="fw-bold text-uppercase" style="color: var(--primary);">Patakaran sa Pagkapribado ng Data</h6>
-                    <p>Alinsunod sa Republic Act No. 10173 o ang Data Privacy Act of 2012 ng Pilipinas, kami ay nakatuon sa pagprotekta ng iyong personal na impormasyon.</p>
-                    
-                    <h6 class="fw-bold mt-4">Mga Impormasyong Kinokolekta</h6>
-                    <ul>
-                        <li>Pangalan (First name at Last name)</li>
-                        <li>Email address</li>
-                        <li>Contact number</li>
-                        <li>Detalye ng booking at event</li>
-                    </ul>
-                    
-                    <h6 class="fw-bold mt-4">Paggamit ng Impormasyon</h6>
-                    <p>Ang iyong personal na impormasyon ay gagamitin lamang para sa:</p>
-                    <ul>
-                        <li>Pagproseso at pamamahala ng iyong catering booking</li>
-                        <li>Pakikipag-ugnayan tungkol sa iyong order</li>
-                        <li>Pagbibigay ng customer support</li>
-                        <li>Pagpapadala ng mga update at promotional offers (kung aprubado mo)</li>
-                    </ul>
-                    
-                    <h6 class="fw-bold mt-4">Proteksyon ng Data</h6>
-                    <p>Kami ay gumagamit ng naaangkop na mga hakbang sa seguridad upang protektahan ang iyong personal na impormasyon mula sa hindi awtorisadong pag-access, pagbabago, o pagsisiwalat.</p>
-                    
-                    <h6 class="fw-bold mt-4">Mga Karapatan Mo</h6>
-                    <p>Ikaw ay may karapatang:</p>
-                    <ul>
-                        <li>Humiling ng access sa iyong personal data</li>
-                        <li>Humiling ng pagwawasto ng mga maling impormasyon</li>
-                        <li>Humiling ng pagtanggal ng iyong data</li>
-                        <li>Bawiin ang iyong pahintulot anumang oras</li>
-                    </ul>
-                    
-                    <h6 class="fw-bold mt-4">Makipag-ugnayan</h6>
-                    <p>Para sa mga katanungan tungkol sa aming patakaran sa privacy, maaari kang makipag-ugnayan sa amin sa pamamagitan ng aming contact page.</p>
+                    <?= nl2br(htmlspecialchars($settings['privacy_policy'] ?? 'Patakaran sa Pagkapribado ng Data...')) ?>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -622,27 +589,7 @@ $siteName = $settings['site_name'] ?? 'Filipino Catering';
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" style="font-size: 14px; line-height: 1.8;">
-                    <h6 class="fw-bold text-uppercase" style="color: var(--primary);">Mga Tuntunin sa Paggamit (Terms of Use)</h6>
-                    <p>Maligayang pagdating sa aming serbisyo ng catering. Sa paggamit ng aming website at serbisyo, sumasang-ayon ka sa mga sumusunod na tuntunin:</p>
-                    
-                    <h6 class="fw-bold mt-4">1. Pag-book at Pag-order</h6>
-                    <p>Ang lahat ng bookings ay dapat gawin nang hindi bababa sa pitong (7) araw bago ang event. Ang pagkumpirma ng booking ay depende sa availability ng aming serbisyo.</p>
-                    
-                    <h6 class="fw-bold mt-4">2. Patakaran sa Pagbabayad</h6>
-                    <ul>
-                        <li>Kinakailangan ang 50% down payment upang kumpirmahin ang booking.</li>
-                        <li>Ang balanse ay dapat bayaran bago o sa araw ng event.</li>
-                        <li>Tumatanggap kami ng cash, GCash, at bank transfer.</li>
-                    </ul>
-                    
-                    <h6 class="fw-bold mt-4">3. Pagkansela at Refund</h6>
-                    <p>Ang pagkansela ng booking ay dapat gawin limang (5) araw bago ang event para sa partial refund ng down payment. Ang mga pagkansela na lampas sa panahong ito ay maaaring magresulta sa forfeiture ng down payment.</p>
-                    
-                    <h6 class="fw-bold mt-4">4. Responsibilidad ng Customer</h6>
-                    <p>Ang customer ang responsable sa pagbibigay ng tamang impormasyon tungkol sa event (petsa, oras, lokasyon, at bilang ng bisita).</p>
-                    
-                    <h6 class="fw-bold mt-4">5. Pagbabago sa Tuntunin</h6>
-                    <p>Inirereserba namin ang karapatang magbago ng mga tuntuning ito anumang oras nang walang paunang abiso.</p>
+                    <?= nl2br(htmlspecialchars($settings['terms_of_use'] ?? 'Mga Tuntunin sa Paggamit...')) ?>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
