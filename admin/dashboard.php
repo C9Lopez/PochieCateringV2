@@ -51,8 +51,11 @@ $upcomingEvents = $conn->query("SELECT b.*, u.first_name, u.last_name, p.name as
                 <h3 class="mb-1">Dashboard</h3>
                 <p class="text-muted mb-0">Welcome back, <?= htmlspecialchars($_SESSION['user_name']) ?>!</p>
             </div>
-            <div>
-                <span class="badge bg-primary"><?= ucfirst(str_replace('_', ' ', getUserRole())) ?></span>
+            <div class="d-flex gap-2">
+                <a href="export_all_pdf.php" class="btn btn-outline-danger">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> Export All Data (PDF)
+                </a>
+                <span class="badge bg-primary d-flex align-items-center"><?= ucfirst(str_replace('_', ' ', getUserRole())) ?></span>
             </div>
         </div>
         

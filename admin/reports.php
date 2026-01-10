@@ -52,7 +52,12 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
     <?php include 'includes/sidebar.php'; ?>
     
     <div class="main-content">
-        <h3 class="mb-4">Reports & Analytics</h3>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Reports & Analytics</h3>
+            <a href="export_all_pdf.php" class="btn btn-outline-danger">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Export Full Backup (PDF)
+            </a>
+        </div>
         
         <div class="card mb-4">
             <div class="card-body">
