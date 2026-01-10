@@ -389,9 +389,12 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
     <header class="sticky-top shadow-sm">
         <div class="top-bar">
             <div class="container d-flex justify-content-between align-items-center">
-                <div>
+                <div class="d-flex align-items-center">
                     <i class="bi bi-clock me-2"></i>
                     <span id="ph-time-display">Loading time...</span>
+                    <button id="installAppBtn" class="btn btn-sm btn-orange ms-3" style="display: none; padding: 2px 10px; font-size: 11px; border-radius: 20px;">
+                        <i class="bi bi-download me-1"></i> Download App
+                    </button>
                 </div>
                 <div class="d-none d-md-block">
                     <i class="bi bi-geo-alt me-1"></i> <?= htmlspecialchars($siteAddress) ?>
@@ -1106,5 +1109,6 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                 });
             }
         </script>
+        <script src="<?= url('pwa-install.js') ?>"></script>
     </body>
     </html>

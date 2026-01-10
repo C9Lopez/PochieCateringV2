@@ -297,10 +297,13 @@ if (isLoggedIn() && getUserRole() === 'customer') {
     <header class="sticky-top shadow-sm">
       <div class="top-bar">
           <div class="container d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                      <i class="bi bi-clock me-2"></i>
-                      <span id="ph-time-display" class="me-2">Loading time...</span>
-                  </div>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clock me-2"></i>
+                        <span id="ph-time-display" class="me-2">Loading time...</span>
+                        <button id="installAppBtn" class="btn btn-sm btn-primary ms-2" style="display: none; padding: 2px 10px; font-size: 11px; border-radius: 20px;">
+                            <i class="bi bi-download me-1"></i> Download App
+                        </button>
+                    </div>
               <div class="d-none d-md-block">
                   <i class="bi bi-geo-alt me-1"></i> <?= htmlspecialchars($settings['site_address'] ?? 'Philippines') ?>
               </div>

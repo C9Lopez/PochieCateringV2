@@ -100,5 +100,6 @@
             setInterval(updateDisplayTime, 1000);
         });
     </script>
+    <script src="<?= url('pwa-install.js') ?>"></script>
 </body>
 </html>
