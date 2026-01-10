@@ -17,6 +17,15 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($siteName) ?> - Authentic Filipino Food Catering Services</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#f97316">
+    <link rel="manifest" href="<?= url('manifest.json') ?>">
+    <link rel="apple-touch-icon" href="<?= url('globe.svg') ?>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Catering">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1084,9 +1093,18 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                   }
               }
               setInterval(updateTime, 1000);
-              updateTime();
-          });
+                updateTime();
+            });
 
-    </script>
-</body>
-</html>
+            // Service Worker Registration for PWA
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    const swPath = "<?= url('sw.js') ?>";
+                    navigator.serviceWorker.register(swPath)
+                        .then(reg => console.log('Service Worker registered:', reg.scope))
+                        .catch(err => console.log('Service Worker registration failed:', err));
+                });
+            }
+        </script>
+    </body>
+    </html>

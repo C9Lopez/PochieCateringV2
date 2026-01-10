@@ -61,24 +61,9 @@
         }
 
         function updateDisplayTime() {
-            const selector = document.getElementById('timezone-selector');
-            let timezone = localStorage.getItem('selected_timezone') || 'Asia/Manila';
-            
-            if (selector) {
-                if (!selector.dataset.initialized) {
-                    selector.value = timezone;
-                    selector.addEventListener('change', function() {
-                        localStorage.setItem('selected_timezone', this.value);
-                        updateDisplayTime();
-                    });
-                    selector.dataset.initialized = 'true';
-                }
-                timezone = selector.value;
-            }
-
             const now = new Date();
             const options = { 
-                timeZone: timezone,
+                timeZone: 'Asia/Manila',
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -96,9 +81,20 @@
                     display.textContent = formatter.format(now);
                 }
             } catch (e) {
-                console.error('Timezone error:', e);
+                console.error('Time display error:', e);
             }
         }
+
+        // Service Worker Registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swPath = "<?= url('sw.js') ?>";
+                navigator.serviceWorker.register(swPath)
+                    .then(reg => console.log('Service Worker registered:', reg.scope))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             updateDisplayTime();
             setInterval(updateDisplayTime, 1000);
