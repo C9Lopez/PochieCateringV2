@@ -50,12 +50,17 @@ $bookings = $conn->query("SELECT b.*, p.name as package_name,
                         <td><?= getStatusBadge($booking['status']) ?></td>
                         <td><?= getPaymentBadge($booking['payment_status']) ?></td>
                         <td>
-                            <a href="<?= url('booking-details.php?id=' . $booking['id']) ?>" class="btn btn-sm btn-primary <?= $booking['unread_messages'] > 0 ? 'btn-pulse' : '' ?>">
-                                <i class="bi bi-eye"></i> View
-                                <?php if ($booking['unread_messages'] > 0): ?>
-                                <i class="bi bi-chat-dots-fill ms-1"></i>
-                                <?php endif; ?>
-                            </a>
+                            <div class="btn-group">
+                                <a href="<?= url('booking-details.php?id=' . $booking['id']) ?>" class="btn btn-sm btn-primary <?= $booking['unread_messages'] > 0 ? 'btn-pulse' : '' ?>">
+                                    <i class="bi bi-eye"></i> View
+                                    <?php if ($booking['unread_messages'] > 0): ?>
+                                    <i class="bi bi-chat-dots-fill ms-1"></i>
+                                    <?php endif; ?>
+                                </a>
+                                <a href="<?= url('export_booking_pdf.php?id=' . $booking['id']) ?>" class="btn btn-sm btn-danger" title="Download PDF Copy">
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     <?php endwhile; ?>

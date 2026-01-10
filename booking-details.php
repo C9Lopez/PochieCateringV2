@@ -79,6 +79,9 @@ $payments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId O
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <a href="<?= url('my-bookings.php') ?>" class="btn btn-outline-secondary mb-2"><i class="bi bi-arrow-left me-1"></i>Back to Bookings</a>
+            <a href="<?= url('export_booking_pdf.php?id=' . $bookingId) ?>" class="btn btn-danger mb-2 ms-2">
+                <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF (Offline Copy)
+            </a>
             <h2>Booking #<?= htmlspecialchars($booking['booking_number']) ?></h2>
             <p class="text-muted mb-0">Submitted on <?= formatDateTime($booking['created_at']) ?></p>
         </div>
