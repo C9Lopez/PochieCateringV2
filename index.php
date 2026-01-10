@@ -706,7 +706,7 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
         </div>
     </section>
     
-    <footer style="background: #000000; color: #ffffff; padding: 60px 0 40px; font-family: 'Poppins', sans-serif;">
+    <footer style="background: #1e293b; color: #ffffff; padding: 60px 0 40px; font-family: 'Poppins', sans-serif;">
         <div class="container">
             <div class="row">
                 <div class="col-12 text-start">
@@ -715,15 +715,16 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                     </p>
                     <p class="mb-4" style="font-size: 14px; opacity: 0.7; line-height: 1.8; max-width: 900px;">
                         Pochie Catering Services provides access to professional catering solutions and delicious Filipino cuisine. 
-                        Pochie Catering Services is a registered business under the ownership of Pochollo Glen Gutierrez and does not provide legal advice, 
-                        except where authorized through its owner Pochollo Glen Gutierrez. Use of our products and services is governed by our 
-                        <a href="#" style="color: #ffffff; text-decoration: underline; opacity: 0.8;">Terms of Use</a> and 
-                        <a href="#" style="color: #ffffff; text-decoration: underline; opacity: 0.8;">Privacy Policy</a>.
+                        Pochie Catering Services is a registered business under the ownership of Pochollo Glen Gutierrez. Use of our products and services is governed by our 
+                        <a href="<?= url('terms.php') ?>" style="color: #ffffff; text-decoration: underline; opacity: 0.8;">Terms of Use</a> and 
+                        <a href="<?= url('privacy.php') ?>" style="color: #ffffff; text-decoration: underline; opacity: 0.8;">Privacy Policy</a>.
                     </p>
                     <div class="d-flex align-items-center mt-3">
-                        <a href="#" style="color: #ffffff; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 2px; opacity: 0.9;">Your privacy choices</a>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/California_Privacy_Options_Icon.svg/1024px-California_Privacy_Options_Icon.svg.png" 
-                             alt="Privacy Choices" style="height: 14px; margin-left: 10px; opacity: 0.9;">
+                        <a href="<?= url('privacy.php#choices') ?>" style="color: #ffffff; text-decoration: none; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 2px; opacity: 0.9;">Your privacy choices</a>
+                        <a href="<?= url('privacy.php#choices') ?>">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/California_Privacy_Options_Icon.svg/1024px-California_Privacy_Options_Icon.svg.png" 
+                                 alt="Privacy Choices" style="height: 14px; margin-left: 10px; opacity: 0.9; cursor: pointer;">
+                        </a>
                     </div>
                 </div>
             </div>
