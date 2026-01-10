@@ -162,9 +162,15 @@ $promotions = $conn->query("SELECT p.*, u.first_name, u.last_name FROM promotion
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <span class="badge bg-<?= $promo['is_active'] ? 'success' : 'secondary' ?>">
-                                        <?= $promo['is_active'] ? 'Active' : 'Inactive' ?>
-                                    </span>
+                                    <?php 
+                                    $isExpired = $promo['end_date'] && strtotime($promo['end_date']) < strtotime('today');
+                                    if ($isExpired): ?>
+                                        <span class="badge bg-danger">Expired</span>
+                                    <?php elseif ($promo['is_active']): ?>
+                                        <span class="badge bg-success">Active</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td><small><?= htmlspecialchars($promo['first_name'] . ' ' . $promo['last_name']) ?></small></td>
                                 <td>
