@@ -52,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param("ssisssii", $title, $description, $discountPercentage, $image, $startDate, $endDate, $isActive, $promoId);
             } else {
                 $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, discount_percentage=?, start_date=?, end_date=?, is_active=? WHERE id=?");
-                $stmt->bind_param("ssisssii", $title, $description, $discountPercentage, $startDate, $endDate, $isActive, $promoId);
+                $stmt->bind_param("ssisssi", $title, $description, $discountPercentage, $startDate, $endDate, $isActive, $promoId);
             }
         } else {
             $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, discount_percentage=?, start_date=?, end_date=?, is_active=? WHERE id=?");
-            $stmt->bind_param("ssisssii", $title, $description, $discountPercentage, $startDate, $endDate, $isActive, $promoId);
+            $stmt->bind_param("ssisssi", $title, $description, $discountPercentage, $startDate, $endDate, $isActive, $promoId);
         }
         
         if ($stmt->execute()) {
