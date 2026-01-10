@@ -21,15 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $lastName = sanitize($conn, $_POST['last_name']);
         $phone = sanitize($conn, $_POST['phone']);
         $ageConfirm = isset($_POST['age_confirm']) ? 1 : 0;
-        $privacyConsent = isset($_POST['privacy_consent']) ? 1 : 0;
-        $termsConsent = isset($_POST['terms_consent']) ? 1 : 0;
+        $privacyTermsConsent = isset($_POST['terms_privacy_consent']) ? 1 : 0;
         
         if (!$ageConfirm) {
             $error = 'You must be 18 years old or above to register';
-        } elseif (!$privacyConsent) {
-            $error = 'You must agree to the Data Privacy Policy to continue';
-        } elseif (!$termsConsent) {
-            $error = 'You must agree to the Terms of Use to continue';
+        } elseif (!$privacyTermsConsent) {
+            $error = 'You must agree to the Data Privacy Policy and Terms of Use to continue';
         } elseif ($password !== $confirmPassword) {
             $error = 'Passwords do not match';
         } elseif (strlen($password) < 6) {
@@ -454,31 +451,15 @@ $siteName = $settings['site_name'] ?? 'Filipino Catering';
                     <div class="consent-box privacy-box">
                         <div class="consent-title">
                             <i class="bi bi-file-lock"></i>
-                            Data Privacy Consent
+                            Data Privacy & Terms
                         </div>
                         <div class="consent-text">
-                            Alinsunod sa Republic Act No. 10173 (Data Privacy Act of 2012), ang iyong personal na impormasyon ay kokolektahin at gagamitin lamang para sa mga layunin ng aming serbisyo ng catering. Ang iyong data ay mapoprotektahan at hindi ibabahagi sa mga third party nang walang iyong pahintulot.
+                            Alinsunod sa Data Privacy Act of 2012, ang iyong impormasyon ay protektado. Sa pagpapatuloy, sumasang-ayon ka rin sa aming mga tuntunin sa pag-order at serbisyo.
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="privacy_consent" id="privacyConsent" required>
-                            <label class="form-check-label" for="privacyConsent">
-                                Nabasa ko at sumasang-ayon ako sa <a href="#" class="privacy-link" data-bs-toggle="modal" data-bs-target="#privacyModal">Data Privacy Policy</a>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="consent-box terms-box">
-                        <div class="consent-title">
-                            <i class="bi bi-file-text"></i>
-                            Terms of Use
-                        </div>
-                        <div class="consent-text">
-                            Sa pamamagitan ng paggamit ng aming serbisyo, sumasang-ayon ka sa aming mga tuntunin at kundisyon sa pag-order, pagbabayad, at pagkansela ng mga serbisyo ng catering.
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="terms_consent" id="termsConsent" required>
-                            <label class="form-check-label" for="termsConsent">
-                                Nabasa ko at sumasang-ayon ako sa <a href="#" class="privacy-link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Use</a>
+                            <input class="form-check-input" type="checkbox" name="terms_privacy_consent" id="termsPrivacyConsent" required>
+                            <label class="form-check-label" for="termsPrivacyConsent">
+                                Nabasa ko at sumasang-ayon ako sa <a href="#" class="privacy-link" data-bs-toggle="modal" data-bs-target="#privacyModal">Data Privacy Policy</a> at <a href="#" class="privacy-link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Use</a>
                             </label>
                         </div>
                     </div>
