@@ -34,11 +34,15 @@ $unreadBookingsAdmin = getBookingsWithUnreadMessages($conn, $_SESSION['user_id']
                 <i class="bi bi-gift"></i>
                 <span>Packages</span>
             </a>
-            <a href="<?= adminUrl('promotions.php') ?>" class="nav-item <?= $currentPage == 'promotions.php' ? 'active' : '' ?>">
-                <i class="bi bi-megaphone"></i>
-                <span>Promotions</span>
-            </a>
-            <a href="<?= adminUrl('payments.php') ?>" class="nav-item <?= $currentPage == 'payments.php' ? 'active' : '' ?>">
+              <a href="<?= adminUrl('promotions.php') ?>" class="nav-item <?= $currentPage == 'promotions.php' ? 'active' : '' ?>">
+                  <i class="bi bi-megaphone"></i>
+                  <span>Promotions</span>
+              </a>
+              <a href="<?= adminUrl('reviews.php') ?>" class="nav-item <?= $currentPage == 'reviews.php' ? 'active' : '' ?>">
+                  <i class="bi bi-star"></i>
+                  <span>Reviews</span>
+              </a>
+              <a href="<?= adminUrl('payments.php') ?>" class="nav-item <?= $currentPage == 'payments.php' ? 'active' : '' ?>">
                 <i class="bi bi-credit-card"></i>
                 <span>Payments</span>
                 <?php if ($adminNotifs['pending_payments'] > 0): ?>
