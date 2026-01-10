@@ -75,17 +75,17 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
         <!-- Footer Bottom -->
         <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 30px; margin-top: 40px;">
             <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                <div class="col-md-7 text-center text-md-start mb-3 mb-md-0">
                     <p class="mb-0" style="font-size: 14px; opacity: 0.9;">
                         &copy; 2026 <strong>Pochie Catering Services</strong>. All rights reserved.
+                        <span class="mx-2" style="opacity: 0.3;">|</span>
+                        <a href="<?= url('terms.php') ?>" style="color: rgba(255,255,255,0.8); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.2);">Terms of Use</a>
+                        <span class="mx-2" style="opacity: 0.3;">|</span>
+                        <a href="<?= url('privacy.php') ?>" style="color: rgba(255,255,255,0.8); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.2);">Privacy Policy</a>
                     </p>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <div class="d-flex flex-wrap justify-content-center justify-content-md-end align-items-center gap-3" style="font-size: 13px;">
-                        <a href="<?= url('terms.php') ?>" style="color: rgba(255,255,255,0.7); text-decoration: none;">Terms of Use</a>
-                        <span style="opacity: 0.3;">|</span>
-                        <a href="<?= url('privacy.php') ?>" style="color: rgba(255,255,255,0.7); text-decoration: none;">Privacy Policy</a>
-                        <span style="opacity: 0.3;">|</span>
                         <div class="d-flex align-items-center">
                             <a href="<?= url('privacy.php#choices') ?>" style="color: rgba(255,255,255,0.7); text-decoration: none;">Your privacy choices</a>
                             <a href="<?= url('privacy.php#choices') ?>">

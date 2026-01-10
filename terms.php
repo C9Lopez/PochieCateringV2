@@ -1,35 +1,29 @@
 <?php
+require_once 'config/functions.php';
 require_once 'includes/header.php';
+
+$settings = getSettings($conn);
+$termsContent = $settings['terms_of_use'] ?? 'No Terms of Use published yet.';
+$lastUpdated = $conn->query("SELECT updated_at FROM terms_history WHERE type = 'terms_of_use' ORDER BY updated_at DESC LIMIT 1")->fetch_assoc();
+$displayDate = $lastUpdated ? date('F j, Y', strtotime($lastUpdated['updated_at'])) : date('F j, Y');
 ?>
 
 <div class="container my-5 py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8 card p-4 shadow-sm border-0">
-            <h1 class="section-title mb-5 text-center">Terms of Use</h1>
+        <div class="col-lg-10 card p-4 p-md-5 shadow-sm border-0" style="border-radius: 20px;">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold" style="font-family: 'Playfair Display', serif; color: #1e3a5f;">Terms of Use</h1>
+                <div style="width: 80px; height: 4px; background: #f97316; margin: 20px auto; border-radius: 2px;"></div>
+                <p class="text-muted">Last updated: <?= $displayDate ?></p>
+            </div>
             
-            <div class="terms-content">
-                <p class="text-muted">Last updated: January 10, 2026</p>
+            <div class="terms-content" style="font-size: 16px; line-height: 1.8; color: #475569;">
+                <?= nl2br($termsContent) ?>
                 
-                <h4 class="mt-4">1. Acceptance of Terms</h4>
-                <p>By accessing and using the services provided by Pochie Catering Services, you agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use our services.</p>
-                
-                <h4 class="mt-4">2. Services Provided</h4>
-                <p>Pochie Catering Services offers professional catering solutions, including food preparation, delivery, and event service staff. Specific menu items and pricing are subject to availability and change.</p>
-                
-                <h4 class="mt-4">3. Booking and Payments</h4>
-                <p>Bookings are only confirmed upon payment of the required deposit as specified in your booking request. Final payments must be settled according to the agreed schedule prior to the event date.</p>
-                
-                <h4 class="mt-4">4. Cancellations</h4>
-                <p>Cancellations must be made within the specified timeframe to be eligible for refunds. Deposit refunds are subject to our cancellation policy, which considers the proximity of the cancellation to the event date.</p>
-                
-                <h4 class="mt-4">5. Liability</h4>
-                <p>While we strive for excellence, Pochie Catering Services is not liable for indirect, incidental, or consequential damages arising from the use of our services, except where required by law.</p>
-                
-                <h4 class="mt-4">6. Changes to Terms</h4>
-                <p>We reserve the right to modify these terms at any time. Your continued use of our services after such changes constitutes acceptance of the new terms.</p>
-                
-                <div class="mt-5 text-center">
-                    <a href="index.php" class="btn btn-primary">Back to Home</a>
+                <div class="mt-5 text-center border-top pt-4">
+                    <a href="<?= url('index.php') ?>" class="btn btn-orange px-5 py-3 rounded-pill fw-bold">
+                        <i class="bi bi-house-door me-2"></i>Back to Home
+                    </a>
                 </div>
             </div>
         </div>
