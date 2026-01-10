@@ -1,4 +1,4 @@
-const CACHE_NAME = 'catering-pwa-v1';
+const CACHE_NAME = 'catering-pwa-v2';
 const ASSETS_TO_CACHE = [
   'index.php',
   'manifest.json',

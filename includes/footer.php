@@ -77,7 +77,7 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
             <div class="row align-items-center">
                 <div class="col-md-12 text-center">
                     <p class="mb-0" style="font-size: 14px; opacity: 0.9;">
-                        &copy; 2026 <strong>Pochie Catering Services</strong>. All rights reserved.
+                        &copy; <?= date('Y') ?> <strong><?= htmlspecialchars($siteName) ?></strong>. All rights reserved.
                         <span class="mx-2" style="opacity: 0.3;">|</span>
                         <a href="<?= url('terms.php') ?>" style="color: rgba(255,255,255,0.8); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.2);">Terms of Use</a>
                         <span class="mx-2" style="opacity: 0.3;">|</span>
