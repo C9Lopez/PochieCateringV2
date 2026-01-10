@@ -264,8 +264,14 @@ include 'includes/header.php';
             color: var(--primary);
             text-decoration: underline;
         }
-        .modal { z-index: 1070 !important; }
-        .modal-backdrop { z-index: 1060 !important; }
+        .modal { z-index: 1200 !important; }
+        .modal-backdrop { z-index: 1190 !important; }
+        @media (max-width: 576px) {
+            .modal-dialog { margin: 10px; }
+            .modal-body { padding: 20px; font-size: 13px; }
+            .modal-header { padding: 15px 20px; }
+            .modal-title { font-size: 1.1rem; }
+        }
         .modal-header {
             background: linear-gradient(135deg, var(--secondary) 0%, #0d1b2a 100%);
             color: white;
