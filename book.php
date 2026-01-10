@@ -8,11 +8,13 @@ $categories = $conn->query("SELECT * FROM menu_categories WHERE is_active = 1");
 $menuItems = $conn->query("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN menu_categories c ON m.category_id = c.id WHERE m.is_available = 1 ORDER BY c.name, m.name");
 
 $selectedPackageId = isset($_GET['package']) ? (int)$_GET['package'] : null;
-$selectedPackage = null;
-if ($selectedPackageId) {
-    $pkgQuery = $conn->query("SELECT * FROM packages WHERE id = $selectedPackageId");
-    $selectedPackage = $pkgQuery->fetch_assoc();
-}
+    $selectedPackage = null;
+    if ($selectedPackageId) {
+        $pkgQuery = $conn->query("SELECT * FROM packages WHERE id = $selectedPackageId");
+        $selectedPackage = $pkgQuery->fetch_assoc();
+    }
+    
+    $claimedPromo = $_SESSION['claimed_promo'] ?? null;
 
 // Get occupied dates (bookings with reserved/active status) - case insensitive
 $occupiedDates = [];
@@ -58,10 +60,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $totalAmount = $packageTotal + $menuTotal;
         
+        // Apply Promotion Discount
+        $discountAmount = 0;
+        $claimedPromo = $_SESSION['claimed_promo'] ?? null;
+        if ($claimedPromo && $claimedPromo['discount'] > 0) {
+            $discountAmount = ($totalAmount * $claimedPromo['discount']) / 100;
+            $totalAmount -= $discountAmount;
+        }
+        
         $stmt = $conn->prepare("INSERT INTO bookings (booking_number, customer_id, package_id, event_type, event_date, event_time, venue_address, number_of_guests, special_requests, total_amount, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')");
         $stmt->bind_param("siissssisd", $bookingNumber, $_SESSION['user_id'], $packageId, $eventType, $eventDate, $eventTime, $venueAddress, $numberOfGuests, $specialRequests, $totalAmount);
         
         if ($stmt->execute()) {
+            // Clear claimed promo after successful booking
+            unset($_SESSION['claimed_promo']);
             $bookingId = $conn->insert_id;
             
             foreach ($selectedItems as $itemId) {
@@ -391,6 +403,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedItemsList = document.getElementById('selectedItemsList');
     const menuSubtotal = document.getElementById('menuSubtotal');
     
+    // Promotion Data from PHP
+    const claimedPromo = <?= json_encode($claimedPromo) ?>;
+    
     const occupiedDates = <?= $occupiedDatesJson ?>;
     
     let packageTotal = 0;
@@ -568,8 +583,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function updateTotal() {
-        const total = packageTotal + menuTotal;
-        totalAmount.textContent = '₱' + total.toLocaleString('en-PH', {minimumFractionDigits: 2});
+        const subtotal = packageTotal + menuTotal;
+        let finalTotal = subtotal;
+        
+        // Clear previous promo summary if exists
+        const oldPromoSummary = document.getElementById('promoSummary');
+        if (oldPromoSummary) oldPromoSummary.remove();
+        
+        if (claimedPromo && claimedPromo.discount > 0) {
+            const discountAmount = (subtotal * claimedPromo.discount) / 100;
+            finalTotal = subtotal - discountAmount;
+            
+            const promoDiv = document.createElement('div');
+            promoDiv.id = 'promoSummary';
+            promoDiv.innerHTML = `
+                <div class="d-flex justify-content-between text-success mt-2 pt-2 border-top">
+                    <span>Promotion (${claimedPromo.title}):</span>
+                    <strong>-${claimedPromo.discount}%</strong>
+                </div>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>Discount Amount:</span>
+                    <span>-₱${discountAmount.toLocaleString('en-PH', {minimumFractionDigits: 2})}</span>
+                </div>
+            `;
+            totalAmount.parentElement.before(promoDiv);
+        }
+        
+        totalAmount.textContent = '₱' + finalTotal.toLocaleString('en-PH', {minimumFractionDigits: 2});
     }
     
     packageSelect.addEventListener('change', updateSummary);

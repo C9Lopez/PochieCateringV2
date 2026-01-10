@@ -2,10 +2,45 @@
 $pageTitle = "Catering Packages";
 require_once 'includes/header.php';
 
+// Handle Claimed Promotion
+if (isset($_GET['claim_promo'])) {
+    $promoId = (int)$_GET['claim_promo'];
+    $promoQuery = $conn->query("SELECT * FROM promotions WHERE id = $promoId AND is_active = 1");
+    if ($promoQuery && $promoQuery->num_rows > 0) {
+        $promo = $promoQuery->fetch_assoc();
+        $_SESSION['claimed_promo'] = [
+            'id' => $promo['id'],
+            'title' => $promo['title'],
+            'discount' => $promo['discount_percentage']
+        ];
+    }
+}
+
+$claimedPromo = $_SESSION['claimed_promo'] ?? null;
 $packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY base_price");
 ?>
 
 <div class="container py-5">
+    <?php if ($claimedPromo): ?>
+    <div class="alert alert-success alert-dismissible fade show mb-5 rounded-4 border-0 shadow-sm d-flex align-items-center p-4">
+        <div class="fs-1 me-4">🎁</div>
+        <div>
+            <h4 class="alert-heading mb-1">Promotion Applied!</h4>
+            <p class="mb-0">You've claimed: <strong><?= htmlspecialchars($claimedPromo['title']) ?></strong>. 
+            A <strong><?= $claimedPromo['discount'] ?>% discount</strong> will be automatically applied to your package.</p>
+        </div>
+        <a href="?remove_promo=1" class="btn-close" style="top: 20px; right: 20px;"></a>
+    </div>
+    <?php 
+    endif;
+    
+    if (isset($_GET['remove_promo'])) {
+        unset($_SESSION['claimed_promo']);
+        header("Location: packages.php");
+        exit;
+    }
+    ?>
+    
     <div class="text-center mb-5">
         <h1 class="section-title">Catering Packages</h1>
         <p class="text-muted mt-4">Choose the perfect package for your celebration</p>
@@ -18,9 +53,23 @@ $packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY ba
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
                         <h3 class="mb-1"><?= htmlspecialchars($pkg['name']) ?></h3>
-                        <p class="display-4 fw-bold mb-0" style="color: var(--primary);">
-                            <?= formatPrice($pkg['base_price']) ?>
-                        </p>
+                        <?php if ($claimedPromo && $claimedPromo['discount'] > 0): 
+                            $originalPrice = $pkg['base_price'];
+                            $discountAmount = ($originalPrice * $claimedPromo['discount']) / 100;
+                            $discountedPrice = $originalPrice - $discountAmount;
+                        ?>
+                            <div class="mb-0">
+                                <span class="text-decoration-line-through text-muted fs-5"><?= formatPrice($originalPrice) ?></span>
+                                <p class="display-4 fw-bold mb-0" style="color: var(--primary);">
+                                    <?= formatPrice($discountedPrice) ?>
+                                </p>
+                                <span class="badge bg-danger rounded-pill">-<?= $claimedPromo['discount'] ?>% OFF</span>
+                            </div>
+                        <?php else: ?>
+                            <p class="display-4 fw-bold mb-0" style="color: var(--primary);">
+                                <?= formatPrice($pkg['base_price']) ?>
+                            </p>
+                        <?php endif; ?>
                         <small class="text-muted">per head</small>
                     </div>
                     

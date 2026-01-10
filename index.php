@@ -567,7 +567,11 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                                         <?php else: ?>
                                             🎉
                                         <?php endif; ?>
-                                        <span class="promo-badge sale">Limited Offer</span>
+                                        <?php if ($promo['discount_percentage'] > 0): ?>
+                                            <span class="promo-badge sale"><?= $promo['discount_percentage'] ?>% OFF</span>
+                                        <?php else: ?>
+                                            <span class="promo-badge">Limited Offer</span>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="promo-body">
                                         <h4><?= htmlspecialchars($promo['title']) ?></h4>
@@ -582,7 +586,7 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                                                     <i class="bi bi-check-circle"></i> Available Now
                                                 </div>
                                             <?php endif; ?>
-                                            <a href="<?= url('book.php') ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">Claim Now</a>
+                                            <a href="<?= url('packages.php?claim_promo=' . $promo['id']) ?>" class="btn btn-sm btn-orange rounded-pill px-4">Claim Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -617,9 +621,11 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                             <?php else: ?>
                                 <div class="fs-1">🎁</div>
                             <?php endif; ?>
-                            <span class="promo-badge <?= $promo['end_date'] ? 'sale' : '' ?>">
-                                <?= $promo['end_date'] ? 'Sale' : 'Featured' ?>
-                            </span>
+                            <?php if ($promo['discount_percentage'] > 0): ?>
+                                <span class="promo-badge sale"><?= $promo['discount_percentage'] ?>% OFF</span>
+                            <?php else: ?>
+                                <span class="promo-badge">Limited Offer</span>
+                            <?php endif; ?>
                         </div>
                         <div class="promo-body">
                             <h4><?= htmlspecialchars($promo['title']) ?></h4>
@@ -634,7 +640,7 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
                                         <i class="bi bi-check-circle"></i> Available Now
                                     </div>
                                 <?php endif; ?>
-                                <a href="<?= url('book.php') ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">Claim Now</a>
+                                <a href="<?= url('packages.php?claim_promo=' . $promo['id']) ?>" class="btn btn-sm btn-orange rounded-pill px-4">Claim Now</a>
                             </div>
                         </div>
                     </div>

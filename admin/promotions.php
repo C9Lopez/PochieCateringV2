@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add_promotion'])) {
         $title = sanitize($conn, $_POST['title']);
         $description = sanitize($conn, $_POST['description']);
+        $discountPercentage = (int)$_POST['discount_percentage'];
         $startDate = $_POST['start_date'] ?: null;
         $endDate = $_POST['end_date'] ?: null;
         $isActive = isset($_POST['is_active']) ? 1 : 0;
@@ -22,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        $stmt = $conn->prepare("INSERT INTO promotions (title, description, image, start_date, end_date, is_active, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssii", $title, $description, $image, $startDate, $endDate, $isActive, $createdBy);
+        $stmt = $conn->prepare("INSERT INTO promotions (title, description, discount_percentage, image, start_date, end_date, is_active, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssisssii", $title, $description, $discountPercentage, $image, $startDate, $endDate, $isActive, $createdBy);
         if ($stmt->execute()) {
             $message = 'Promotion added successfully!';
             $messageType = 'success';
@@ -38,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $promoId = (int)$_POST['promo_id'];
         $title = sanitize($conn, $_POST['title']);
         $description = sanitize($conn, $_POST['description']);
+        $discountPercentage = (int)$_POST['discount_percentage'];
         $startDate = $_POST['start_date'] ?: null;
         $endDate = $_POST['end_date'] ?: null;
         $isActive = isset($_POST['is_active']) ? 1 : 0;
@@ -46,15 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $upload = uploadImage($_FILES['image'], 'uploads/promotions');
             if ($upload['success']) {
                 $image = $upload['filename'];
-                $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, image=?, start_date=?, end_date=?, is_active=? WHERE id=?");
-                $stmt->bind_param("sssssii", $title, $description, $image, $startDate, $endDate, $isActive, $promoId);
+                $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, discount_percentage=?, image=?, start_date=?, end_date=?, is_active=? WHERE id=?");
+                $stmt->bind_param("ssisssii", $title, $description, $discountPercentage, $image, $startDate, $endDate, $isActive, $promoId);
             } else {
-                $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, start_date=?, end_date=?, is_active=? WHERE id=?");
-                $stmt->bind_param("ssssii", $title, $description, $startDate, $endDate, $isActive, $promoId);
+                $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, discount_percentage=?, start_date=?, end_date=?, is_active=? WHERE id=?");
+                $stmt->bind_param("ssisssii", $title, $description, $discountPercentage, $startDate, $endDate, $isActive, $promoId);
             }
         } else {
-            $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, start_date=?, end_date=?, is_active=? WHERE id=?");
-            $stmt->bind_param("ssssii", $title, $description, $startDate, $endDate, $isActive, $promoId);
+            $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, discount_percentage=?, start_date=?, end_date=?, is_active=? WHERE id=?");
+            $stmt->bind_param("ssisssii", $title, $description, $discountPercentage, $startDate, $endDate, $isActive, $promoId);
         }
         
         if ($stmt->execute()) {
@@ -211,6 +213,14 @@ $promotions = $conn->query("SELECT p.*, u.first_name, u.last_name FROM promotion
                                                     <label class="form-label">Description</label>
                                                     <textarea name="description" class="form-control" rows="4"><?= htmlspecialchars($promo['description'] ?? '') ?></textarea>
                                                 </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Discount Percentage (%)</label>
+                                                    <div class="input-group">
+                                                        <input type="number" name="discount_percentage" class="form-control" value="<?= $promo['discount_percentage'] ?>" min="0" max="100">
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                    <small class="text-muted">Enter 0 for no automated discount</small>
+                                                </div>
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
                                                         <label class="form-label">Start Date (Optional)</label>
@@ -266,6 +276,14 @@ $promotions = $conn->query("SELECT p.*, u.first_name, u.last_name FROM promotion
                         <div class="mb-3">
                             <label class="form-label">Description</label>
                             <textarea name="description" class="form-control" rows="4" placeholder="Describe your promotion details here..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Discount Percentage (%)</label>
+                            <div class="input-group">
+                                <input type="number" name="discount_percentage" class="form-control" value="0" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <small class="text-muted">Enter 0 for no automated discount</small>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
