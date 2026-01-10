@@ -706,4 +706,4 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
         </div>
     </section>
     
-    <?php include 'includes/footer.php'; ?>
+    <?php require_once 'includes/footer.php'; ?>
