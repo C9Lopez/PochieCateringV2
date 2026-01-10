@@ -48,26 +48,26 @@ while($row = $customers->fetch_assoc()) {
 }
 
 // 4. Menu Items
-$menuItems = $conn->query("SELECT name, category, price, status FROM menu_items ORDER BY category, name ASC");
+$menuItems = $conn->query("SELECT m.name, c.name as category, m.price, m.is_available as status FROM menu_items m LEFT JOIN menu_categories c ON m.category_id = c.id ORDER BY category, m.name ASC");
 $menuData = [];
 while($row = $menuItems->fetch_assoc()) {
     $menuData[] = [
         $row['name'],
-        ucfirst($row['category']),
+        ucfirst($row['category'] ?? 'Uncategorized'),
         number_format($row['price'], 2),
-        ucfirst($row['status'])
+        $row['status'] ? 'Available' : 'Unavailable'
     ];
 }
 
 // 5. Packages
-$packages = $conn->query("SELECT name, min_guests, price_per_pax, status FROM packages ORDER BY name ASC");
+$packages = $conn->query("SELECT name, min_pax as min_guests, base_price as price_per_pax, is_active as status FROM packages ORDER BY name ASC");
 $packageData = [];
 while($row = $packages->fetch_assoc()) {
     $packageData[] = [
         $row['name'],
         $row['min_guests'],
         number_format($row['price_per_pax'], 2),
-        ucfirst($row['status'])
+        $row['status'] ? 'Active' : 'Inactive'
     ];
 }
 ?>
