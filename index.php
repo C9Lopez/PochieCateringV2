@@ -721,7 +721,19 @@ $reviews = $conn->query("SELECT r.*, u.first_name, u.last_name, u.profile_image
     </section>
     <?php endif; ?>
     
-    <?php if ($reviews && $reviews->num_rows > 0): ?>
+    <?php
+    $homeReviews = [];
+    $reviewsQuery = $conn->query("SELECT r.*, u.first_name, u.last_name, u.profile_image 
+                                FROM reviews r 
+                                JOIN users u ON r.customer_id = u.id 
+                                ORDER BY r.created_at DESC LIMIT 6");
+    if ($reviewsQuery) {
+        while ($row = $reviewsQuery->fetch_assoc()) {
+            $homeReviews[] = $row;
+        }
+    }
+    ?>
+    <?php if (!empty($homeReviews)): ?>
     <section>
         <div class="container">
             <div class="text-center mb-5">
@@ -729,7 +741,7 @@ $reviews = $conn->query("SELECT r.*, u.first_name, u.last_name, u.profile_image
                 <p class="section-subtitle">What our happy clients say about us</p>
             </div>
             <div class="row g-4">
-                <?php while($rev = $reviews->fetch_assoc()): ?>
+                <?php foreach($homeReviews as $rev): ?>
                 <div class="col-md-4">
                     <div class="review-card">
                         <div class="review-stars">
@@ -751,7 +763,7 @@ $reviews = $conn->query("SELECT r.*, u.first_name, u.last_name, u.profile_image
                         </div>
                     </div>
                 </div>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
