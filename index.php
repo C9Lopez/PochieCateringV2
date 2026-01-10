@@ -10,6 +10,10 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
 $packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY base_price LIMIT 3");
 $menuItems = $conn->query("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN menu_categories c ON m.category_id = c.id WHERE m.is_featured = 1 AND m.is_available = 1 LIMIT 6");
 $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER BY created_at DESC");
+$reviews = $conn->query("SELECT r.*, u.first_name, u.last_name, u.profile_image 
+                        FROM reviews r 
+                        JOIN users u ON r.customer_id = u.id 
+                        ORDER BY r.created_at DESC LIMIT 6");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -369,6 +373,41 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
             background: #fff7ed;
             color: var(--primary);
         }
+
+        /* Review Styles */
+        .review-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            height: 100%;
+            transition: transform 0.3s;
+        }
+        .review-card:hover {
+            transform: translateY(-5px);
+        }
+        .review-stars {
+            color: #ffc107;
+            margin-bottom: 15px;
+        }
+        .review-user {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .review-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+            object-fit: cover;
+        }
     </style>
 </head>
   <body>
@@ -682,6 +721,42 @@ $promotions = $conn->query("SELECT * FROM promotions WHERE is_active = 1 ORDER B
     </section>
     <?php endif; ?>
     
+    <?php if ($reviews && $reviews->num_rows > 0): ?>
+    <section>
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Customer Testimonials</h2>
+                <p class="section-subtitle">What our happy clients say about us</p>
+            </div>
+            <div class="row g-4">
+                <?php while($rev = $reviews->fetch_assoc()): ?>
+                <div class="col-md-4">
+                    <div class="review-card">
+                        <div class="review-stars">
+                            <?php for($i = 1; $i <= 5; $i++): ?>
+                                <i class="bi bi-star<?= $i <= $rev['rating'] ? '-fill' : '' ?>"></i>
+                            <?php endfor; ?>
+                        </div>
+                        <p class="text-muted italic">"<?= htmlspecialchars($rev['comment']) ?: 'No comment provided.' ?>"</p>
+                        <div class="review-user">
+                            <?php if ($rev['profile_image']): ?>
+                                <img src="<?= url('uploads/profile/' . $rev['profile_image']) ?>" class="review-avatar" alt="User">
+                            <?php else: ?>
+                                <div class="review-avatar"><?= strtoupper(substr($rev['first_name'], 0, 1)) ?></div>
+                            <?php endif; ?>
+                            <div>
+                                <h6 class="mb-0"><?= htmlspecialchars($rev['first_name'] . ' ' . $rev['last_name']) ?></h6>
+                                <small class="text-muted">Verified Customer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endwhile; ?>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
+
     <section class="cta-section text-center">
         <div class="container">
             <h2>Ready to Plan Your Event?</h2>
