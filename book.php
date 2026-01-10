@@ -335,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                            data-name="<?= htmlspecialchars($item['name']) ?>">
                                     <label class="form-check-label w-100" for="item<?= $item['id'] ?>">
                                         <strong><?= htmlspecialchars($item['name']) ?></strong>
-                                        <br><small class="text-muted"><?= formatPrice($item['price']) ?>/tray</small>
+                                        <br><small class="text-muted"><?= formatPrice($item['price']) ?>/tray <span class="text-danger small">(Max 20)</span></small>
                                     </label>
                                     <div class="quantity-control mt-2" style="display: none;">
                                         <div class="input-group input-group-sm">
@@ -645,7 +645,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     document.querySelectorAll('.item-qty').forEach(input => {
-        input.addEventListener('change', updateMenuItemsSummary);
+        input.addEventListener('change', function() {
+            if (parseInt(this.value) > 20) {
+                this.value = 20;
+                alert('Maximum of 20 trays per item allowed.');
+            }
+            if (parseInt(this.value) < 1) {
+                this.value = 1;
+            }
+            updateMenuItemsSummary();
+        });
     });
     
     if (packageSelect.value) updateSummary();
