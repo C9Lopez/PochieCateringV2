@@ -396,7 +396,14 @@ if ($promotionsResult) {
         </div>
         <nav class="navbar navbar-expand-lg">
             <div class="container">
-                <a class="navbar-brand" href="<?= url('index.php') ?>">🍲 <?= htmlspecialchars($siteName) ?></a>
+                <a class="navbar-brand d-flex align-items-center" href="<?= url('index.php') ?>">
+                    <?php if (!empty($settings['site_logo'])): ?>
+                        <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="<?= htmlspecialchars($siteName) ?>" style="max-height: 40px;" class="me-2">
+                    <?php else: ?>
+                        <span class="me-2">🍲</span>
+                    <?php endif; ?>
+                    <?= htmlspecialchars($siteName) ?>
+                </a>
                 
                 <div class="d-flex align-items-center order-lg-last">
                     <?php if (isLoggedIn()): ?>

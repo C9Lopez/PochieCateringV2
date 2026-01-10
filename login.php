@@ -102,7 +102,13 @@ include 'includes/header.php';
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <div class="logo">🍲</div>
+                <div class="logo">
+                    <?php if (!empty($settings['site_logo'])): ?>
+                        <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="Logo" style="max-height: 60px;">
+                    <?php else: ?>
+                        🍲
+                    <?php endif; ?>
+                </div>
                 <h1><?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?></h1>
                 <p>Sign in to your account</p>
             </div>

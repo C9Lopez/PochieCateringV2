@@ -288,7 +288,13 @@ include 'includes/header.php';
     <div class="register-container">
         <div class="register-card">
             <div class="register-header">
-                <div class="logo">🍲</div>
+                <div class="logo">
+                    <?php if (!empty($settings['site_logo'])): ?>
+                        <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="Logo" style="max-height: 60px;">
+                    <?php else: ?>
+                        🍲
+                    <?php endif; ?>
+                </div>
                 <h1><?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?></h1>
                 <p><?= $step == 1 ? 'Create your account' : ($step == 2 ? 'Verify your email' : 'Registration complete') ?></p>
             </div>
