@@ -52,7 +52,7 @@ function createMailer() {
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
     $mail->CharSet = 'UTF-8';
-    $mail->Encoding = 'quoted-printable';
+    $mail->Encoding = 'base64';
     $mail->XMailer = ' ';
     
     $siteName = getSiteName();
@@ -124,8 +124,10 @@ function sendVerificationEmail($email, $code, $name) {
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
         $mail->Subject = 'Verify your email';
+        $mail->ContentType = 'text/html';
         
-        $mail->Body = getEmailTemplate('Verify your email', '', $code, $name);
+        $htmlBody = getEmailTemplate('Verify your email', '', $code, $name);
+        $mail->msgHTML($htmlBody);
         $mail->AltBody = 'Hello ' . $name . ', Your verification code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
         
         $mail->send();
@@ -144,8 +146,10 @@ function sendPasswordResetEmail($email, $code, $name) {
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
         $mail->Subject = 'Reset your password';
+        $mail->ContentType = 'text/html';
         
-        $mail->Body = getEmailTemplate('Reset your password', '', $code, $name);
+        $htmlBody = getEmailTemplate('Reset your password', '', $code, $name);
+        $mail->msgHTML($htmlBody);
         $mail->AltBody = 'Hello ' . $name . ', Your password reset code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
         
         $mail->send();
