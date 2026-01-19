@@ -61,82 +61,57 @@ function createMailer() {
     return $mail;
 }
 
-function getEmailTemplate($title, $content, $code) {
+function getEmailTemplate($title, $content, $code, $name = '') {
     $siteName = getSiteName();
-    $logoUrl = getSiteLogoUrl();
     
-    $logoHtml = '';
-    if (!empty($logoUrl)) {
-        $logoHtml = '<img src="' . htmlspecialchars($logoUrl) . '" alt="' . htmlspecialchars($siteName) . '" style="max-height: 60px; margin-bottom: 10px;">';
-    } else {
-        $logoHtml = '<span style="font-size: 24px; font-weight: bold; color: #4285f4;">' . htmlspecialchars($siteName) . '</span>';
-    }
+    $displayName = $name ? htmlspecialchars($name) : 'there';
     
-    return '
-<!DOCTYPE html>
+    return '<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>' . htmlspecialchars($title) . '</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, sans-serif; background-color: #f5f5f5;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
-        <tr>
-            <td align="center">
-                <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 500px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                    <!-- Logo -->
-                    <tr>
-                        <td align="center" style="padding: 40px 40px 20px 40px;">
-                            ' . $logoHtml . '
-                        </td>
-                    </tr>
-                    
-                    <!-- Title -->
-                    <tr>
-                        <td align="center" style="padding: 0 40px 30px 40px;">
-                            <h1 style="margin: 0; font-size: 24px; font-weight: 400; color: #202124;">' . htmlspecialchars($title) . '</h1>
-                        </td>
-                    </tr>
-                    
-                    <!-- Divider -->
-                    <tr>
-                        <td style="padding: 0 40px;">
-                            <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 0;">
-                        </td>
-                    </tr>
-                    
-                    <!-- Content -->
-                    <tr>
-                        <td style="padding: 30px 40px;">
-                            <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6; color: #5f6368;">' . $content . '</p>
-                            <p style="margin: 0 0 10px 0; font-size: 14px; color: #5f6368;">Use this code to complete the process:</p>
-                        </td>
-                    </tr>
-                    
-                    <!-- Code -->
-                    <tr>
-                        <td align="center" style="padding: 0 40px 30px 40px;">
-                            <div style="font-size: 36px; font-weight: 500; letter-spacing: 8px; color: #202124;">' . htmlspecialchars($code) . '</div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Expiry -->
-                    <tr>
-                        <td style="padding: 0 40px 30px 40px;">
-                            <p style="margin: 0; font-size: 14px; color: #5f6368;">This code will expire in 10 minutes.</p>
-                        </td>
-                    </tr>
-                    
-                    <!-- Footer Note -->
-                    <tr>
-                        <td style="padding: 0 40px 40px 40px;">
-                            <p style="margin: 0; font-size: 12px; color: #9aa0a6;">If you didn\'t request this, you can safely ignore this email.</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+<body style="margin:0;padding:0;background-color:#f6f8fa;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f8fa;padding:45px 0;">
+<tr>
+<td align="center">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:544px;">
+<tr>
+<td align="center" style="padding-bottom:24px;">
+<span style="font-size:32px;font-weight:600;color:#24292f;">' . htmlspecialchars($siteName) . '</span>
+</td>
+</tr>
+<tr>
+<td align="center" style="padding-bottom:24px;">
+<span style="font-size:24px;color:#24292f;">Please verify your identity, ' . $displayName . '</span>
+</td>
+</tr>
+<tr>
+<td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border:1px solid #d0d7de;border-radius:6px;">
+<tr>
+<td style="padding:24px;">
+<p style="margin:0 0 16px 0;font-size:14px;line-height:1.5;color:#24292f;">Here is your verification code:</p>
+<p style="margin:0 0 24px 0;font-size:32px;font-weight:600;letter-spacing:6px;color:#24292f;text-align:center;">' . htmlspecialchars($code) . '</p>
+<p style="margin:0 0 16px 0;font-size:14px;line-height:1.5;color:#24292f;">This code is valid for <strong>10 minutes</strong> and can only be used once.</p>
+<p style="margin:0 0 16px 0;font-size:14px;line-height:1.5;color:#24292f;"><strong>Please don\'t share this code with anyone:</strong> we\'ll never ask for it on the phone or via email.</p>
+<p style="margin:16px 0 0 0;font-size:14px;line-height:1.5;color:#24292f;">Thanks,<br>The ' . htmlspecialchars($siteName) . ' Team</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding-top:24px;">
+<p style="margin:0;font-size:12px;line-height:1.5;color:#57606a;">You\'re receiving this email because a verification code was requested for your account. If this wasn\'t you, please ignore this email.</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
 </body>
 </html>';
 }
@@ -150,8 +125,7 @@ function sendVerificationEmail($email, $code, $name) {
         $mail->isHTML(true);
         $mail->Subject = 'Verify your email';
         
-        $content = $siteName . ' received a request to use ' . $email . ' as a registered email for your account.';
-        $mail->Body = getEmailTemplate('Verify your email', $content, $code);
+        $mail->Body = getEmailTemplate('Verify your email', '', $code, $name);
         $mail->AltBody = 'Hello ' . $name . ', Your verification code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
         
         $mail->send();
@@ -171,8 +145,7 @@ function sendPasswordResetEmail($email, $code, $name) {
         $mail->isHTML(true);
         $mail->Subject = 'Reset your password';
         
-        $content = $siteName . ' received a password reset request for the account associated with ' . $email . '.';
-        $mail->Body = getEmailTemplate('Reset your password', $content, $code);
+        $mail->Body = getEmailTemplate('Reset your password', '', $code, $name);
         $mail->AltBody = 'Hello ' . $name . ', Your password reset code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
         
         $mail->send();
