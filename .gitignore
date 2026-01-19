@@ -1,5 +1,20 @@
-# Config folder - contains sensitive database credentials
-config/
+# Dependencies
+vendor/
 
-# Database folder - contains SQL files
-database/
+# IDE
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Uploads (user generated content)
+uploads/chat/*
+uploads/menu/*
+uploads/promotions/*
+uploads/settings/*
+!uploads/**/.gitkeep
