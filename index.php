@@ -378,24 +378,12 @@ if ($promotionsResult) {
         }
         
         @media (max-width: 991px) {
-            .navbar .dropdown {
-                position: relative !important;
-            }
             .navbar .dropdown-menu-end {
-                position: fixed !important;
-                top: auto !important;
-                left: 10px !important;
-                right: 10px !important;
-                width: calc(100% - 20px) !important;
-                max-width: 300px !important;
-                margin-left: auto !important;
-                transform: none !important;
-                margin-top: 10px !important;
-                z-index: 9999 !important;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.25) !important;
-            }
-            .navbar .dropdown-menu-end.show {
-                display: block !important;
+                position: absolute !important;
+                right: 0 !important;
+                left: auto !important;
+                transform: translateY(10px) !important;
+                margin: 0 !important;
             }
         }
     </style>
