@@ -1,0 +1,5 @@
+# Config folder - contains sensitive database credentials
+config/
+
+# Database folder - contains SQL files
+database/
