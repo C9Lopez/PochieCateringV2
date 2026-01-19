@@ -225,7 +225,7 @@ if ($promotionsResult) {
             height: 100%;
             object-fit: cover;
         }
-        .menu-body { padding: 20px; }
+        .menu-body { padding: 30px; }
         .menu-body h5 { font-weight: 600; margin-bottom: 5px; }
         .menu-body small { color: #64748b; }
         .menu-price { color: var(--primary); font-weight: 700; font-size: 18px; }
@@ -382,14 +382,20 @@ if ($promotionsResult) {
                 position: relative !important;
             }
             .navbar .dropdown-menu-end {
-                position: absolute !important;
-                right: 0 !important;
-                left: auto !important;
-                top: 100% !important;
+                position: fixed !important;
+                top: auto !important;
+                left: 10px !important;
+                right: 10px !important;
+                width: calc(100% - 20px) !important;
+                max-width: 300px !important;
+                margin-left: auto !important;
                 transform: none !important;
-                margin-top: 5px !important;
-                min-width: 200px;
-                z-index: 1050;
+                margin-top: 10px !important;
+                z-index: 9999 !important;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.25) !important;
+            }
+            .navbar .dropdown-menu-end.show {
+                display: block !important;
             }
         }
     </style>
