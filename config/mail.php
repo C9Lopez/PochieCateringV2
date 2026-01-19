@@ -13,6 +13,7 @@ function generateVerificationCode() {
 }
 
 function createMailer() {
+    // die("Using config/mail.php");
     $mail = new PHPMailer(true);
     
     $mail->isSMTP();
