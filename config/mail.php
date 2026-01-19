@@ -15,24 +15,16 @@ function createMailer() {
     $mail = new PHPMailer(true);
     
     $mail->isSMTP();
-    $mail->Host = 'smtp.hostinger.com';
+    $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'pochiecatering@pochiecatering.store';
-    $mail->Password = 'Huncho2003_';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port = 465;
+    $mail->Username = 'pochiecatering@gmail.com';
+    $mail->Password = 'wagyoueuurkzcxzp';
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
     $mail->CharSet = 'UTF-8';
     
-    $mail->SMTPOptions = array(
-        'ssl' => array(
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true
-        )
-    );
-    
-    $mail->setFrom('pochiecatering@pochiecatering.store', 'Pochie Catering Services');
-    $mail->addReplyTo('pochiecatering@pochiecatering.store', 'Pochie Catering Services');
+    $mail->setFrom('pochiecatering@gmail.com', 'Pochie Catering Services');
+    $mail->addReplyTo('pochiecatering@gmail.com', 'Pochie Catering Services');
     
     return $mail;
 }
