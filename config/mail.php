@@ -122,13 +122,21 @@ function sendVerificationEmail($email, $code, $name) {
         $siteName = getSiteName();
         
         $mail->addAddress($email, $name);
-        $mail->isHTML(true);
-        $mail->Subject = 'Verify your email';
-        $mail->ContentType = 'text/html';
+        $mail->isHTML(false);
+        $mail->Subject = 'Verify your email - ' . $siteName;
         
-        $htmlBody = getEmailTemplate('Verify your email', '', $code, $name);
-        $mail->msgHTML($htmlBody);
-        $mail->AltBody = 'Hello ' . $name . ', Your verification code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
+        $mail->Body = "Hello " . $name . ",
+
+Your verification code is:
+
+" . $code . "
+
+This code is valid for 10 minutes and can only be used once.
+
+Please don't share this code with anyone.
+
+Thanks,
+The " . $siteName . " Team";
         
         $mail->send();
         return true;
@@ -144,13 +152,21 @@ function sendPasswordResetEmail($email, $code, $name) {
         $siteName = getSiteName();
         
         $mail->addAddress($email, $name);
-        $mail->isHTML(true);
-        $mail->Subject = 'Reset your password';
-        $mail->ContentType = 'text/html';
+        $mail->isHTML(false);
+        $mail->Subject = 'Reset your password - ' . $siteName;
         
-        $htmlBody = getEmailTemplate('Reset your password', '', $code, $name);
-        $mail->msgHTML($htmlBody);
-        $mail->AltBody = 'Hello ' . $name . ', Your password reset code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
+        $mail->Body = "Hello " . $name . ",
+
+Your password reset code is:
+
+" . $code . "
+
+This code is valid for 10 minutes and can only be used once.
+
+Please don't share this code with anyone.
+
+Thanks,
+The " . $siteName . " Team";
         
         $mail->send();
         return true;
