@@ -377,12 +377,13 @@ if ($promotionsResult) {
             color: var(--primary);
         }
         
-        @media (max-width: 576px) {
-            .dropdown-menu-end {
+        @media (max-width: 991px) {
+            .navbar .dropdown-menu-end {
+                position: absolute !important;
                 right: 0 !important;
                 left: auto !important;
-                transform: translateX(0) !important;
-                min-width: 200px;
+                transform: translateY(10px) !important;
+                margin: 0 !important;
             }
         }
     </style>

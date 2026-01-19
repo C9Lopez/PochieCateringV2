@@ -297,11 +297,12 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             
             .dropdown-menu-mobile-fix {
                 position: absolute !important;
-                right: auto !important;
-                left: 0 !important;
-                transform: none !important;
-                width: calc(100vw - 30px) !important;
-                max-width: 300px !important;
+                right: 0 !important;
+                left: auto !important;
+                transform: translateY(10px) !important;
+                min-width: 200px !important;
+                width: auto !important;
+                margin: 0 !important;
             }
         }
     </style>
