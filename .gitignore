@@ -1,9 +1,8 @@
 # Database folder - contains SQL files
 database/
 
-# Sensitive config files
-config/mail.php
-config/database.php
+# Config folder - contains sensitive credentials
+config/
 
 # Uploads
 uploads/
