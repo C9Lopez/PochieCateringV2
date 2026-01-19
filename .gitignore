@@ -1,20 +1,5 @@
-# Dependencies
-vendor/
+# Config folder - contains sensitive database credentials
+config/
 
-# IDE
-.idea/
-.vscode/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Uploads (user generated content)
-uploads/chat/*
-uploads/menu/*
-uploads/promotions/*
-uploads/settings/*
-!uploads/**/.gitkeep
+# Database folder - contains SQL files
+database/
