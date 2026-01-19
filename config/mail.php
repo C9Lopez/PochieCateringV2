@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/smtp_config.php';
 require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/Exception.php';
 require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/PHPMailer.php';
 require_once __DIR__ . '/../vendor/phpmailer/phpmailer/src/SMTP.php';
@@ -13,16 +12,15 @@ function generateVerificationCode() {
 }
 
 function createMailer() {
-    // die("Using config/mail.php");
     $mail = new PHPMailer(true);
     
     $mail->isSMTP();
-    $mail->Host = SMTP_HOST;
-    $mail->SMTPAuth = SMTP_AUTH;
-    $mail->Username = SMTP_USERNAME;
-    $mail->Password = SMTP_PASSWORD;
+    $mail->Host = 'smtp.hostinger.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'pochiecatering@pochiecatering.store';
+    $mail->Password = 'Huncho2003_';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port = SMTP_PORT;
+    $mail->Port = 465;
     $mail->CharSet = 'UTF-8';
     
     $mail->SMTPOptions = array(
@@ -33,8 +31,8 @@ function createMailer() {
         )
     );
     
-    $mail->setFrom(SMTP_USERNAME, SMTP_FROM_NAME);
-    $mail->addReplyTo(SMTP_USERNAME, SMTP_FROM_NAME);
+    $mail->setFrom('pochiecatering@pochiecatering.store', 'Pochie Catering Services');
+    $mail->addReplyTo('pochiecatering@pochiecatering.store', 'Pochie Catering Services');
     
     return $mail;
 }
