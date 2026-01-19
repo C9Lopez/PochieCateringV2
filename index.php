@@ -378,12 +378,18 @@ if ($promotionsResult) {
         }
         
         @media (max-width: 991px) {
+            .navbar .dropdown {
+                position: static !important;
+            }
             .navbar .dropdown-menu-end {
                 position: absolute !important;
-                right: 0 !important;
+                right: 10px !important;
                 left: auto !important;
-                transform: translateY(10px) !important;
-                margin: 0 !important;
+                top: 100% !important;
+                transform: none !important;
+                margin-top: 5px !important;
+                min-width: 200px;
+                max-width: calc(100vw - 20px);
             }
         }
     </style>
