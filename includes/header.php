@@ -295,14 +295,26 @@ if (isLoggedIn() && getUserRole() === 'customer') {
                 box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             }
             
+            .navbar .dropdown {
+                position: relative !important;
+            }
+            
             .dropdown-menu-mobile-fix {
-                position: absolute !important;
-                right: 0 !important;
-                left: auto !important;
-                transform: translateY(10px) !important;
-                min-width: 200px !important;
-                width: auto !important;
-                margin: 0 !important;
+                position: fixed !important;
+                top: auto !important;
+                left: 10px !important;
+                right: 10px !important;
+                width: calc(100% - 20px) !important;
+                max-width: 300px !important;
+                margin-left: auto !important;
+                transform: none !important;
+                margin-top: 10px !important;
+                z-index: 9999 !important;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.25) !important;
+            }
+            
+            .dropdown-menu-mobile-fix.show {
+                display: block !important;
             }
         }
     </style>
