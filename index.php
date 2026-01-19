@@ -376,6 +376,16 @@ if ($promotionsResult) {
             background: #fff7ed;
             color: var(--primary);
         }
+        
+        @media (max-width: 991px) {
+            .navbar .dropdown-menu-end {
+                position: absolute !important;
+                right: 0 !important;
+                left: auto !important;
+                transform: translateY(10px) !important;
+                margin: 0 !important;
+            }
+        }
     </style>
 </head>
   <body>
