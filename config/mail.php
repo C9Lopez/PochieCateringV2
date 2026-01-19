@@ -52,7 +52,7 @@ function createMailer() {
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
     $mail->CharSet = 'UTF-8';
-    $mail->Encoding = 'base64';
+    $mail->Encoding = 'quoted-printable';
     $mail->XMailer = ' ';
     
     $siteName = getSiteName();
@@ -125,18 +125,9 @@ function sendVerificationEmail($email, $code, $name) {
         $mail->isHTML(false);
         $mail->Subject = 'Verify your email - ' . $siteName;
         
-        $mail->Body = "Hello " . $name . ",
-
-Your verification code is:
-
-" . $code . "
-
-This code is valid for 10 minutes and can only be used once.
-
-Please don't share this code with anyone.
-
-Thanks,
-The " . $siteName . " Team";
+        $content = $siteName . ' received a request to use ' . $email . ' as a registered email for your account.';
+        $mail->Body = getEmailTemplate('Verify your email', $content, $code);
+        $mail->AltBody = 'Hello ' . $name . ', Your verification code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
         
         $mail->send();
         return true;
@@ -155,18 +146,9 @@ function sendPasswordResetEmail($email, $code, $name) {
         $mail->isHTML(false);
         $mail->Subject = 'Reset your password - ' . $siteName;
         
-        $mail->Body = "Hello " . $name . ",
-
-Your password reset code is:
-
-" . $code . "
-
-This code is valid for 10 minutes and can only be used once.
-
-Please don't share this code with anyone.
-
-Thanks,
-The " . $siteName . " Team";
+        $content = $siteName . ' received a password reset request for the account associated with ' . $email . '.';
+        $mail->Body = getEmailTemplate('Reset your password', $content, $code);
+        $mail->AltBody = 'Hello ' . $name . ', Your password reset code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
         
         $mail->send();
         return true;
