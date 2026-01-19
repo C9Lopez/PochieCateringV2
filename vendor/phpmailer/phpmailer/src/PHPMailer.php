@@ -460,9 +460,6 @@ class PHPMailer
     public function postSend()
     {
         try {
-            $this->uniqueid = $this->generateId();
-            $this->lastMessageID = '<' . $this->uniqueid . '@' . $this->serverHostname() . '>';
-            $this->MIMEHeader .= 'Message-ID: ' . $this->lastMessageID . static::$LE;
             $header = $this->MIMEHeader;
             $body = $this->MIMEBody;
             switch ($this->Mailer) {

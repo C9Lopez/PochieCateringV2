@@ -1,5 +1,18 @@
-# # Config folder - contains sensitive database credentials
-# config/
-
-# # Database folder - contains SQL files
+# Database folder - contains SQL files
 database/
+
+# Sensitive config files
+config/mail.php
+config/database.php
+
+# Uploads
+uploads/
+
+# Test files
+test_*.php
+check_*.php
+debug_*.php
+
+# Environment
+.env
+*.log

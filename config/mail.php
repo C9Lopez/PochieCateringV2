@@ -52,10 +52,13 @@ function createMailer() {
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
     $mail->CharSet = 'UTF-8';
+    $mail->XMailer = ' ';
+    
+    $uniqueId = bin2hex(random_bytes(16));
+    $mail->MessageID = '<' . $uniqueId . '@pochiecatering.com>';
     
     $siteName = getSiteName();
     $mail->setFrom('pochiecatering@gmail.com', $siteName);
-    $mail->addReplyTo('pochiecatering@gmail.com', $siteName);
     
     return $mail;
 }
