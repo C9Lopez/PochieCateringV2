@@ -377,12 +377,11 @@ if ($promotionsResult) {
             color: var(--primary);
         }
         
-        @media (max-width: 575.98px) {
+        @media (max-width: 576px) {
             .dropdown-menu-end {
                 right: 0 !important;
                 left: auto !important;
-                transform: none !important;
-                position: absolute !important;
+                transform: translateX(0) !important;
                 min-width: 200px;
             }
         }
