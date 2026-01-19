@@ -379,17 +379,17 @@ if ($promotionsResult) {
         
         @media (max-width: 991px) {
             .navbar .dropdown {
-                position: static !important;
+                position: relative !important;
             }
             .navbar .dropdown-menu-end {
                 position: absolute !important;
-                right: 10px !important;
+                right: 0 !important;
                 left: auto !important;
                 top: 100% !important;
                 transform: none !important;
                 margin-top: 5px !important;
                 min-width: 200px;
-                max-width: calc(100vw - 20px);
+                z-index: 1050;
             }
         }
     </style>
