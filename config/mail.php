@@ -52,6 +52,7 @@ function createMailer() {
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
     $mail->CharSet = 'UTF-8';
+    $mail->Encoding = 'base64';
     $mail->XMailer = ' ';
     
     $uniqueId = bin2hex(random_bytes(16));
@@ -150,6 +151,7 @@ function sendVerificationEmail($email, $code, $name) {
         
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
+        $mail->ContentType = 'text/html';
         $mail->Subject = 'Verify your email';
         
         $content = htmlspecialchars($siteName) . ' received a request to use <strong>' . htmlspecialchars($email) . '</strong> as a registered email for your account.';
@@ -171,6 +173,7 @@ function sendPasswordResetEmail($email, $code, $name) {
         
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
+        $mail->ContentType = 'text/html';
         $mail->Subject = 'Reset your password';
         
         $content = htmlspecialchars($siteName) . ' received a password reset request for the account associated with <strong>' . htmlspecialchars($email) . '</strong>.';
