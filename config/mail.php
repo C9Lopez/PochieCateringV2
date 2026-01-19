@@ -52,11 +52,8 @@ function createMailer() {
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
     $mail->CharSet = 'UTF-8';
-    $mail->Encoding = 'base64';
+    $mail->Encoding = 'quoted-printable';
     $mail->XMailer = ' ';
-    
-    $uniqueId = bin2hex(random_bytes(16));
-    $mail->MessageID = '<' . $uniqueId . '@pochiecatering.com>';
     
     $siteName = getSiteName();
     $mail->setFrom('pochiecatering@gmail.com', $siteName);
@@ -151,10 +148,9 @@ function sendVerificationEmail($email, $code, $name) {
         
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
-        $mail->ContentType = 'text/html';
         $mail->Subject = 'Verify your email';
         
-        $content = htmlspecialchars($siteName) . ' received a request to use <strong>' . htmlspecialchars($email) . '</strong> as a registered email for your account.';
+        $content = $siteName . ' received a request to use ' . $email . ' as a registered email for your account.';
         $mail->Body = getEmailTemplate('Verify your email', $content, $code);
         $mail->AltBody = 'Hello ' . $name . ', Your verification code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
         
@@ -173,10 +169,9 @@ function sendPasswordResetEmail($email, $code, $name) {
         
         $mail->addAddress($email, $name);
         $mail->isHTML(true);
-        $mail->ContentType = 'text/html';
         $mail->Subject = 'Reset your password';
         
-        $content = htmlspecialchars($siteName) . ' received a password reset request for the account associated with <strong>' . htmlspecialchars($email) . '</strong>.';
+        $content = $siteName . ' received a password reset request for the account associated with ' . $email . '.';
         $mail->Body = getEmailTemplate('Reset your password', $content, $code);
         $mail->AltBody = 'Hello ' . $name . ', Your password reset code is: ' . $code . '. This code will expire in 10 minutes. - ' . $siteName;
         
