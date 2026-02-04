@@ -69,12 +69,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     <div class="card bg-light mb-4">
                         <div class="card-body">
-                            <h6>Payment Methods Accepted:</h6>
-                            <ul class="mb-0">
-                                <li><strong>GCash:</strong> 09123456789 (Pochie Catering Services)</li>
-                                <li><strong>Bank Transfer:</strong> BDO 1234-5678-9012 (Pochie Catering Services)</li>
-                                <li><strong>Maya:</strong> 09123456789</li>
+                            <h6 class="mb-3"><i class="bi bi-wallet2 me-2"></i>Payment Methods Accepted:</h6>
+                            
+                            <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="gcash-tab" data-bs-toggle="tab" data-bs-target="#gcash" type="button" role="tab">
+                                        <i class="bi bi-phone me-1"></i>GCash
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="maya-tab" data-bs-toggle="tab" data-bs-target="#maya" type="button" role="tab">
+                                        <i class="bi bi-phone me-1"></i>Maya
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank" type="button" role="tab">
+                                        <i class="bi bi-bank me-1"></i>Bank Transfer
+                                    </button>
+                                </li>
                             </ul>
+                            
+                            <div class="tab-content p-3 border border-top-0 rounded-bottom" id="paymentTabsContent">
+                                <!-- GCash Tab -->
+                                <div class="tab-pane fade show active" id="gcash" role="tabpanel">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <p class="mb-2"><strong>GCash Number:</strong></p>
+                                            <h4 class="text-primary mb-1">0912-345-6789</h4>
+                                            <p class="text-muted mb-3">Pochie Catering Services</p>
+                                            <button type="button" class="btn btn-sm btn-outline-primary copy-btn" data-copy="09123456789">
+                                                <i class="bi bi-clipboard me-1"></i>Copy Number
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6 text-center">
+                                            <div class="border rounded p-3 bg-white d-inline-block">
+                                                <img src="<?= url('assets/images/gcash-qr.png') ?>" alt="GCash QR Code" class="img-fluid" style="max-width: 150px;" onerror="this.parentElement.innerHTML='<div class=\'text-muted\'><i class=\'bi bi-qr-code\' style=\'font-size: 4rem;\'></i><br><small>QR Code</small></div>'">
+                                            </div>
+                                            <p class="small text-muted mt-2">Scan to pay via GCash</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Maya Tab -->
+                                <div class="tab-pane fade" id="maya" role="tabpanel">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <p class="mb-2"><strong>Maya Number:</strong></p>
+                                            <h4 class="text-success mb-1">0912-345-6789</h4>
+                                            <p class="text-muted mb-3">Pochie Catering Services</p>
+                                            <button type="button" class="btn btn-sm btn-outline-success copy-btn" data-copy="09123456789">
+                                                <i class="bi bi-clipboard me-1"></i>Copy Number
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6 text-center">
+                                            <div class="border rounded p-3 bg-white d-inline-block">
+                                                <img src="<?= url('assets/images/maya-qr.png') ?>" alt="Maya QR Code" class="img-fluid" style="max-width: 150px;" onerror="this.parentElement.innerHTML='<div class=\'text-muted\'><i class=\'bi bi-qr-code\' style=\'font-size: 4rem;\'></i><br><small>QR Code</small></div>'">
+                                            </div>
+                                            <p class="small text-muted mt-2">Scan to pay via Maya</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bank Transfer Tab -->
+                                <div class="tab-pane fade" id="bank" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="border rounded p-3 bg-white">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/BDO_Unibank_%28logo%29.svg/120px-BDO_Unibank_%28logo%29.svg.png" alt="BDO" height="25" class="mb-2" onerror="this.style.display='none'">
+                                                <p class="mb-1"><strong>BDO Savings Account</strong></p>
+                                                <h5 class="text-primary mb-1">1234-5678-9012</h5>
+                                                <p class="text-muted small mb-2">Pochie Catering Services</p>
+                                                <button type="button" class="btn btn-sm btn-outline-primary copy-btn" data-copy="123456789012">
+                                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="border rounded p-3 bg-white">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/BPI_logo_2022.svg/120px-BPI_logo_2022.svg.png" alt="BPI" height="25" class="mb-2" onerror="this.style.display='none'">
+                                                <p class="mb-1"><strong>BPI Savings Account</strong></p>
+                                                <h5 class="text-danger mb-1">9876-5432-1098</h5>
+                                                <p class="text-muted small mb-2">Pochie Catering Services</p>
+                                                <button type="button" class="btn btn-sm btn-outline-danger copy-btn" data-copy="987654321098">
+                                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-warning mt-3 mb-0 small">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                <strong>Importante:</strong> I-screenshot ang iyong payment confirmation at isama ang <strong>Reference Number</strong> sa form sa ibaba.
+                            </div>
                         </div>
                     </div>
                     
@@ -122,5 +210,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </div>
+
+<script>
+// Copy to clipboard functionality
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const text = this.getAttribute('data-copy');
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+            this.classList.add('btn-success');
+            this.classList.remove('btn-outline-primary', 'btn-outline-success', 'btn-outline-danger');
+            setTimeout(() => {
+                this.innerHTML = originalHTML;
+                this.classList.remove('btn-success');
+                this.classList.add('btn-outline-primary');
+            }, 2000);
+        });
+    });
+});
+
+// Image preview before upload
+document.querySelector('input[name="proof_image"]').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            let preview = document.getElementById('image-preview');
+            if (!preview) {
+                preview = document.createElement('div');
+                preview.id = 'image-preview';
+                preview.className = 'mt-2 text-center';
+                document.querySelector('input[name="proof_image"]').parentElement.appendChild(preview);
+            }
+            preview.innerHTML = `
+                <img src="${e.target.result}" class="img-fluid rounded border" style="max-height: 200px;">
+                <p class="small text-muted mt-1">Preview ng iyong proof of payment</p>
+            `;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
 
 <?php require_once 'includes/footer.php'; ?>
