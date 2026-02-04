@@ -8,6 +8,20 @@ require_once 'config/functions.php';
 requireLogin();
 
 $bookingId = isset($_GET['booking_id']) ? (int)$_GET['booking_id'] : 0;
+$sessionId = isset($_GET['session_id']) ? $_GET['session_id'] : '';
+
+// Clean up the pending payment record that was created when initiating PayMongo checkout
+// This prevents cancelled/abandoned payments from showing in Payment Management
+if ($sessionId) {
+    $cleanupStmt = $conn->prepare("DELETE FROM payments WHERE paymongo_session_id = ? AND status = 'pending'");
+    $cleanupStmt->bind_param("s", $sessionId);
+    $cleanupStmt->execute();
+} elseif ($bookingId) {
+    // If no session_id, delete recent pending PayMongo payments for this booking (within last 30 minutes)
+    $cleanupStmt = $conn->prepare("DELETE FROM payments WHERE booking_id = ? AND payment_method = 'PayMongo' AND status = 'pending' AND created_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)");
+    $cleanupStmt->bind_param("i", $bookingId);
+    $cleanupStmt->execute();
+}
 
 require_once 'includes/header.php';
 ?>

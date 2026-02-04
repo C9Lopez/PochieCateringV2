@@ -11,11 +11,14 @@ $bookingId = isset($_GET['booking']) ? (int)$_GET['booking'] : 0;
 $paymentType = isset($_GET['type']) ? $_GET['type'] : 'full'; // 'downpayment' or 'full'
 
 // Get booking details
-$booking = $conn->query("SELECT b.*, p.name as package_name, u.first_name, u.last_name, u.email, u.phone 
+$bookingStmt = $conn->prepare("SELECT b.*, p.name as package_name, u.first_name, u.last_name, u.email, u.phone 
                          FROM bookings b 
                          LEFT JOIN packages p ON b.package_id = p.id 
                          LEFT JOIN users u ON b.customer_id = u.id
-                         WHERE b.id = $bookingId AND b.customer_id = {$_SESSION['user_id']}")->fetch_assoc();
+                         WHERE b.id = ? AND b.customer_id = ?");
+$bookingStmt->bind_param("ii", $bookingId, $_SESSION['user_id']);
+$bookingStmt->execute();
+$booking = $bookingStmt->get_result()->fetch_assoc();
 
 if (!$booking) {
     header('Location: ' . url('my-bookings.php?error=booking_not_found'));
@@ -33,7 +36,10 @@ $totalAmount = (float)$booking['total_amount'];
 $paidAmount = 0;
 
 // Get existing payments
-$paymentsResult = $conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'");
+$paymentsStmt = $conn->prepare("SELECT SUM(amount) as paid FROM payments WHERE booking_id = ? AND status = 'verified'");
+$paymentsStmt->bind_param("i", $bookingId);
+$paymentsStmt->execute();
+$paymentsResult = $paymentsStmt->get_result();
 if ($paymentsResult) {
     $paidAmount = (float)($paymentsResult->fetch_assoc()['paid'] ?? 0);
 }
