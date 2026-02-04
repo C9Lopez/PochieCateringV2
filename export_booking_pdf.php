@@ -22,9 +22,12 @@ if (!$booking) {
 }
 
 // Fetch menu items
-$menuItems = $conn->query("SELECT bm.*, m.name FROM booking_menu_items bm 
+$menuItemsStmt = $conn->prepare("SELECT bm.*, m.name FROM booking_menu_items bm 
                            LEFT JOIN menu_items m ON bm.menu_item_id = m.id 
-                           WHERE bm.booking_id = $bookingId");
+                           WHERE bm.booking_id = ?");
+$menuItemsStmt->bind_param("i", $bookingId);
+$menuItemsStmt->execute();
+$menuItems = $menuItemsStmt->get_result();
 $menuData = [];
 while($item = $menuItems->fetch_assoc()) {
     $menuData[] = [
@@ -36,7 +39,10 @@ while($item = $menuItems->fetch_assoc()) {
 }
 
 // Fetch payments
-$payments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId ORDER BY created_at DESC");
+$paymentsStmt = $conn->prepare("SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at DESC");
+$paymentsStmt->bind_param("i", $bookingId);
+$paymentsStmt->execute();
+$payments = $paymentsStmt->get_result();
 $paymentData = [];
 while($pay = $payments->fetch_assoc()) {
     $paymentData[] = [
@@ -55,8 +61,10 @@ $menuItemsTotal = 0;
 foreach ($menuData as $item) {
     // Item format: [name, price, qty, subtotal] - need to parse subtotal
 }
-$menuTotalResult = $conn->query("SELECT SUM(price * quantity) as total FROM booking_menu_items WHERE booking_id = $bookingId");
-$menuItemsTotal = (float)($menuTotalResult->fetch_assoc()['total'] ?? 0);
+$menuTotalStmt = $conn->prepare("SELECT SUM(price * quantity) as total FROM booking_menu_items WHERE booking_id = ?");
+$menuTotalStmt->bind_param("i", $bookingId);
+$menuTotalStmt->execute();
+$menuItemsTotal = (float)($menuTotalStmt->get_result()->fetch_assoc()['total'] ?? 0);
 
 // Calculate discount (if any)
 $subtotal = $packageTotal + $menuItemsTotal;

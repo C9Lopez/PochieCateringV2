@@ -11,39 +11,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_booking'])) {
     // Temporarily disable exception mode to allow error suppression
     mysqli_report(MYSQLI_REPORT_OFF);
     // Delete related records first (tables may not exist)
-    $conn->query("DELETE FROM chat_messages WHERE booking_id = $deleteId");
-    $conn->query("DELETE FROM booking_menu_items WHERE booking_id = $deleteId");
-    $conn->query("DELETE FROM payment_records WHERE booking_id = $deleteId");
+    $delMsgStmt = $conn->prepare("DELETE FROM chat_messages WHERE booking_id = ?");
+    $delMsgStmt->bind_param("i", $deleteId);
+    $delMsgStmt->execute();
+    
+    $delMenuStmt = $conn->prepare("DELETE FROM booking_menu_items WHERE booking_id = ?");
+    $delMenuStmt->bind_param("i", $deleteId);
+    $delMenuStmt->execute();
+    
+    $delPayStmt = $conn->prepare("DELETE FROM payment_records WHERE booking_id = ?");
+    $delPayStmt->bind_param("i", $deleteId);
+    @$delPayStmt->execute(); // May fail if table doesn't exist
+    
     // Re-enable exception mode
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-    $conn->query("DELETE FROM bookings WHERE id = $deleteId");
+    
+    $delBookingStmt = $conn->prepare("DELETE FROM bookings WHERE id = ?");
+    $delBookingStmt->bind_param("i", $deleteId);
+    $delBookingStmt->execute();
+    
     $message = 'Booking deleted successfully!';
     $messageType = 'success';
 }
 
 $statusFilter = $_GET['status'] ?? '';
 $searchQuery = $_GET['search'] ?? '';
-$userId = $_SESSION['user_id'];
+$userId = (int)$_SESSION['user_id'];
+
+// Build query with prepared statement parameters
+$params = [];
+$types = "";
 
 $sql = "SELECT b.*, u.first_name, u.last_name, u.email, u.phone, p.name as package_name,
-        (SELECT COUNT(*) FROM chat_messages cm WHERE cm.booking_id = b.id AND cm.sender_id != $userId AND cm.is_read = 0) as unread_messages,
+        (SELECT COUNT(*) FROM chat_messages cm WHERE cm.booking_id = b.id AND cm.sender_id != ? AND cm.is_read = 0) as unread_messages,
         (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE booking_id = b.id AND status = 'verified') as total_paid
         FROM bookings b 
         LEFT JOIN users u ON b.customer_id = u.id 
         LEFT JOIN packages p ON b.package_id = p.id 
         WHERE 1=1";
 
+$params[] = $userId;
+$types .= "i";
+
 if ($statusFilter) {
     $statusFilter = $conn->real_escape_string($statusFilter);
-    $sql .= " AND b.status = '$statusFilter'";
+    $sql .= " AND b.status = ?";
+    $params[] = $statusFilter;
+    $types .= "s";
 }
 if ($searchQuery) {
-    $searchQuery = $conn->real_escape_string($searchQuery);
-    $sql .= " AND (b.booking_number LIKE '%$searchQuery%' OR u.first_name LIKE '%$searchQuery%' OR u.last_name LIKE '%$searchQuery%')";
+    $searchLike = "%" . $conn->real_escape_string($searchQuery) . "%";
+    $sql .= " AND (b.booking_number LIKE ? OR u.first_name LIKE ? OR u.last_name LIKE ?)";
+    $params[] = $searchLike;
+    $params[] = $searchLike;
+    $params[] = $searchLike;
+    $types .= "sss";
 }
 $sql .= " ORDER BY b.created_at DESC";
 
-$bookings = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$bookings = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">

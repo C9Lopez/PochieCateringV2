@@ -22,18 +22,29 @@ if (!$booking) {
     exit();
 }
 
-$menuItems = $conn->query("SELECT bm.*, m.name, m.description FROM booking_menu_items bm 
+$menuItemsStmt = $conn->prepare("SELECT bm.*, m.name, m.description FROM booking_menu_items bm 
                            LEFT JOIN menu_items m ON bm.menu_item_id = m.id 
-                           WHERE bm.booking_id = $bookingId");
+                           WHERE bm.booking_id = ?");
+$menuItemsStmt->bind_param("i", $bookingId);
+$menuItemsStmt->execute();
+$menuItems = $menuItemsStmt->get_result();
 
-$menuItemsTotal = $conn->query("SELECT SUM(price * quantity) as total FROM booking_menu_items WHERE booking_id = $bookingId")->fetch_assoc()['total'] ?? 0;
+$menuTotalStmt = $conn->prepare("SELECT SUM(price * quantity) as total FROM booking_menu_items WHERE booking_id = ?");
+$menuTotalStmt->bind_param("i", $bookingId);
+$menuTotalStmt->execute();
+$menuItemsTotal = $menuTotalStmt->get_result()->fetch_assoc()['total'] ?? 0;
 $packageTotal = ($booking['base_price'] ?? 0) * $booking['number_of_guests'];
 
-$messages = $conn->query("SELECT cm.*, u.first_name, u.last_name, u.role FROM chat_messages cm 
+$messagesStmt = $conn->prepare("SELECT cm.*, u.first_name, u.last_name, u.role FROM chat_messages cm 
                           LEFT JOIN users u ON cm.sender_id = u.id 
-                          WHERE cm.booking_id = $bookingId ORDER BY cm.created_at ASC");
+                          WHERE cm.booking_id = ? ORDER BY cm.created_at ASC");
+$messagesStmt->bind_param("i", $bookingId);
+$messagesStmt->execute();
+$messages = $messagesStmt->get_result();
 
-$conn->query("UPDATE chat_messages SET is_read = 1 WHERE booking_id = $bookingId AND sender_id != {$_SESSION['user_id']}");
+$markReadStmt = $conn->prepare("UPDATE chat_messages SET is_read = 1 WHERE booking_id = ? AND sender_id != ?");
+$markReadStmt->bind_param("ii", $bookingId, $_SESSION['user_id']);
+$markReadStmt->execute();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
     $message = $conn->real_escape_string($_POST['message']);
@@ -56,7 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
     }
 }
 
-$payments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId ORDER BY created_at DESC");
+$paymentsStmt = $conn->prepare("SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at DESC");
+$paymentsStmt->bind_param("i", $bookingId);
+$paymentsStmt->execute();
+$payments = $paymentsStmt->get_result();
 ?>
 
 <div class="container py-5">
@@ -300,12 +314,17 @@ $payments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId O
                     
                     <?php 
                     // Calculate paid amount (verified only)
-                    $paidResult = $conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'");
-                    $paidAmount = (float)($paidResult->fetch_assoc()['paid'] ?? 0);
+                    $paidStmt2 = $conn->prepare("SELECT SUM(amount) as paid FROM payments WHERE booking_id = ? AND status = 'verified'");
+                    $paidStmt2->bind_param("i", $bookingId);
+                    $paidStmt2->execute();
+                    $paidAmount = (float)($paidStmt2->get_result()->fetch_assoc()['paid'] ?? 0);
                     $remainingAmount = $booking['total_amount'] - $paidAmount;
                     
                     // Check for pending payments
-                    $pendingPayments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId AND status = 'pending' ORDER BY created_at DESC");
+                    $pendingStmt = $conn->prepare("SELECT * FROM payments WHERE booking_id = ? AND status = 'pending' ORDER BY created_at DESC");
+                    $pendingStmt->bind_param("i", $bookingId);
+                    $pendingStmt->execute();
+                    $pendingPayments = $pendingStmt->get_result();
                     $pendingTotal = 0;
                     $pendingList = [];
                     while ($pp = $pendingPayments->fetch_assoc()) {

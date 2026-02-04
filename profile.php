@@ -36,7 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Password must be at least 6 characters';
         } else {
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-            $conn->query("UPDATE users SET password = '$hashedPassword' WHERE id = {$_SESSION['user_id']}");
+            $pwdStmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+            $pwdStmt->bind_param("si", $hashedPassword, $_SESSION['user_id']);
+            $pwdStmt->execute();
             $success = 'Password changed successfully!';
         }
     }

@@ -67,19 +67,33 @@ switch ($eventType) {
             $stmt->execute();
             
             // Get booking ID from payment
-            $paymentResult = $conn->query("SELECT booking_id, amount FROM payments WHERE paymongo_session_id = '$sessionId'");
+            $paymentStmt = $conn->prepare("SELECT booking_id, amount FROM payments WHERE paymongo_session_id = ?");
+            $paymentStmt->bind_param("s", $sessionId);
+            $paymentStmt->execute();
+            $paymentResult = $paymentStmt->get_result();
             if ($paymentResult && $payment = $paymentResult->fetch_assoc()) {
-                $bookingId = $payment['booking_id'];
+                $bookingId = (int)$payment['booking_id'];
                 
                 // Check total paid and update booking
-                $totalPaid = $conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'")->fetch_assoc()['paid'] ?? 0;
-                $booking = $conn->query("SELECT total_amount, customer_id, booking_number FROM bookings WHERE id = $bookingId")->fetch_assoc();
+                $totalPaidStmt = $conn->prepare("SELECT SUM(amount) as paid FROM payments WHERE booking_id = ? AND status = 'verified'");
+                $totalPaidStmt->bind_param("i", $bookingId);
+                $totalPaidStmt->execute();
+                $totalPaid = $totalPaidStmt->get_result()->fetch_assoc()['paid'] ?? 0;
+                
+                $bookingStmt = $conn->prepare("SELECT total_amount, customer_id, booking_number FROM bookings WHERE id = ?");
+                $bookingStmt->bind_param("i", $bookingId);
+                $bookingStmt->execute();
+                $booking = $bookingStmt->get_result()->fetch_assoc();
                 
                 if ($booking) {
                     if ($totalPaid >= $booking['total_amount']) {
-                        $conn->query("UPDATE bookings SET payment_status = 'paid', status = 'paid' WHERE id = $bookingId");
+                        $updateStmt = $conn->prepare("UPDATE bookings SET payment_status = 'paid', status = 'paid' WHERE id = ?");
+                        $updateStmt->bind_param("i", $bookingId);
+                        $updateStmt->execute();
                     } else {
-                        $conn->query("UPDATE bookings SET payment_status = 'partial' WHERE id = $bookingId");
+                        $updateStmt = $conn->prepare("UPDATE bookings SET payment_status = 'partial' WHERE id = ?");
+                        $updateStmt->bind_param("i", $bookingId);
+                        $updateStmt->execute();
                     }
                     
                     // Add notification

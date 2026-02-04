@@ -42,7 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $verificationCode = generateVerificationCode();
                 $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
                 
-                $conn->query("DELETE FROM email_verifications WHERE email = '$email'");
+                $deleteStmt = $conn->prepare("DELETE FROM email_verifications WHERE email = ?");
+                $deleteStmt->bind_param("s", $email);
+                $deleteStmt->execute();
                 
                 $stmt = $conn->prepare("INSERT INTO email_verifications (email, code, expires_at) VALUES (?, ?, ?)");
                 $stmt->bind_param("sss", $email, $verificationCode, $expiresAt);
@@ -451,7 +453,7 @@ include 'includes/header.php';
             </div>
             <div class="modal-body">
                 <div class="policy-content">
-                    <?= $settings['privacy_policy'] ?? 'No privacy policy has been set.' ?>
+                    <?= nl2br(htmlspecialchars($settings['privacy_policy'] ?? 'No privacy policy has been set.')) ?>
                 </div>
             </div>
             <div class="modal-footer border-0 bg-light">
@@ -473,7 +475,7 @@ include 'includes/header.php';
             </div>
             <div class="modal-body">
                 <div class="policy-content">
-                    <?= $settings['terms_of_use'] ?? 'No terms of use have been set.' ?>
+                    <?= nl2br(htmlspecialchars($settings['terms_of_use'] ?? 'No terms of use have been set.')) ?>
                 </div>
             </div>
             <div class="modal-footer border-0 bg-light">

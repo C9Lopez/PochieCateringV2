@@ -6,9 +6,12 @@ requireLogin();
 $bookingId = isset($_GET['booking']) ? (int)$_GET['booking'] : 0;
 $paymongoError = isset($_GET['error']) ? $_GET['error'] : '';
 
-$booking = $conn->query("SELECT b.*, p.name as package_name FROM bookings b 
+$bookingStmt = $conn->prepare("SELECT b.*, p.name as package_name FROM bookings b 
                          LEFT JOIN packages p ON b.package_id = p.id 
-                         WHERE b.id = $bookingId AND b.customer_id = {$_SESSION['user_id']}")->fetch_assoc();
+                         WHERE b.id = ? AND b.customer_id = ?");
+$bookingStmt->bind_param("ii", $bookingId, $_SESSION['user_id']);
+$bookingStmt->execute();
+$booking = $bookingStmt->get_result()->fetch_assoc();
 
 if (!$booking || !in_array($booking['status'], ['approved', 'paid', 'preparing'])) {
     header('Location: ' . url('my-bookings.php'));
@@ -16,8 +19,10 @@ if (!$booking || !in_array($booking['status'], ['approved', 'paid', 'preparing']
 }
 
 // Calculate paid and remaining amounts
-$paidResult = $conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'");
-$paidAmount = (float)($paidResult->fetch_assoc()['paid'] ?? 0);
+$paidStmt = $conn->prepare("SELECT SUM(amount) as paid FROM payments WHERE booking_id = ? AND status = 'verified'");
+$paidStmt->bind_param("i", $bookingId);
+$paidStmt->execute();
+$paidAmount = (float)($paidStmt->get_result()->fetch_assoc()['paid'] ?? 0);
 $remainingAmount = $booking['total_amount'] - $paidAmount;
 $downpaymentAmount = $booking['total_amount'] * 0.5;
 

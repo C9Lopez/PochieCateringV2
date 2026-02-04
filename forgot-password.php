@@ -25,7 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $resetCode = generateVerificationCode();
             $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
             
-            $conn->query("DELETE FROM password_resets WHERE user_id = " . $user['id']);
+            $delStmt = $conn->prepare("DELETE FROM password_resets WHERE user_id = ?");
+            $delStmt->bind_param("i", $user['id']);
+            $delStmt->execute();
             
             $stmt = $conn->prepare("INSERT INTO password_resets (user_id, code, expires_at) VALUES (?, ?, ?)");
             $stmt->bind_param("iss", $user['id'], $resetCode, $expiresAt);
@@ -88,7 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->bind_param("si", $hashedPassword, $userId);
             
             if ($stmt->execute()) {
-                $conn->query("UPDATE password_resets SET used = 1 WHERE user_id = $userId");
+                $markUsedStmt = $conn->prepare("UPDATE password_resets SET used = 1 WHERE user_id = ?");
+                $markUsedStmt->bind_param("i", $userId);
+                $markUsedStmt->execute();
                 
                 unset($_SESSION['reset_user_id']);
                 unset($_SESSION['reset_email']);
@@ -115,7 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $resetCode = generateVerificationCode();
             $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
             
-            $conn->query("DELETE FROM password_resets WHERE user_id = $userId");
+            $delResetStmt = $conn->prepare("DELETE FROM password_resets WHERE user_id = ?");
+            $delResetStmt->bind_param("i", $userId);
+            $delResetStmt->execute();
             $stmt = $conn->prepare("INSERT INTO password_resets (user_id, code, expires_at) VALUES (?, ?, ?)");
             $stmt->bind_param("iss", $userId, $resetCode, $expiresAt);
             $stmt->execute();

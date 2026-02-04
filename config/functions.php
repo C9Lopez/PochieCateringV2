@@ -1,4 +1,9 @@
 <?php
+// Session security settings
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_samesite', 'Lax');
+
 session_start();
 date_default_timezone_set('Asia/Manila');
 require_once __DIR__ . '/database.php';
@@ -63,11 +68,29 @@ function requireRole($roles) {
     }
 }
 
+// CSRF Token Functions
+function generateCSRFToken() {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function getCSRFTokenField() {
+    return '<input type="hidden" name="csrf_token" value="' . generateCSRFToken() . '">';
+}
+
+function verifyCSRFToken($token) {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
 function getCurrentUser($conn) {
     if (!isLoggedIn()) return null;
-    $id = $_SESSION['user_id'];
-    $result = $conn->query("SELECT * FROM users WHERE id = $id");
-    return $result->fetch_assoc();
+    $id = (int)$_SESSION['user_id'];
+    $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
 }
 
 function getSettings($conn) {
@@ -119,15 +142,34 @@ function getPaymentBadge($status) {
 function uploadImage($file, $folder = 'uploads') {
     $targetDir = __DIR__ . "/../$folder/";
     if (!file_exists($targetDir)) {
-        mkdir($targetDir, 0777, true);
+        mkdir($targetDir, 0755, true);
     }
     
-    $fileName = uniqid() . '_' . basename($file['name']);
+    // Check file size (max 5MB)
+    $maxSize = 5 * 1024 * 1024;
+    if ($file['size'] > $maxSize) {
+        return ['success' => false, 'error' => 'File too large. Maximum size is 5MB'];
+    }
+    
+    // Sanitize filename - remove special characters, keep only alphanumeric and dots
+    $originalName = preg_replace('/[^a-zA-Z0-9_.-]/', '', basename($file['name']));
+    $fileName = uniqid() . '_' . $originalName;
     $targetFile = $targetDir . $fileName;
     $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
     
+    // Check extension
     $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     if (!in_array($imageFileType, $allowedTypes)) {
+        return ['success' => false, 'error' => 'Invalid file type. Allowed: JPG, PNG, GIF, WEBP'];
+    }
+    
+    // Verify MIME type
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimeType = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+    
+    $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!in_array($mimeType, $allowedMimes)) {
         return ['success' => false, 'error' => 'Invalid file type'];
     }
     
@@ -166,16 +208,24 @@ function getUnreadMessageCount($conn, $userId) {
 }
 
 function getCustomerNotificationCounts($conn, $userId) {
-    $unreadMessages = $conn->query("
+    $userId = (int)$userId;
+    
+    $msgStmt = $conn->prepare("
         SELECT COUNT(*) as count FROM chat_messages cm
         JOIN bookings b ON cm.booking_id = b.id
-        WHERE b.customer_id = $userId AND cm.sender_id != $userId AND cm.is_read = 0
-    ")->fetch_assoc()['count'] ?? 0;
+        WHERE b.customer_id = ? AND cm.sender_id != ? AND cm.is_read = 0
+    ");
+    $msgStmt->bind_param("ii", $userId, $userId);
+    $msgStmt->execute();
+    $unreadMessages = $msgStmt->get_result()->fetch_assoc()['count'] ?? 0;
     
-    $unreadNotifications = $conn->query("
+    $notifStmt = $conn->prepare("
         SELECT COUNT(*) as count FROM notifications 
-        WHERE user_id = $userId AND is_read = 0
-    ")->fetch_assoc()['count'] ?? 0;
+        WHERE user_id = ? AND is_read = 0
+    ");
+    $notifStmt->bind_param("i", $userId);
+    $notifStmt->execute();
+    $unreadNotifications = $notifStmt->get_result()->fetch_assoc()['count'] ?? 0;
     
     return [
         'messages' => $unreadMessages,
@@ -185,16 +235,24 @@ function getCustomerNotificationCounts($conn, $userId) {
 }
 
 function getStaffNotificationCounts($conn, $staffId) {
-    $unreadMessages = $conn->query("
+    $staffId = (int)$staffId;
+    
+    $msgStmt = $conn->prepare("
         SELECT COUNT(*) as count FROM chat_messages cm
         JOIN bookings b ON cm.booking_id = b.id
-        WHERE b.assigned_staff_id = $staffId AND cm.sender_id != $staffId AND cm.is_read = 0
-    ")->fetch_assoc()['count'] ?? 0;
+        WHERE b.assigned_staff_id = ? AND cm.sender_id != ? AND cm.is_read = 0
+    ");
+    $msgStmt->bind_param("ii", $staffId, $staffId);
+    $msgStmt->execute();
+    $unreadMessages = $msgStmt->get_result()->fetch_assoc()['count'] ?? 0;
     
-    $newBookings = $conn->query("
+    $bookingsStmt = $conn->prepare("
         SELECT COUNT(*) as count FROM bookings 
-        WHERE assigned_staff_id = $staffId AND status IN ('new', 'pending') AND DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-    ")->fetch_assoc()['count'] ?? 0;
+        WHERE assigned_staff_id = ? AND status IN ('new', 'pending') AND DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    ");
+    $bookingsStmt->bind_param("i", $staffId);
+    $bookingsStmt->execute();
+    $newBookings = $bookingsStmt->get_result()->fetch_assoc()['count'] ?? 0;
     
     return [
         'messages' => $unreadMessages,
@@ -204,12 +262,15 @@ function getStaffNotificationCounts($conn, $staffId) {
 }
 
 function getAdminNotificationCounts($conn) {
-    $userId = $_SESSION['user_id'] ?? 0;
+    $userId = (int)($_SESSION['user_id'] ?? 0);
     
-    $unreadMessages = $conn->query("
+    $msgStmt = $conn->prepare("
         SELECT COUNT(*) as count FROM chat_messages 
-        WHERE sender_id != $userId AND is_read = 0
-    ")->fetch_assoc()['count'] ?? 0;
+        WHERE sender_id != ? AND is_read = 0
+    ");
+    $msgStmt->bind_param("i", $userId);
+    $msgStmt->execute();
+    $unreadMessages = $msgStmt->get_result()->fetch_assoc()['count'] ?? 0;
     
     $newBookings = $conn->query("
         SELECT COUNT(*) as count FROM bookings WHERE status = 'new'
@@ -228,38 +289,47 @@ function getAdminNotificationCounts($conn) {
 }
 
 function getBookingsWithUnreadMessages($conn, $userId, $role) {
+    $userId = (int)$userId;
+    
     if ($role === 'customer') {
         $query = "
             SELECT b.id, b.booking_number, COUNT(cm.id) as unread_count
             FROM bookings b
             JOIN chat_messages cm ON cm.booking_id = b.id
-            WHERE b.customer_id = $userId AND cm.sender_id != $userId AND cm.is_read = 0
+            WHERE b.customer_id = ? AND cm.sender_id != ? AND cm.is_read = 0
             GROUP BY b.id
             ORDER BY MAX(cm.created_at) DESC
             LIMIT 5
         ";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $userId, $userId);
     } elseif ($role === 'staff') {
         $query = "
             SELECT b.id, b.booking_number, COUNT(cm.id) as unread_count
             FROM bookings b
             JOIN chat_messages cm ON cm.booking_id = b.id
-            WHERE b.assigned_staff_id = $userId AND cm.sender_id != $userId AND cm.is_read = 0
+            WHERE b.assigned_staff_id = ? AND cm.sender_id != ? AND cm.is_read = 0
             GROUP BY b.id
             ORDER BY MAX(cm.created_at) DESC
             LIMIT 5
         ";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $userId, $userId);
     } else {
         $query = "
             SELECT b.id, b.booking_number, COUNT(cm.id) as unread_count
             FROM bookings b
             JOIN chat_messages cm ON cm.booking_id = b.id
-            WHERE cm.sender_id != $userId AND cm.is_read = 0
+            WHERE cm.sender_id != ? AND cm.is_read = 0
             GROUP BY b.id
             ORDER BY MAX(cm.created_at) DESC
             LIMIT 10
         ";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $userId);
     }
-    $result = $conn->query($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
     return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 }
 

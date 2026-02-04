@@ -15,7 +15,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $pageTitle ?? $settings['site_name'] ?? 'Pochie Catering Services' ?></title>
+    <title><?= htmlspecialchars($pageTitle ?? $settings['site_name'] ?? 'Pochie Catering Services') ?></title>
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#f97316">
@@ -336,7 +336,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
                 <?php else: ?>
                     <span class="me-2">🍲</span>
                 <?php endif; ?>
-                <?= $settings['site_name'] ?? 'Pochie Catering Services' ?>
+                <?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?>
             </a>
 
             <div class="d-flex align-items-center order-lg-last">

@@ -10,8 +10,10 @@ $menuItems = $conn->query("SELECT m.*, c.name as category_name FROM menu_items m
 $selectedPackageId = isset($_GET['package']) ? (int)$_GET['package'] : null;
     $selectedPackage = null;
     if ($selectedPackageId) {
-        $pkgQuery = $conn->query("SELECT * FROM packages WHERE id = $selectedPackageId");
-        $selectedPackage = $pkgQuery->fetch_assoc();
+        $pkgStmt = $conn->prepare("SELECT * FROM packages WHERE id = ?");
+        $pkgStmt->bind_param("i", $selectedPackageId);
+        $pkgStmt->execute();
+        $selectedPackage = $pkgStmt->get_result()->fetch_assoc();
     }
     
     $claimedPromo = $_SESSION['claimed_promo'] ?? null;
@@ -46,14 +48,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $bookingNumber = 'BK' . date('Ymd') . strtoupper(substr(uniqid(), -4));
         
-        $pkgQuery = $conn->query("SELECT base_price FROM packages WHERE id = $packageId");
-        $pkg = $pkgQuery->fetch_assoc();
+        $pkgStmt = $conn->prepare("SELECT base_price FROM packages WHERE id = ?");
+        $pkgStmt->bind_param("i", $packageId);
+        $pkgStmt->execute();
+        $pkg = $pkgStmt->get_result()->fetch_assoc();
         $packageTotal = $pkg['base_price'] * $numberOfGuests;
         
         $menuTotal = 0;
         foreach ($selectedItems as $itemId) {
-            $itemQuery = $conn->query("SELECT price FROM menu_items WHERE id = " . (int)$itemId);
-            $item = $itemQuery->fetch_assoc();
+            $itemId = (int)$itemId;
+            $itemStmt = $conn->prepare("SELECT price FROM menu_items WHERE id = ?");
+            $itemStmt->bind_param("i", $itemId);
+            $itemStmt->execute();
+            $item = $itemStmt->get_result()->fetch_assoc();
             $qty = isset($itemQuantities[$itemId]) ? (int)$itemQuantities[$itemId] : 1;
             $menuTotal += $item['price'] * $qty;
         }
@@ -77,8 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $bookingId = $conn->insert_id;
             
             foreach ($selectedItems as $itemId) {
-                $itemQuery = $conn->query("SELECT price FROM menu_items WHERE id = " . (int)$itemId);
-                $item = $itemQuery->fetch_assoc();
+                $itemId = (int)$itemId;
+                $itemPriceStmt = $conn->prepare("SELECT price FROM menu_items WHERE id = ?");
+                $itemPriceStmt->bind_param("i", $itemId);
+                $itemPriceStmt->execute();
+                $item = $itemPriceStmt->get_result()->fetch_assoc();
                 $qty = isset($itemQuantities[$itemId]) ? (int)$itemQuantities[$itemId] : 1;
                 $menuStmt = $conn->prepare("INSERT INTO booking_menu_items (booking_id, menu_item_id, quantity, price) VALUES (?, ?, ?, ?)");
                 $menuStmt->bind_param("iiid", $bookingId, $itemId, $qty, $item['price']);

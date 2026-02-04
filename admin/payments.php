@@ -9,25 +9,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['verify_payment'])) {
         $paymentId = (int)$_POST['payment_id'];
         $status = sanitize($conn, $_POST['status']);
-        $conn->query("UPDATE payments SET status = '$status', processed_by = {$_SESSION['user_id']} WHERE id = $paymentId");
         
-        $payment = $conn->query("SELECT p.*, b.booking_number, b.customer_id FROM payments p JOIN bookings b ON p.booking_id = b.id WHERE p.id = $paymentId")->fetch_assoc();
+        $updateStmt = $conn->prepare("UPDATE payments SET status = ?, processed_by = ? WHERE id = ?");
+        $updateStmt->bind_param("sii", $status, $_SESSION['user_id'], $paymentId);
+        $updateStmt->execute();
+        
+        $paymentStmt = $conn->prepare("SELECT p.*, b.booking_number, b.customer_id FROM payments p JOIN bookings b ON p.booking_id = b.id WHERE p.id = ?");
+        $paymentStmt->bind_param("i", $paymentId);
+        $paymentStmt->execute();
+        $payment = $paymentStmt->get_result()->fetch_assoc();
         
         if ($status === 'verified') {
             // Calculate total paid after this verification
-            $bookingId = $payment['booking_id'];
-            $bookingData = $conn->query("SELECT total_amount FROM bookings WHERE id = $bookingId")->fetch_assoc();
+            $bookingId = (int)$payment['booking_id'];
+            
+            $bookingDataStmt = $conn->prepare("SELECT total_amount FROM bookings WHERE id = ?");
+            $bookingDataStmt->bind_param("i", $bookingId);
+            $bookingDataStmt->execute();
+            $bookingData = $bookingDataStmt->get_result()->fetch_assoc();
             $totalAmount = (float)($bookingData['total_amount'] ?? 0);
             
             // Sum all verified payments for this booking
-            $totalPaid = (float)$conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'")->fetch_assoc()['paid'];
+            $totalPaidStmt = $conn->prepare("SELECT SUM(amount) as paid FROM payments WHERE booking_id = ? AND status = 'verified'");
+            $totalPaidStmt->bind_param("i", $bookingId);
+            $totalPaidStmt->execute();
+            $totalPaid = (float)$totalPaidStmt->get_result()->fetch_assoc()['paid'];
             
             // Determine payment status
             if ($totalPaid >= $totalAmount) {
-                $conn->query("UPDATE bookings SET payment_status = 'paid', status = 'paid' WHERE id = $bookingId");
+                $updateBookingStmt = $conn->prepare("UPDATE bookings SET payment_status = 'paid', status = 'paid' WHERE id = ?");
+                $updateBookingStmt->bind_param("i", $bookingId);
+                $updateBookingStmt->execute();
                 $paymentStatusText = 'Fully Paid';
             } else {
-                $conn->query("UPDATE bookings SET payment_status = 'partial' WHERE id = $bookingId");
+                $updateBookingStmt = $conn->prepare("UPDATE bookings SET payment_status = 'partial' WHERE id = ?");
+                $updateBookingStmt->bind_param("i", $bookingId);
+                $updateBookingStmt->execute();
                 $paymentStatusText = 'Partial (' . formatPrice($totalPaid) . ' of ' . formatPrice($totalAmount) . ')';
             }
             
