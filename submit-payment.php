@@ -26,8 +26,34 @@ $paidAmount = (float)($paidStmt->get_result()->fetch_assoc()['paid'] ?? 0);
 $remainingAmount = $booking['total_amount'] - $paidAmount;
 $downpaymentAmount = $booking['total_amount'] * 0.5;
 
-// Fetch payment settings from database
+// Fetch payment settings from database (create table if not exists)
 $paymentMethods = [];
+$tableExists = $conn->query("SHOW TABLES LIKE 'payment_settings'")->num_rows > 0;
+
+if (!$tableExists) {
+    // Create the table
+    $conn->query("CREATE TABLE IF NOT EXISTS `payment_settings` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `payment_type` varchar(50) NOT NULL,
+        `account_name` varchar(255) DEFAULT NULL,
+        `account_number` varchar(100) DEFAULT NULL,
+        `qr_code_image` varchar(255) DEFAULT NULL,
+        `is_enabled` tinyint(1) DEFAULT 1,
+        `display_order` int(11) DEFAULT 0,
+        `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+        `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `payment_type` (`payment_type`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    
+    // Insert default values
+    $conn->query("INSERT INTO `payment_settings` (`payment_type`, `account_name`, `account_number`, `is_enabled`, `display_order`) VALUES
+        ('gcash', 'Pochie Catering Services', '09XX XXX XXXX', 1, 1),
+        ('maya', 'Pochie Catering Services', '09XX XXX XXXX', 1, 2),
+        ('bdo', 'Pochie Catering Services', 'XXXX XXXX XXXX', 1, 3),
+        ('bpi', 'Pochie Catering Services', 'XXXX XXXX XXXX', 1, 4)");
+}
+
 $pmResult = $conn->query("SELECT * FROM payment_settings WHERE is_enabled = 1 ORDER BY display_order ASC");
 if ($pmResult) {
     while ($pm = $pmResult->fetch_assoc()) {
