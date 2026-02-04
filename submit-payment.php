@@ -4,15 +4,22 @@ require_once 'includes/header.php';
 requireLogin();
 
 $bookingId = isset($_GET['booking']) ? (int)$_GET['booking'] : 0;
+$paymongoError = isset($_GET['error']) ? $_GET['error'] : '';
 
 $booking = $conn->query("SELECT b.*, p.name as package_name FROM bookings b 
                          LEFT JOIN packages p ON b.package_id = p.id 
                          WHERE b.id = $bookingId AND b.customer_id = {$_SESSION['user_id']}")->fetch_assoc();
 
-if (!$booking || $booking['status'] !== 'approved') {
+if (!$booking || !in_array($booking['status'], ['approved', 'paid', 'preparing'])) {
     header('Location: ' . url('my-bookings.php'));
     exit();
 }
+
+// Calculate paid and remaining amounts
+$paidResult = $conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'");
+$paidAmount = (float)($paidResult->fetch_assoc()['paid'] ?? 0);
+$remainingAmount = $booking['total_amount'] - $paidAmount;
+$downpaymentAmount = $booking['total_amount'] * 0.5;
 
 $error = '';
 $success = '';
@@ -57,6 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>Submit Payment</h5>
                 </div>
                 <div class="card-body">
+                    <?php if ($paymongoError): ?>
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <?= htmlspecialchars(urldecode($paymongoError)) ?>
+                        </div>
+                    <?php endif; ?>
+                    
                     <?php if ($error): ?>
                         <div class="alert alert-danger"><?= $error ?></div>
                     <?php endif; ?>
@@ -65,6 +79,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <strong>Booking:</strong> #<?= $booking['booking_number'] ?><br>
                         <strong>Package:</strong> <?= htmlspecialchars($booking['package_name']) ?><br>
                         <strong>Total Amount:</strong> <?= formatPrice($booking['total_amount']) ?>
+                        <?php if ($paidAmount > 0): ?>
+                        <br><strong class="text-success">Paid:</strong> <?= formatPrice($paidAmount) ?>
+                        <br><strong class="text-danger">Remaining:</strong> <?= formatPrice($remainingAmount) ?>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <!-- Online Payment Option (PayMongo) -->
+                    <div class="card border-primary mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Pay Online (Instant Verification)</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small mb-3">
+                                Magbayad gamit ang GCash, GrabPay, o Maya. Automatic ang verification - walang need mag-upload ng screenshot!
+                            </p>
+                            
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <a href="<?= url('pay-online.php?booking=' . $bookingId . '&type=downpayment') ?>" 
+                                       class="btn btn-outline-primary w-100 <?= $paidAmount >= $downpaymentAmount ? 'disabled' : '' ?>">
+                                        <i class="bi bi-wallet2 me-2"></i>
+                                        50% Downpayment<br>
+                                        <small><?= formatPrice($downpaymentAmount) ?></small>
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="<?= url('pay-online.php?booking=' . $bookingId . '&type=full') ?>" 
+                                       class="btn btn-primary w-100 <?= $remainingAmount <= 0 ? 'disabled' : '' ?>">
+                                        <i class="bi bi-credit-card me-2"></i>
+                                        Pay Full Amount<br>
+                                        <small><?= formatPrice($remainingAmount > 0 ? $remainingAmount : $booking['total_amount']) ?></small>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3 text-center">
+                                <img src="https://www.paymongo.com/assets/gcash.svg" alt="GCash" height="24" class="mx-1">
+                                <img src="https://www.paymongo.com/assets/grab_pay.svg" alt="GrabPay" height="24" class="mx-1">
+                                <img src="https://www.paymongo.com/assets/paymaya.svg" alt="Maya" height="24" class="mx-1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center my-4">
+                        <span class="text-muted">— o kaya —</span>
                     </div>
                     
                     <div class="card bg-light mb-4">
