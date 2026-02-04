@@ -280,9 +280,43 @@ $payments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId O
                         <?= getPaymentBadge($booking['payment_status']) ?>
                     </div>
                     
+                    <?php 
+                    // Calculate paid amount
+                    $paidResult = $conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'");
+                    $paidAmount = (float)($paidResult->fetch_assoc()['paid'] ?? 0);
+                    $remainingAmount = $booking['total_amount'] - $paidAmount;
+                    ?>
+                    
+                    <?php if ($paidAmount > 0): ?>
+                    <div class="d-flex justify-content-between mb-2 text-success">
+                        <span>Amount Paid:</span>
+                        <strong><?= formatPrice($paidAmount) ?></strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 text-danger">
+                        <span>Remaining Balance:</span>
+                        <strong><?= formatPrice($remainingAmount) ?></strong>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if (in_array($booking['status'], ['approved', 'paid', 'preparing']) && $remainingAmount > 0): ?>
+                    <a href="<?= url('submit-payment.php?booking=' . $bookingId) ?>" class="btn btn-success w-100 mb-3">
+                        <i class="bi bi-credit-card me-2"></i>Pay Now
+                    </a>
+                    <?php elseif ($booking['status'] === 'new' || $booking['status'] === 'pending' || $booking['status'] === 'negotiating'): ?>
+                    <div class="alert alert-warning small mb-3">
+                        <i class="bi bi-hourglass-split me-1"></i>
+                        Please wait for your booking to be <strong>approved</strong> before making a payment.
+                    </div>
+                    <?php elseif ($remainingAmount <= 0): ?>
+                    <div class="alert alert-success small mb-3">
+                        <i class="bi bi-check-circle me-1"></i>
+                        <strong>Fully Paid!</strong> Thank you for your payment.
+                    </div>
+                    <?php endif; ?>
+                    
                     <div class="alert alert-info small mb-0">
                         <i class="bi bi-info-circle me-1"></i>
-                        Use the chat to negotiate final price and send payment via QR code.
+                        Use the chat to negotiate final price and discuss details with our team.
                     </div>
                 </div>
             </div>
