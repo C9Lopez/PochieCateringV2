@@ -317,26 +317,28 @@ $payments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId O
                     </div>
                     <?php endif; ?>
                     
-                    <?php if (count($pendingList) > 0): ?>
-                    <div class="alert alert-warning small mb-3">
-                        <i class="bi bi-hourglass-split me-2"></i>
-                        <strong>Waiting for Confirmation</strong>
-                        <?php foreach ($pendingList as $pending): 
-                            $pendingAmount = (float)$pending['amount'];
-                            $downpayment = $booking['total_amount'] * 0.5;
-                            
-                            // Determine payment type
-                            if ($pendingAmount >= $booking['total_amount'] * 0.95) {
-                                $typeLabel = 'Full Payment';
-                            } elseif ($pendingAmount >= $downpayment * 0.95 && $pendingAmount <= $downpayment * 1.05) {
-                                $typeLabel = '50% Downpayment';
-                            } elseif ($paidAmount > 0 && $pendingAmount >= $remainingAmount * 0.95) {
-                                $typeLabel = 'Remaining Balance';
-                            } else {
-                                $percentage = round(($pendingAmount / $booking['total_amount']) * 100);
-                                $typeLabel = $percentage . '% Partial Payment';
-                            }
-                        ?>
+                      <?php if (count($pendingList) > 0): ?>
+                      <div class="alert alert-warning small mb-3">
+                          <i class="bi bi-hourglass-split me-2"></i>
+                          <strong>Waiting for Confirmation</strong>
+                          <?php foreach ($pendingList as $pending): 
+                              $pendingAmount = (float)$pending['amount'];
+                              $downpayment = $booking['total_amount'] * 0.5;
+                              
+                              // Determine payment type - prioritize "Remaining Balance" if there's prior payment
+                              if ($pendingAmount >= $booking['total_amount'] * 0.95) {
+                                  $typeLabel = 'Full Payment';
+                              } elseif ($paidAmount > 0 && $pendingAmount >= $remainingAmount * 0.90 && $pendingAmount <= $remainingAmount * 1.10) {
+                                  // If there's already a verified payment, this is likely the remaining balance
+                                  $typeLabel = 'Remaining Balance';
+                              } elseif ($paidAmount == 0 && $pendingAmount >= $downpayment * 0.95 && $pendingAmount <= $downpayment * 1.05) {
+                                  // Only show "50% Downpayment" if NO prior payment exists
+                                  $typeLabel = '50% Downpayment';
+                              } else {
+                                  $percentage = round(($pendingAmount / $booking['total_amount']) * 100);
+                                  $typeLabel = $percentage . '% Partial Payment';
+                              }
+                          ?>
                         <div class="mt-2 p-2 bg-white rounded border">
                             <div class="d-flex justify-content-between">
                                 <span><?= $typeLabel ?></span>
