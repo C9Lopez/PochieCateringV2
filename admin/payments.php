@@ -69,6 +69,7 @@ $stats = $conn->query("SELECT
     COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_count,
     COUNT(CASE WHEN status = 'verified' THEN 1 END) as verified_count,
     COUNT(CASE WHEN status = 'rejected' THEN 1 END) as rejected_count,
+    COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed_count,
     SUM(CASE WHEN status = 'verified' THEN amount ELSE 0 END) as total_verified
     FROM payments")->fetch_assoc();
 ?>
@@ -98,7 +99,7 @@ $stats = $conn->query("SELECT
         
         <!-- Payment Stats Cards -->
         <div class="row mb-4">
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="card border-warning">
                     <div class="card-body text-center">
                         <h3 class="text-warning mb-0"><?= $stats['pending_count'] ?? 0 ?></h3>
@@ -106,7 +107,7 @@ $stats = $conn->query("SELECT
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-6 mb-2">
                 <div class="card border-success">
                     <div class="card-body text-center">
                         <h3 class="text-success mb-0"><?= $stats['verified_count'] ?? 0 ?></h3>
@@ -114,7 +115,7 @@ $stats = $conn->query("SELECT
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2 col-6 mb-2">
                 <div class="card border-danger">
                     <div class="card-body text-center">
                         <h3 class="text-danger mb-0"><?= $stats['rejected_count'] ?? 0 ?></h3>
@@ -122,11 +123,19 @@ $stats = $conn->query("SELECT
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2 col-6 mb-2">
+                <div class="card border-secondary">
+                    <div class="card-body text-center">
+                        <h3 class="text-secondary mb-0"><?= $stats['failed_count'] ?? 0 ?></h3>
+                        <small class="text-muted">Failed (Online)</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 col-12 mb-2">
                 <div class="card border-primary">
                     <div class="card-body text-center">
                         <h3 class="text-primary mb-0"><?= formatPrice($stats['total_verified'] ?? 0) ?></h3>
-                        <small class="text-muted">Total Verified Amount</small>
+                        <small class="text-muted">Total Verified</small>
                     </div>
                 </div>
             </div>
@@ -249,8 +258,11 @@ $stats = $conn->query("SELECT
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <span class="badge bg-<?= $p['status'] == 'verified' ? 'success' : ($p['status'] == 'rejected' ? 'danger' : 'warning') ?>">
+                                    <span class="badge bg-<?= $p['status'] == 'verified' ? 'success' : ($p['status'] == 'rejected' ? 'danger' : ($p['status'] == 'failed' ? 'dark' : 'warning')) ?>">
                                         <?= ucfirst($p['status']) ?>
+                                        <?php if ($p['status'] === 'verified' && strpos($p['payment_method'] ?? '', 'PayMongo') !== false): ?>
+                                        <i class="bi bi-lightning-fill ms-1" title="Auto-verified via PayMongo"></i>
+                                        <?php endif; ?>
                                     </span>
                                 </td>
                                 <td><?= formatDateTime($p['created_at']) ?></td>

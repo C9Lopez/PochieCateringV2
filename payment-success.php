@@ -16,7 +16,7 @@ $paymentDetails = null;
 $error = '';
 
 if ($sessionId) {
-    // Verify the payment with PayMongo
+    // Verify the payment with PayMongo API
     $result = getCheckoutSession($sessionId);
     
     if ($result['success']) {
@@ -24,45 +24,73 @@ if ($sessionId) {
         $status = $session['attributes']['payment_intent']['attributes']['status'] ?? 
                   $session['attributes']['status'] ?? 'unknown';
         
+        // Get payment details from PayMongo response
+        $paymentDetails = [
+            'amount' => ($session['attributes']['line_items'][0]['amount'] ?? 0) / 100,
+            'method' => $session['attributes']['payment_method_used'] ?? 'E-Wallet',
+            'reference' => $session['attributes']['reference_number'] ?? $sessionId,
+            'paymongo_payment_id' => $session['attributes']['payments'][0]['id'] ?? null
+        ];
+        
         // Check if payment was successful
         if (in_array($status, ['succeeded', 'paid', 'processing'])) {
             $paymentVerified = true;
             
-            // Get payment details
-            $paymentDetails = [
-                'amount' => ($session['attributes']['line_items'][0]['amount'] ?? 0) / 100,
-                'method' => $session['attributes']['payment_method_used'] ?? 'E-Wallet',
-                'reference' => $session['attributes']['reference_number'] ?? $sessionId
-            ];
-            
-            // Update payment record in database
-            $stmt = $conn->prepare("UPDATE payments SET status = 'verified', reference_number = ? WHERE paymongo_session_id = ?");
+            // Update payment record in database - INSTANT VERIFICATION
+            $stmt = $conn->prepare("UPDATE payments SET status = 'verified', reference_number = ?, payment_method = ? WHERE paymongo_session_id = ?");
             $refNumber = $paymentDetails['reference'];
-            $stmt->bind_param("ss", $refNumber, $sessionId);
+            $paymentMethod = 'PayMongo (' . $paymentDetails['method'] . ')';
+            $stmt->bind_param("sss", $refNumber, $paymentMethod, $sessionId);
             $stmt->execute();
             
             // Update booking status if needed
             if ($bookingId) {
-                // Check total paid
-                $totalPaid = $conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'")->fetch_assoc()['paid'] ?? 0;
-                $booking = $conn->query("SELECT total_amount, customer_id FROM bookings WHERE id = $bookingId")->fetch_assoc();
+                // Check total paid using prepared statement
+                $paidStmt = $conn->prepare("SELECT SUM(amount) as paid FROM payments WHERE booking_id = ? AND status = 'verified'");
+                $paidStmt->bind_param("i", $bookingId);
+                $paidStmt->execute();
+                $totalPaid = $paidStmt->get_result()->fetch_assoc()['paid'] ?? 0;
                 
-                if ($booking && $totalPaid >= $booking['total_amount']) {
-                    $conn->query("UPDATE bookings SET payment_status = 'paid', status = 'paid' WHERE id = $bookingId");
-                } else {
-                    $conn->query("UPDATE bookings SET payment_status = 'partial' WHERE id = $bookingId");
-                }
+                $bookingStmt = $conn->prepare("SELECT total_amount, customer_id, booking_number FROM bookings WHERE id = ?");
+                $bookingStmt->bind_param("i", $bookingId);
+                $bookingStmt->execute();
+                $booking = $bookingStmt->get_result()->fetch_assoc();
                 
-                // Notify customer
                 if ($booking) {
-                    $bookingNumber = $conn->query("SELECT booking_number FROM bookings WHERE id = $bookingId")->fetch_assoc()['booking_number'];
-                    addNotification($conn, $booking['customer_id'], 'Payment Received', 
-                        "Your payment of " . formatPrice($paymentDetails['amount']) . " for booking #$bookingNumber has been received!", 
+                    if ($totalPaid >= $booking['total_amount']) {
+                        $updateStmt = $conn->prepare("UPDATE bookings SET payment_status = 'paid', status = 'paid' WHERE id = ?");
+                        $updateStmt->bind_param("i", $bookingId);
+                        $updateStmt->execute();
+                    } else {
+                        $updateStmt = $conn->prepare("UPDATE bookings SET payment_status = 'partial' WHERE id = ?");
+                        $updateStmt->bind_param("i", $bookingId);
+                        $updateStmt->execute();
+                    }
+                    
+                    // Notify customer
+                    addNotification($conn, $booking['customer_id'], 'Payment Verified (Instant)', 
+                        "Your payment of " . formatPrice($paymentDetails['amount']) . " for booking #{$booking['booking_number']} has been automatically verified!", 
                         'success', url("booking-details.php?id=$bookingId"));
+                    
+                    // Notify admins
+                    $admins = $conn->query("SELECT id FROM users WHERE role IN ('admin', 'super_admin')");
+                    while ($admin = $admins->fetch_assoc()) {
+                        addNotification($conn, $admin['id'], 'Online Payment Received (Auto-Verified)', 
+                            "Payment of " . formatPrice($paymentDetails['amount']) . " for booking #{$booking['booking_number']} via {$paymentDetails['method']} - Reference: {$paymentDetails['reference']}", 
+                            'info', "admin/payments.php");
+                    }
                 }
             }
+        } elseif (in_array($status, ['failed', 'cancelled', 'expired'])) {
+            // Payment failed - record it as failed instead of deleting
+            $failedStmt = $conn->prepare("UPDATE payments SET status = 'failed', reference_number = ? WHERE paymongo_session_id = ?");
+            $failedRef = 'FAILED-' . ($paymentDetails['reference'] ?? $sessionId);
+            $failedStmt->bind_param("ss", $failedRef, $sessionId);
+            $failedStmt->execute();
+            
+            $error = "Payment failed (Status: $status). The payment record has been saved for your reference.";
         } else {
-            $error = "Payment status: $status. Please contact support if you believe this is an error.";
+            $error = "Payment status: $status. Please wait a few moments or contact support if you believe this is an error.";
         }
     } else {
         $error = $result['error'] ?? 'Unable to verify payment. Please contact support.';

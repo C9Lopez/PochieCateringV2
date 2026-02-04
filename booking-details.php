@@ -421,6 +421,62 @@ $payments = $paymentsStmt->get_result();
                 </div>
             </div>
             
+            <?php 
+            // Get all payments for this booking (for payment history)
+            $allPaymentsStmt = $conn->prepare("SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at DESC");
+            $allPaymentsStmt->bind_param("i", $bookingId);
+            $allPaymentsStmt->execute();
+            $allPayments = $allPaymentsStmt->get_result();
+            $paymentCount = $allPayments->num_rows;
+            ?>
+            
+            <?php if ($paymentCount > 0): ?>
+            <div class="card mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Payment History</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Reference</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while($pay = $allPayments->fetch_assoc()): ?>
+                                <tr>
+                                    <td><small><?= formatDateTime($pay['created_at']) ?></small></td>
+                                    <td><strong><?= formatPrice($pay['amount']) ?></strong></td>
+                                    <td><small><?= htmlspecialchars($pay['payment_method']) ?></small></td>
+                                    <td>
+                                        <?php if (!empty($pay['reference_number']) && !str_starts_with($pay['reference_number'], 'PM-')): ?>
+                                        <code class="small"><?= htmlspecialchars($pay['reference_number']) ?></code>
+                                        <?php else: ?>
+                                        <span class="text-muted">-</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<?= $pay['status'] === 'verified' ? 'success' : ($pay['status'] === 'failed' ? 'dark' : ($pay['status'] === 'rejected' ? 'danger' : 'warning')) ?>">
+                                            <?= ucfirst($pay['status']) ?>
+                                            <?php if ($pay['status'] === 'verified' && strpos($pay['payment_method'], 'PayMongo') !== false): ?>
+                                            <i class="bi bi-lightning-fill" title="Auto-verified"></i>
+                                            <?php endif; ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            
             <div class="card">
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Booking Status</h5>
