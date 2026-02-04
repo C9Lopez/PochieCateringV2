@@ -26,7 +26,8 @@ $searchQuery = $_GET['search'] ?? '';
 $userId = $_SESSION['user_id'];
 
 $sql = "SELECT b.*, u.first_name, u.last_name, u.email, u.phone, p.name as package_name,
-        (SELECT COUNT(*) FROM chat_messages cm WHERE cm.booking_id = b.id AND cm.sender_id != $userId AND cm.is_read = 0) as unread_messages
+        (SELECT COUNT(*) FROM chat_messages cm WHERE cm.booking_id = b.id AND cm.sender_id != $userId AND cm.is_read = 0) as unread_messages,
+        (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE booking_id = b.id AND status = 'verified') as total_paid
         FROM bookings b 
         LEFT JOIN users u ON b.customer_id = u.id 
         LEFT JOIN packages p ON b.package_id = p.id 
@@ -149,7 +150,23 @@ $bookings = $conn->query($sql);
                                 <td><?= $b['number_of_guests'] ?></td>
                                 <td><?= formatPrice($b['total_amount']) ?></td>
                                 <td><?= getStatusBadge($b['status']) ?></td>
-                                <td><?= getPaymentBadge($b['payment_status']) ?></td>
+                                <td>
+                                    <?php 
+                                    $totalPaid = (float)$b['total_paid'];
+                                    $totalAmount = (float)$b['total_amount'];
+                                    $remaining = $totalAmount - $totalPaid;
+                                    
+                                    if ($totalPaid >= $totalAmount) {
+                                        echo '<span class="badge bg-success">Fully Paid</span>';
+                                    } elseif ($totalPaid > 0) {
+                                        $percentage = round(($totalPaid / $totalAmount) * 100);
+                                        echo '<span class="badge bg-warning text-dark">Partial ' . $percentage . '%</span>';
+                                        echo '<br><small class="text-muted">' . formatPrice($totalPaid) . ' paid</small>';
+                                    } else {
+                                        echo '<span class="badge bg-danger">Unpaid</span>';
+                                    }
+                                    ?>
+                                </td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="<?= adminUrl('booking-details.php?id=' . $b['id']) ?>" class="btn btn-sm btn-primary <?= $b['unread_messages'] > 0 ? 'btn-pulse' : '' ?>">

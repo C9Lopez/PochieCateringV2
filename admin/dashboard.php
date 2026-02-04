@@ -13,7 +13,8 @@ $pendingPayments = $conn->query("SELECT COUNT(*) as count FROM payments WHERE st
 $paidBookings = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE payment_status = 'paid'")->fetch_assoc()['count'];
 $completedBookings = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE status = 'completed'")->fetch_assoc()['count'];
 
-$allBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, u.phone, p.name as package_name 
+$allBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, u.phone, p.name as package_name,
+                             (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE booking_id = b.id AND status = 'verified') as total_paid
                              FROM bookings b 
                              LEFT JOIN users u ON b.customer_id = u.id 
                              LEFT JOIN packages p ON b.package_id = p.id 
@@ -205,7 +206,21 @@ $upcomingEvents = $conn->query("SELECT b.*, u.first_name, u.last_name, p.name as
                                 <td><?= $b['number_of_guests'] ?> pax</td>
                                 <td><strong><?= formatPrice($b['total_amount']) ?></strong></td>
                                 <td><?= getStatusBadge($b['status']) ?></td>
-                                <td><?= getPaymentBadge($b['payment_status']) ?></td>
+                                <td>
+                                    <?php 
+                                    $totalPaid = (float)$b['total_paid'];
+                                    $totalAmount = (float)$b['total_amount'];
+                                    
+                                    if ($totalPaid >= $totalAmount) {
+                                        echo '<span class="badge bg-success">Fully Paid</span>';
+                                    } elseif ($totalPaid > 0) {
+                                        $percentage = round(($totalPaid / $totalAmount) * 100);
+                                        echo '<span class="badge bg-warning text-dark">' . $percentage . '% Paid</span>';
+                                    } else {
+                                        echo '<span class="badge bg-danger">Unpaid</span>';
+                                    }
+                                    ?>
+                                </td>
                                 <td>
                                     <a href="<?= adminUrl('booking-details.php?id=' . $b['id']) ?>" class="btn btn-sm btn-primary">
                                         <i class="bi bi-eye"></i> View

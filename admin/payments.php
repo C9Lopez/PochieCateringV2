@@ -14,9 +14,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $payment = $conn->query("SELECT p.*, b.booking_number, b.customer_id FROM payments p JOIN bookings b ON p.booking_id = b.id WHERE p.id = $paymentId")->fetch_assoc();
         
         if ($status === 'verified') {
-            $conn->query("UPDATE bookings SET payment_status = 'paid', status = 'paid' WHERE id = {$payment['booking_id']}");
-            addNotification($conn, $payment['customer_id'], 'Payment Verified', "Your payment for booking #{$payment['booking_number']} has been verified!", 'success');
-            $message = 'Payment verified successfully!';
+            // Calculate total paid after this verification
+            $bookingId = $payment['booking_id'];
+            $bookingData = $conn->query("SELECT total_amount FROM bookings WHERE id = $bookingId")->fetch_assoc();
+            $totalAmount = (float)($bookingData['total_amount'] ?? 0);
+            
+            // Sum all verified payments for this booking
+            $totalPaid = (float)$conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'")->fetch_assoc()['paid'];
+            
+            // Determine payment status
+            if ($totalPaid >= $totalAmount) {
+                $conn->query("UPDATE bookings SET payment_status = 'paid', status = 'paid' WHERE id = $bookingId");
+                $paymentStatusText = 'Fully Paid';
+            } else {
+                $conn->query("UPDATE bookings SET payment_status = 'partial' WHERE id = $bookingId");
+                $paymentStatusText = 'Partial (' . formatPrice($totalPaid) . ' of ' . formatPrice($totalAmount) . ')';
+            }
+            
+            addNotification($conn, $payment['customer_id'], 'Payment Verified', "Your payment for booking #{$payment['booking_number']} has been verified! Status: $paymentStatusText", 'success');
+            $message = "Payment verified! Booking is now: $paymentStatusText";
         } else {
             $message = 'Payment rejected.';
         }
@@ -107,6 +123,7 @@ $stats = $conn->query("SELECT
                                 <th>Booking #</th>
                                 <th>Customer</th>
                                 <th>Amount</th>
+                                <th>Type</th>
                                 <th>Method</th>
                                 <th>Reference</th>
                                 <th>Proof</th>
@@ -117,7 +134,23 @@ $stats = $conn->query("SELECT
                         </thead>
                         <tbody>
                             <?php if ($payments && $payments->num_rows > 0): ?>
-                            <?php while($p = $payments->fetch_assoc()): ?>
+                            <?php while($p = $payments->fetch_assoc()): 
+                                // Calculate payment type
+                                $downpaymentAmount = $p['booking_total'] * 0.5;
+                                $paymentAmount = (float)$p['amount'];
+                                
+                                // Determine payment type based on amount
+                                if ($paymentAmount >= $p['booking_total'] * 0.95) {
+                                    $paymentType = 'Full Payment';
+                                    $typeClass = 'success';
+                                } elseif ($paymentAmount >= $downpaymentAmount * 0.95 && $paymentAmount <= $downpaymentAmount * 1.05) {
+                                    $paymentType = '50% Downpayment';
+                                    $typeClass = 'warning';
+                                } else {
+                                    $paymentType = 'Partial';
+                                    $typeClass = 'info';
+                                }
+                            ?>
                             <tr class="<?= $p['status'] === 'pending' ? 'table-warning' : '' ?>">
                                 <td>
                                     <strong><?= $p['booking_number'] ?></strong>
@@ -132,6 +165,9 @@ $stats = $conn->query("SELECT
                                 <td>
                                     <strong><?= formatPrice($p['amount']) ?></strong>
                                     <br><small class="text-muted">of <?= formatPrice($p['booking_total']) ?></small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<?= $typeClass ?>"><?= $paymentType ?></span>
                                 </td>
                                 <td>
                                     <span class="badge bg-<?= $p['payment_method'] === 'GCash' ? 'primary' : ($p['payment_method'] === 'Maya' ? 'success' : 'secondary') ?>">
@@ -189,7 +225,7 @@ $stats = $conn->query("SELECT
                             </tr>
                             <?php endwhile; ?>
                             <?php else: ?>
-                            <tr><td colspan="9" class="text-center text-muted py-4">No payments found</td></tr>
+                            <tr><td colspan="10" class="text-center text-muted py-4">No payments found</td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
