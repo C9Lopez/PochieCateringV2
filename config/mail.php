@@ -122,7 +122,7 @@ function sendVerificationEmail($email, $code, $name) {
         $siteName = getSiteName();
         
         $mail->addAddress($email, $name);
-        $mail->isHTML(false);
+        $mail->isHTML(true);
         $mail->Subject = 'Verify your email - ' . $siteName;
         
         $content = $siteName . ' received a request to use ' . $email . ' as a registered email for your account.';
@@ -143,7 +143,7 @@ function sendPasswordResetEmail($email, $code, $name) {
         $siteName = getSiteName();
         
         $mail->addAddress($email, $name);
-        $mail->isHTML(false);
+        $mail->isHTML(true);
         $mail->Subject = 'Reset your password - ' . $siteName;
         
         $content = $siteName . ' received a password reset request for the account associated with ' . $email . '.';
