@@ -174,7 +174,8 @@ function uploadImage($file, $folder = 'uploads') {
     }
     
     if (move_uploaded_file($file['tmp_name'], $targetFile)) {
-        return ['success' => true, 'filename' => $fileName, 'path' => url("$folder/$fileName")];
+        // Return relative path only (without BASE_URL) for database storage
+        return ['success' => true, 'filename' => $fileName, 'path' => "$folder/$fileName"];
     }
     
     return ['success' => false, 'error' => 'Upload failed'];
