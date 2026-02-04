@@ -40,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$payments = $conn->query("SELECT p.*, b.booking_number, b.total_amount as booking_total, b.event_date, u.first_name, u.last_name, u.phone 
+$payments = $conn->query("SELECT p.*, b.booking_number, b.total_amount as booking_total, b.event_date, u.first_name, u.last_name, u.phone,
+                          (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE booking_id = p.booking_id AND status = 'verified') as total_paid_verified
                           FROM payments p 
                           JOIN bookings b ON p.booking_id = b.id 
                           LEFT JOIN users u ON b.customer_id = u.id 
@@ -135,20 +136,54 @@ $stats = $conn->query("SELECT
                         <tbody>
                             <?php if ($payments && $payments->num_rows > 0): ?>
                             <?php while($p = $payments->fetch_assoc()): 
-                                // Calculate payment type
-                                $downpaymentAmount = $p['booking_total'] * 0.5;
+                                // Calculate payment type based on actual amounts
+                                $bookingTotal = (float)$p['booking_total'];
                                 $paymentAmount = (float)$p['amount'];
+                                $totalPaidVerified = (float)$p['total_paid_verified'];
+                                $downpaymentAmount = $bookingTotal * 0.5;
                                 
-                                // Determine payment type based on amount
-                                if ($paymentAmount >= $p['booking_total'] * 0.95) {
-                                    $paymentType = 'Full Payment';
-                                    $typeClass = 'success';
-                                } elseif ($paymentAmount >= $downpaymentAmount * 0.95 && $paymentAmount <= $downpaymentAmount * 1.05) {
-                                    $paymentType = '50% Downpayment';
-                                    $typeClass = 'warning';
+                                // For verified payments: check cumulative total
+                                // For pending: check what this payment would accomplish
+                                if ($p['status'] === 'verified') {
+                                    // Check if this payment completed the full amount
+                                    if ($totalPaidVerified >= $bookingTotal * 0.95) {
+                                        // Check if this specific payment is the remaining balance (completing full payment)
+                                        $paidBeforeThis = $totalPaidVerified - $paymentAmount;
+                                        if ($paidBeforeThis > 0 && $paymentAmount < $bookingTotal * 0.6) {
+                                            $paymentType = 'Remaining Balance';
+                                            $typeClass = 'success';
+                                        } else {
+                                            $paymentType = 'Full Payment';
+                                            $typeClass = 'success';
+                                        }
+                                    } elseif ($paymentAmount >= $downpaymentAmount * 0.95 && $paymentAmount <= $downpaymentAmount * 1.05) {
+                                        $paymentType = '50% Downpayment';
+                                        $typeClass = 'warning';
+                                    } else {
+                                        $percentage = round(($paymentAmount / $bookingTotal) * 100);
+                                        $paymentType = $percentage . '% Partial';
+                                        $typeClass = 'info';
+                                    }
                                 } else {
-                                    $paymentType = 'Partial';
-                                    $typeClass = 'info';
+                                    // For pending payments: determine type by amount
+                                    if ($paymentAmount >= $bookingTotal * 0.95) {
+                                        $paymentType = 'Full Payment';
+                                        $typeClass = 'success';
+                                    } elseif ($paymentAmount >= $downpaymentAmount * 0.95 && $paymentAmount <= $downpaymentAmount * 1.05) {
+                                        $paymentType = '50% Downpayment';
+                                        $typeClass = 'warning';
+                                    } else {
+                                        // Check if this completes the remaining balance
+                                        $remaining = $bookingTotal - $totalPaidVerified;
+                                        if ($paymentAmount >= $remaining * 0.95 && $totalPaidVerified > 0) {
+                                            $paymentType = 'Remaining Balance';
+                                            $typeClass = 'success';
+                                        } else {
+                                            $percentage = round(($paymentAmount / $bookingTotal) * 100);
+                                            $paymentType = $percentage . '% Partial';
+                                            $typeClass = 'info';
+                                        }
+                                    }
                                 }
                             ?>
                             <tr class="<?= $p['status'] === 'pending' ? 'table-warning' : '' ?>">
