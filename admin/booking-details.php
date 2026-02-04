@@ -234,6 +234,14 @@ markMessagesAsRead($conn, $bookingId, $_SESSION['user_id']);
                 <div class="card mb-4">
                     <div class="card-header bg-warning"><h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Order Summary</h5></div>
                     <div class="card-body">
+                        <?php 
+                        // Calculate subtotal (before any discount)
+                        $subtotal = $packageTotal + $menuItemsTotal;
+                        // Check if there's a discount applied (subtotal > total_amount)
+                        $discountAmount = $subtotal - $booking['total_amount'];
+                        $hasDiscount = $discountAmount > 1; // More than ₱1 difference = discount applied
+                        $discountPercent = $hasDiscount ? round(($discountAmount / $subtotal) * 100) : 0;
+                        ?>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Package (<?= $booking['number_of_guests'] ?> pax x <?= formatPrice($booking['base_price'] ?? 0) ?>):</span>
                             <span><?= formatPrice($packageTotal) ?></span>
@@ -242,6 +250,16 @@ markMessagesAsRead($conn, $bookingId, $_SESSION['user_id']);
                         <div class="d-flex justify-content-between mb-2">
                             <span>Additional Menu Items:</span>
                             <span><?= formatPrice($menuItemsTotal) ?></span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if ($hasDiscount): ?>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span class="text-muted text-decoration-line-through"><?= formatPrice($subtotal) ?></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span><i class="bi bi-tag me-1"></i>Promo Discount (<?= $discountPercent ?>%):</span>
+                            <span>-<?= formatPrice($discountAmount) ?></span>
                         </div>
                         <?php endif; ?>
                         <hr>

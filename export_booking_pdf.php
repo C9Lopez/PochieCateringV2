@@ -49,6 +49,20 @@ while($pay = $payments->fetch_assoc()) {
 }
 
 $packageTotal = ($booking['base_price'] ?? 0) * $booking['number_of_guests'];
+
+// Calculate menu items total
+$menuItemsTotal = 0;
+foreach ($menuData as $item) {
+    // Item format: [name, price, qty, subtotal] - need to parse subtotal
+}
+$menuTotalResult = $conn->query("SELECT SUM(price * quantity) as total FROM booking_menu_items WHERE booking_id = $bookingId");
+$menuItemsTotal = (float)($menuTotalResult->fetch_assoc()['total'] ?? 0);
+
+// Calculate discount (if any)
+$subtotal = $packageTotal + $menuItemsTotal;
+$discountAmount = $subtotal - $booking['total_amount'];
+$hasDiscount = $discountAmount > 1;
+$discountPercent = $hasDiscount ? round(($discountAmount / $subtotal) * 100) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -148,6 +162,13 @@ $packageTotal = ($booking['base_price'] ?? 0) * $booking['number_of_guests'];
             doc.text('Payment Summary', 14, doc.lastAutoTable.finalY + 15);
             
             const summary = [
+                ['Package Subtotal', '<?= formatPrice($packageTotal) ?>'],
+                <?php if ($menuItemsTotal > 0): ?>
+                ['Menu Items', '<?= formatPrice($menuItemsTotal) ?>'],
+                <?php endif; ?>
+                <?php if ($hasDiscount): ?>
+                ['Promo Discount (<?= $discountPercent ?>%)', '-<?= formatPrice($discountAmount) ?>'],
+                <?php endif; ?>
                 ['Total Amount Due', '<?= formatPrice($booking['total_amount']) ?>']
             ];
 
@@ -155,7 +176,8 @@ $packageTotal = ($booking['base_price'] ?? 0) * $booking['number_of_guests'];
                 startY: doc.lastAutoTable.finalY + 20,
                 body: summary,
                 theme: 'grid',
-                styles: { fontSize: 12, fontStyle: 'bold' },
+                styles: { fontSize: 11 },
+                columnStyles: { 0: { fontStyle: 'bold' } },
                 headStyles: { fillColor: [52, 58, 64] }
             });
 
