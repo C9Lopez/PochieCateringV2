@@ -281,20 +281,81 @@ $payments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId O
                     </div>
                     
                     <?php 
-                    // Calculate paid amount
+                    // Calculate paid amount (verified only)
                     $paidResult = $conn->query("SELECT SUM(amount) as paid FROM payments WHERE booking_id = $bookingId AND status = 'verified'");
                     $paidAmount = (float)($paidResult->fetch_assoc()['paid'] ?? 0);
                     $remainingAmount = $booking['total_amount'] - $paidAmount;
+                    
+                    // Check for pending payments
+                    $pendingPayments = $conn->query("SELECT * FROM payments WHERE booking_id = $bookingId AND status = 'pending' ORDER BY created_at DESC");
+                    $pendingTotal = 0;
+                    $pendingList = [];
+                    while ($pp = $pendingPayments->fetch_assoc()) {
+                        $pendingTotal += $pp['amount'];
+                        $pendingList[] = $pp;
+                    }
                     ?>
                     
                     <?php if ($paidAmount > 0): ?>
                     <div class="d-flex justify-content-between mb-2 text-success">
-                        <span>Amount Paid:</span>
+                        <span><i class="bi bi-check-circle me-1"></i>Verified Paid:</span>
                         <strong><?= formatPrice($paidAmount) ?></strong>
                     </div>
+                    <?php endif; ?>
+                    
+                    <?php if ($pendingTotal > 0): ?>
+                    <div class="d-flex justify-content-between mb-2 text-warning">
+                        <span><i class="bi bi-hourglass-split me-1"></i>Pending Verification:</span>
+                        <strong><?= formatPrice($pendingTotal) ?></strong>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if ($remainingAmount > 0): ?>
                     <div class="d-flex justify-content-between mb-3 text-danger">
                         <span>Remaining Balance:</span>
                         <strong><?= formatPrice($remainingAmount) ?></strong>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if (count($pendingList) > 0): ?>
+                    <div class="alert alert-warning small mb-3">
+                        <i class="bi bi-hourglass-split me-2"></i>
+                        <strong>Waiting for Confirmation</strong>
+                        <?php foreach ($pendingList as $pending): 
+                            $pendingAmount = (float)$pending['amount'];
+                            $downpayment = $booking['total_amount'] * 0.5;
+                            
+                            // Determine payment type
+                            if ($pendingAmount >= $booking['total_amount'] * 0.95) {
+                                $typeLabel = 'Full Payment';
+                            } elseif ($pendingAmount >= $downpayment * 0.95 && $pendingAmount <= $downpayment * 1.05) {
+                                $typeLabel = '50% Downpayment';
+                            } elseif ($paidAmount > 0 && $pendingAmount >= $remainingAmount * 0.95) {
+                                $typeLabel = 'Remaining Balance';
+                            } else {
+                                $percentage = round(($pendingAmount / $booking['total_amount']) * 100);
+                                $typeLabel = $percentage . '% Partial Payment';
+                            }
+                        ?>
+                        <div class="mt-2 p-2 bg-white rounded border">
+                            <div class="d-flex justify-content-between">
+                                <span><?= $typeLabel ?></span>
+                                <strong><?= formatPrice($pending['amount']) ?></strong>
+                            </div>
+                            <small class="text-muted">
+                                <?= htmlspecialchars($pending['payment_method']) ?> 
+                                <?php if ($pending['reference_number']): ?>
+                                    | Ref: <?= htmlspecialchars($pending['reference_number']) ?>
+                                <?php endif; ?>
+                            </small>
+                            <div class="text-muted" style="font-size: 11px;">
+                                Submitted: <?= formatDateTime($pending['created_at']) ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                        <div class="mt-2 text-center" style="font-size: 11px;">
+                            <i class="bi bi-info-circle me-1"></i>Our team will verify your payment shortly.
+                        </div>
                     </div>
                     <?php endif; ?>
                     
