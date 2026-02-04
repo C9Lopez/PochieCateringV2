@@ -1,18 +1,21 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Force HTTPS (uncomment if needed)
-    # RewriteCond %{HTTPS} off
-    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    # Force HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
     
-    # Handle root URL - redirect to index.php
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^$ index.php [L]
+    # DirectoryIndex fallback
+    DirectoryIndex index.php
     
     # Handle trailing slashes
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)/$ /$1 [L,R=301]
+    
+    # Handle root URL
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^$ index.php [L]
 </IfModule>
 
 # Cache static assets
@@ -31,3 +34,12 @@
     AddType application/manifest+json .webmanifest
     AddType application/manifest+json .json
 </IfModule>
+
+# Force no-cache for manifest and service worker
+<FilesMatch "(manifest\.json|sw\.js)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </IfModule>
+</FilesMatch>

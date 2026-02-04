@@ -1,9 +1,9 @@
-const CACHE_NAME = 'catering-pwa-v7';
+const CACHE_NAME = 'catering-pwa-v8';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.php',
-  '/manifest.json',
-  '/uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg',
+  './',
+  './index.php',
+  './manifest.json',
+  './uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap'
@@ -66,7 +66,7 @@ self.addEventListener('fetch', (event) => {
         .catch(() => {
           // If network fails, try cache, then fallback to index
           return caches.match(event.request)
-            .then(cached => cached || caches.match('/'));
+            .then(cached => cached || caches.match('./') || caches.match('./index.php'));
         })
     );
     return;

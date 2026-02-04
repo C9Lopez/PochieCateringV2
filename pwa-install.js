@@ -6,6 +6,12 @@ if (installBtn) {
     installBtn.style.setProperty('display', 'none', 'important');
 
     window.addEventListener('beforeinstallprompt', (e) => {
+        // Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('App is already in standalone mode');
+            return;
+        }
+
         // Prevent Chrome 67 and earlier from automatically showing the prompt
         e.preventDefault();
         // Stash the event so it can be triggered later.
