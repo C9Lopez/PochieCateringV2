@@ -11,9 +11,26 @@ $completedBookings = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE 
 $cancelledBookings = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE status = 'cancelled' AND created_at BETWEEN '$startDate' AND '$endDate 23:59:59'")->fetch_assoc()['count'];
 $paidBookings = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE payment_status = 'paid' AND created_at BETWEEN '$startDate' AND '$endDate 23:59:59'")->fetch_assoc()['count'];
 
-$totalRevenue = $conn->query("SELECT SUM(total_amount) as total FROM bookings WHERE (status = 'completed' OR payment_status = 'paid') AND created_at BETWEEN '$startDate' AND '$endDate 23:59:59'")->fetch_assoc()['total'] ?? 0;
+// Actual collected revenue from verified payments (includes partial/downpayments)
+$collectedRevenue = $conn->query("SELECT SUM(p.amount) as total FROM payments p 
+                                  JOIN bookings b ON p.booking_id = b.id 
+                                  WHERE p.status = 'verified' 
+                                  AND p.created_at BETWEEN '$startDate' AND '$endDate 23:59:59'")->fetch_assoc()['total'] ?? 0;
+
+// Expected revenue from fully paid bookings
 $paidRevenue = $conn->query("SELECT SUM(total_amount) as total FROM bookings WHERE payment_status = 'paid' AND created_at BETWEEN '$startDate' AND '$endDate 23:59:59'")->fetch_assoc()['total'] ?? 0;
-$completedRevenue = $conn->query("SELECT SUM(total_amount) as total FROM bookings WHERE status = 'completed' AND created_at BETWEEN '$startDate' AND '$endDate 23:59:59'")->fetch_assoc()['total'] ?? 0;
+
+// Pending/uncollected revenue (partial payments still pending)
+$pendingRevenue = $conn->query("SELECT SUM(p.amount) as total FROM payments p 
+                                WHERE p.status = 'pending' 
+                                AND p.created_at BETWEEN '$startDate' AND '$endDate 23:59:59'")->fetch_assoc()['total'] ?? 0;
+
+// Partial payments collected (downpayments on not-fully-paid bookings)
+$partialCollected = $conn->query("SELECT SUM(p.amount) as total FROM payments p 
+                                  JOIN bookings b ON p.booking_id = b.id 
+                                  WHERE p.status = 'verified' 
+                                  AND b.payment_status != 'paid'
+                                  AND p.created_at BETWEEN '$startDate' AND '$endDate 23:59:59'")->fetch_assoc()['total'] ?? 0;
 
 $popularPackages = $conn->query("SELECT p.name, COUNT(*) as booking_count, SUM(b.total_amount) as revenue
                                   FROM bookings b 
@@ -21,12 +38,14 @@ $popularPackages = $conn->query("SELECT p.name, COUNT(*) as booking_count, SUM(b
                                   WHERE b.created_at BETWEEN '$startDate' AND '$endDate 23:59:59'
                                   GROUP BY p.id ORDER BY booking_count DESC LIMIT 5");
 
-$monthlyRevenue = $conn->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, 
-                                 SUM(CASE WHEN status = 'completed' OR payment_status = 'paid' THEN total_amount ELSE 0 END) as revenue, 
-                                 COUNT(*) as bookings,
-                                 SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-                                 SUM(CASE WHEN payment_status = 'paid' THEN 1 ELSE 0 END) as paid
-                                 FROM bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+$monthlyRevenue = $conn->query("SELECT DATE_FORMAT(p.created_at, '%Y-%m') as month, 
+                                 SUM(p.amount) as revenue, 
+                                 COUNT(DISTINCT p.booking_id) as bookings,
+                                 SUM(CASE WHEN p.amount >= b.total_amount * 0.95 THEN 1 ELSE 0 END) as full_payments,
+                                 SUM(CASE WHEN p.amount < b.total_amount * 0.95 THEN 1 ELSE 0 END) as partial_payments
+                                 FROM payments p
+                                 JOIN bookings b ON p.booking_id = b.id
+                                 WHERE p.status = 'verified' AND p.created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
                                  GROUP BY month ORDER BY month DESC");
 
 $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.name as package_name
@@ -113,27 +132,39 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
         </div>
         
         <div class="row g-4 mb-4">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card bg-success text-white">
                     <div class="card-body text-center">
-                        <h3 class="mb-1"><?= formatPrice($totalRevenue) ?></h3>
-                        <small>Total Revenue (Paid + Completed)</small>
+                        <h3 class="mb-1"><?= formatPrice($collectedRevenue) ?></h3>
+                        <small>Total Collected Revenue</small>
+                        <div class="small opacity-75 mt-1">All verified payments</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card bg-primary text-white">
                     <div class="card-body text-center">
                         <h3 class="mb-1"><?= formatPrice($paidRevenue) ?></h3>
-                        <small>Revenue from Paid Bookings</small>
+                        <small>Fully Paid Bookings</small>
+                        <div class="small opacity-75 mt-1">100% payment complete</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body text-center">
+                        <h3 class="mb-1"><?= formatPrice($partialCollected) ?></h3>
+                        <small>Downpayments Collected</small>
+                        <div class="small opacity-75 mt-1">50% partial payments</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
                 <div class="card bg-secondary text-white">
                     <div class="card-body text-center">
-                        <h3 class="mb-1"><?= formatPrice($completedRevenue) ?></h3>
-                        <small>Revenue from Completed Events</small>
+                        <h3 class="mb-1"><?= formatPrice($pendingRevenue) ?></h3>
+                        <small>Pending Verification</small>
+                        <div class="small opacity-75 mt-1">Awaiting admin approval</div>
                     </div>
                 </div>
             </div>
@@ -203,11 +234,11 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
             </div>
             <div class="col-lg-6">
                 <div class="card mb-4">
-                    <div class="card-header"><h5 class="mb-0">Monthly Revenue (Last 12 Months)</h5></div>
+                    <div class="card-header"><h5 class="mb-0">Monthly Collected Revenue (Last 12 Months)</h5></div>
                     <div class="card-body p-0">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr><th>Month</th><th>Bookings</th><th>Paid</th><th>Completed</th><th>Revenue</th></tr>
+                                <tr><th>Month</th><th>Bookings</th><th>Full</th><th>Partial</th><th>Revenue</th></tr>
                             </thead>
                             <tbody>
                                 <?php if ($monthlyRevenue && $monthlyRevenue->num_rows > 0): ?>
@@ -215,13 +246,13 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
                                 <tr>
                                     <td><?= date('F Y', strtotime($m['month'] . '-01')) ?></td>
                                     <td><?= $m['bookings'] ?></td>
-                                    <td><span class="badge bg-success"><?= $m['paid'] ?></span></td>
-                                    <td><span class="badge bg-secondary"><?= $m['completed'] ?></span></td>
+                                    <td><span class="badge bg-success"><?= $m['full_payments'] ?></span></td>
+                                    <td><span class="badge bg-warning text-dark"><?= $m['partial_payments'] ?></span></td>
                                     <td><strong class="text-success"><?= formatPrice($m['revenue']) ?></strong></td>
                                 </tr>
                                 <?php endwhile; ?>
                                 <?php else: ?>
-                                <tr><td colspan="5" class="text-center text-muted py-3">No data available</td></tr>
+                                <tr><td colspan="5" class="text-center text-muted py-3">No verified payments yet</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
