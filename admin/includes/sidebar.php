@@ -50,6 +50,10 @@ $unreadBookingsAdmin = getBookingsWithUnreadMessages($conn, $_SESSION['user_id']
                 <span class="nav-badge warning"><?= $adminNotifs['pending_payments'] ?></span>
                 <?php endif; ?>
             </a>
+            <a href="<?= adminUrl('payment-settings.php') ?>" class="nav-item <?= $currentPage == 'payment-settings.php' ? 'active' : '' ?>">
+                <i class="bi bi-qr-code"></i>
+                <span>Payment Settings</span>
+            </a>
         </div>
         
         <div class="nav-section">

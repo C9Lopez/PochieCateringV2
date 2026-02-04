@@ -26,6 +26,15 @@ $paidAmount = (float)($paidStmt->get_result()->fetch_assoc()['paid'] ?? 0);
 $remainingAmount = $booking['total_amount'] - $paidAmount;
 $downpaymentAmount = $booking['total_amount'] * 0.5;
 
+// Fetch payment settings from database
+$paymentMethods = [];
+$pmResult = $conn->query("SELECT * FROM payment_settings WHERE is_enabled = 1 ORDER BY display_order ASC");
+if ($pmResult) {
+    while ($pm = $pmResult->fetch_assoc()) {
+        $paymentMethods[$pm['payment_type']] = $pm;
+    }
+}
+
 $error = '';
 $success = '';
 
@@ -135,92 +144,131 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="card-body">
                             <h6 class="mb-3"><i class="bi bi-wallet2 me-2"></i>Payment Methods Accepted:</h6>
                             
+                            <?php 
+                            $gcash = $paymentMethods['gcash'] ?? null;
+                            $maya = $paymentMethods['maya'] ?? null;
+                            $bdo = $paymentMethods['bdo'] ?? null;
+                            $bpi = $paymentMethods['bpi'] ?? null;
+                            $hasEwallet = $gcash || $maya;
+                            $hasBank = $bdo || $bpi;
+                            ?>
+                            
                             <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
+                                <?php if ($gcash): ?>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link active" id="gcash-tab" data-bs-toggle="tab" data-bs-target="#gcash" type="button" role="tab">
                                         <i class="bi bi-phone me-1"></i>GCash
                                     </button>
                                 </li>
+                                <?php endif; ?>
+                                <?php if ($maya): ?>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="maya-tab" data-bs-toggle="tab" data-bs-target="#maya" type="button" role="tab">
+                                    <button class="nav-link <?= !$gcash ? 'active' : '' ?>" id="maya-tab" data-bs-toggle="tab" data-bs-target="#maya" type="button" role="tab">
                                         <i class="bi bi-phone me-1"></i>Maya
                                     </button>
                                 </li>
+                                <?php endif; ?>
+                                <?php if ($hasBank): ?>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank" type="button" role="tab">
+                                    <button class="nav-link <?= !$hasEwallet ? 'active' : '' ?>" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank" type="button" role="tab">
                                         <i class="bi bi-bank me-1"></i>Bank Transfer
                                     </button>
                                 </li>
+                                <?php endif; ?>
                             </ul>
                             
                             <div class="tab-content p-3 border border-top-0 rounded-bottom" id="paymentTabsContent">
+                                <?php if ($gcash): ?>
                                 <!-- GCash Tab -->
                                 <div class="tab-pane fade show active" id="gcash" role="tabpanel">
                                     <div class="row align-items-center">
                                         <div class="col-md-6">
                                             <p class="mb-2"><strong>GCash Number:</strong></p>
-                                            <h4 class="text-primary mb-1">0912-345-6789</h4>
-                                            <p class="text-muted mb-3">Pochie Catering Services</p>
-                                            <button type="button" class="btn btn-sm btn-outline-primary copy-btn" data-copy="09123456789">
+                                            <h4 class="text-primary mb-1"><?= htmlspecialchars($gcash['account_number']) ?></h4>
+                                            <p class="text-muted mb-3"><?= htmlspecialchars($gcash['account_name']) ?></p>
+                                            <button type="button" class="btn btn-sm btn-outline-primary copy-btn" data-copy="<?= htmlspecialchars(preg_replace('/[^0-9]/', '', $gcash['account_number'])) ?>">
                                                 <i class="bi bi-clipboard me-1"></i>Copy Number
                                             </button>
                                         </div>
                                         <div class="col-md-6 text-center">
+                                            <?php if (!empty($gcash['qr_code_image'])): ?>
                                             <div class="border rounded p-3 bg-white d-inline-block">
-                                                <img src="<?= url('assets/images/gcash-qr.png') ?>" alt="GCash QR Code" class="img-fluid" style="max-width: 150px;" onerror="this.parentElement.innerHTML='<div class=\'text-muted\'><i class=\'bi bi-qr-code\' style=\'font-size: 4rem;\'></i><br><small>QR Code</small></div>'">
+                                                <img src="<?= url($gcash['qr_code_image']) ?>" alt="GCash QR Code" class="img-fluid" style="max-width: 150px;">
                                             </div>
                                             <p class="small text-muted mt-2">Scan to pay via GCash</p>
+                                            <?php else: ?>
+                                            <div class="border rounded p-3 bg-white d-inline-block text-muted">
+                                                <i class="bi bi-qr-code" style="font-size: 4rem;"></i>
+                                                <br><small>QR Code not set</small>
+                                            </div>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                                 
+                                <?php if ($maya): ?>
                                 <!-- Maya Tab -->
-                                <div class="tab-pane fade" id="maya" role="tabpanel">
+                                <div class="tab-pane fade <?= !$gcash ? 'show active' : '' ?>" id="maya" role="tabpanel">
                                     <div class="row align-items-center">
                                         <div class="col-md-6">
                                             <p class="mb-2"><strong>Maya Number:</strong></p>
-                                            <h4 class="text-success mb-1">0912-345-6789</h4>
-                                            <p class="text-muted mb-3">Pochie Catering Services</p>
-                                            <button type="button" class="btn btn-sm btn-outline-success copy-btn" data-copy="09123456789">
+                                            <h4 class="text-success mb-1"><?= htmlspecialchars($maya['account_number']) ?></h4>
+                                            <p class="text-muted mb-3"><?= htmlspecialchars($maya['account_name']) ?></p>
+                                            <button type="button" class="btn btn-sm btn-outline-success copy-btn" data-copy="<?= htmlspecialchars(preg_replace('/[^0-9]/', '', $maya['account_number'])) ?>">
                                                 <i class="bi bi-clipboard me-1"></i>Copy Number
                                             </button>
                                         </div>
                                         <div class="col-md-6 text-center">
+                                            <?php if (!empty($maya['qr_code_image'])): ?>
                                             <div class="border rounded p-3 bg-white d-inline-block">
-                                                <img src="<?= url('assets/images/maya-qr.png') ?>" alt="Maya QR Code" class="img-fluid" style="max-width: 150px;" onerror="this.parentElement.innerHTML='<div class=\'text-muted\'><i class=\'bi bi-qr-code\' style=\'font-size: 4rem;\'></i><br><small>QR Code</small></div>'">
+                                                <img src="<?= url($maya['qr_code_image']) ?>" alt="Maya QR Code" class="img-fluid" style="max-width: 150px;">
                                             </div>
                                             <p class="small text-muted mt-2">Scan to pay via Maya</p>
+                                            <?php else: ?>
+                                            <div class="border rounded p-3 bg-white d-inline-block text-muted">
+                                                <i class="bi bi-qr-code" style="font-size: 4rem;"></i>
+                                                <br><small>QR Code not set</small>
+                                            </div>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                                 
+                                <?php if ($hasBank): ?>
                                 <!-- Bank Transfer Tab -->
-                                <div class="tab-pane fade" id="bank" role="tabpanel">
+                                <div class="tab-pane fade <?= !$hasEwallet ? 'show active' : '' ?>" id="bank" role="tabpanel">
                                     <div class="row">
+                                        <?php if ($bdo): ?>
                                         <div class="col-md-6 mb-3">
                                             <div class="border rounded p-3 bg-white">
                                                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/BDO_Unibank_%28logo%29.svg/120px-BDO_Unibank_%28logo%29.svg.png" alt="BDO" height="25" class="mb-2" onerror="this.style.display='none'">
                                                 <p class="mb-1"><strong>BDO Savings Account</strong></p>
-                                                <h5 class="text-primary mb-1">1234-5678-9012</h5>
-                                                <p class="text-muted small mb-2">Pochie Catering Services</p>
-                                                <button type="button" class="btn btn-sm btn-outline-primary copy-btn" data-copy="123456789012">
+                                                <h5 class="text-primary mb-1"><?= htmlspecialchars($bdo['account_number']) ?></h5>
+                                                <p class="text-muted small mb-2"><?= htmlspecialchars($bdo['account_name']) ?></p>
+                                                <button type="button" class="btn btn-sm btn-outline-primary copy-btn" data-copy="<?= htmlspecialchars(preg_replace('/[^0-9]/', '', $bdo['account_number'])) ?>">
                                                     <i class="bi bi-clipboard me-1"></i>Copy
                                                 </button>
                                             </div>
                                         </div>
+                                        <?php endif; ?>
+                                        <?php if ($bpi): ?>
                                         <div class="col-md-6 mb-3">
                                             <div class="border rounded p-3 bg-white">
                                                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/BPI_logo_2022.svg/120px-BPI_logo_2022.svg.png" alt="BPI" height="25" class="mb-2" onerror="this.style.display='none'">
                                                 <p class="mb-1"><strong>BPI Savings Account</strong></p>
-                                                <h5 class="text-danger mb-1">9876-5432-1098</h5>
-                                                <p class="text-muted small mb-2">Pochie Catering Services</p>
-                                                <button type="button" class="btn btn-sm btn-outline-danger copy-btn" data-copy="987654321098">
+                                                <h5 class="text-danger mb-1"><?= htmlspecialchars($bpi['account_number']) ?></h5>
+                                                <p class="text-muted small mb-2"><?= htmlspecialchars($bpi['account_name']) ?></p>
+                                                <button type="button" class="btn btn-sm btn-outline-danger copy-btn" data-copy="<?= htmlspecialchars(preg_replace('/[^0-9]/', '', $bpi['account_number'])) ?>">
                                                     <i class="bi bi-clipboard me-1"></i>Copy
                                                 </button>
                                             </div>
                                         </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
+                                <?php endif; ?>
                             </div>
                             
                             <div class="alert alert-warning mt-3 mb-0 small">
