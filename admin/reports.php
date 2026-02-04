@@ -72,10 +72,10 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
     <?php include 'includes/sidebar.php'; ?>
     
     <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-4">
             <h3 class="mb-0">Reports & Analytics</h3>
-            <a href="export_all_pdf.php" class="btn btn-outline-danger">
-                <i class="bi bi-file-earmark-pdf me-1"></i> Export Full Backup (PDF)
+            <a href="export_all_pdf.php" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
             </a>
         </div>
         
@@ -174,6 +174,7 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
         <div class="card mb-4">
             <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Recent Paid/Completed Bookings</h5></div>
             <div class="card-body p-0">
+                <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
@@ -200,10 +201,11 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
                         </tr>
                         <?php endwhile; ?>
                         <?php else: ?>
-                        <tr><td colspan="7" class="text-center text-muted py-3">No paid/completed bookings in this period</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-3">No paid/completed bookings in this period</td></tr>
                         <?php endif; ?>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         
@@ -212,6 +214,7 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
                 <div class="card mb-4">
                     <div class="card-header"><h5 class="mb-0">Popular Packages</h5></div>
                     <div class="card-body p-0">
+                        <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr><th>Package</th><th>Bookings</th><th>Revenue</th></tr>
@@ -230,6 +233,7 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
                                 <?php endif; ?>
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -237,6 +241,7 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
                 <div class="card mb-4">
                     <div class="card-header"><h5 class="mb-0">Monthly Collected Revenue (Last 12 Months)</h5></div>
                     <div class="card-body p-0">
+                        <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr><th>Month</th><th>Bookings</th><th>Full</th><th>Partial</th><th>Revenue</th></tr>
@@ -257,6 +262,7 @@ $recentPaidBookings = $conn->query("SELECT b.*, u.first_name, u.last_name, p.nam
                                 <?php endif; ?>
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 </div>
             </div>
