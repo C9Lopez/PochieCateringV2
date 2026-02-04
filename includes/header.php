@@ -18,13 +18,13 @@ if (isLoggedIn() && getUserRole() === 'customer') {
     <title><?= htmlspecialchars($pageTitle ?? $settings['site_name'] ?? 'Pochie Catering Services') ?></title>
     
     <!-- PWA Meta Tags -->
-    <link rel="icon" href="<?= url('uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg') ?>" type="image/jpg">
+    <link rel="icon" href="<?= url('uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg') ?>" type="image/jpeg">
     <meta name="theme-color" content="#f97316">
     <link rel="manifest" href="<?= url('manifest.json') ?>">
-    <link rel="apple-touch-icon" href="<?= url('globe.svg') ?>">
+    <link rel="apple-touch-icon" href="<?= url('uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg') ?>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Catering">
+    <meta name="apple-mobile-web-app-title" content="Pochie Catering">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
