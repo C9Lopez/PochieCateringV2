@@ -217,12 +217,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             </button>
                                         </div>
                                         <div class="col-md-6 text-center">
-                                            <?php if (!empty($gcash['qr_code_image'])): ?>
-                                            <div class="border rounded p-3 bg-white d-inline-block">
-                                                <img src="<?= url($gcash['qr_code_image']) ?>" alt="GCash QR Code" class="img-fluid" style="max-width: 150px;">
-                                            </div>
-                                            <p class="small text-muted mt-2">Scan to pay via GCash</p>
-                                            <?php else: ?>
+                                              <?php if (!empty($gcash['qr_code_image'])): ?>
+                                              <div class="border rounded p-3 bg-white d-inline-block qr-clickable" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr-src="<?= url($gcash['qr_code_image']) ?>" data-qr-title="GCash QR Code" role="button">
+                                                  <img src="<?= url($gcash['qr_code_image']) ?>" alt="GCash QR Code" class="img-fluid" style="max-width: 150px;">
+                                              </div>
+                                              <p class="small text-muted mt-2"><i class="bi bi-zoom-in me-1"></i>Click to enlarge</p>
+                                              <?php else: ?>
                                             <div class="border rounded p-3 bg-white d-inline-block text-muted">
                                                 <i class="bi bi-qr-code" style="font-size: 4rem;"></i>
                                                 <br><small>QR Code not set</small>
@@ -246,12 +246,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             </button>
                                         </div>
                                         <div class="col-md-6 text-center">
-                                            <?php if (!empty($maya['qr_code_image'])): ?>
-                                            <div class="border rounded p-3 bg-white d-inline-block">
-                                                <img src="<?= url($maya['qr_code_image']) ?>" alt="Maya QR Code" class="img-fluid" style="max-width: 150px;">
-                                            </div>
-                                            <p class="small text-muted mt-2">Scan to pay via Maya</p>
-                                            <?php else: ?>
+                                              <?php if (!empty($maya['qr_code_image'])): ?>
+                                              <div class="border rounded p-3 bg-white d-inline-block qr-clickable" data-bs-toggle="modal" data-bs-target="#qrModal" data-qr-src="<?= url($maya['qr_code_image']) ?>" data-qr-title="Maya QR Code" role="button">
+                                                  <img src="<?= url($maya['qr_code_image']) ?>" alt="Maya QR Code" class="img-fluid" style="max-width: 150px;">
+                                              </div>
+                                              <p class="small text-muted mt-2"><i class="bi bi-zoom-in me-1"></i>Click to enlarge</p>
+                                              <?php else: ?>
                                             <div class="border rounded p-3 bg-white d-inline-block text-muted">
                                                 <i class="bi bi-qr-code" style="font-size: 4rem;"></i>
                                                 <br><small>QR Code not set</small>
@@ -402,7 +402,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 
+<!-- QR Code Zoom Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrModalLabel">QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <img src="" id="qrModalImage" alt="QR Code" class="img-fluid" style="max-width: 100%;">
+            </div>
+            <div class="modal-footer justify-content-center">
+                <p class="text-muted small mb-0"><i class="bi bi-phone me-1"></i>Scan this QR code using your e-wallet app</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+// QR Code Modal - show larger image when clicked
+document.querySelectorAll('.qr-clickable').forEach(function(el) {
+    el.addEventListener('click', function() {
+        const qrSrc = this.getAttribute('data-qr-src');
+        const qrTitle = this.getAttribute('data-qr-title');
+        document.getElementById('qrModalImage').src = qrSrc;
+        document.getElementById('qrModalLabel').textContent = qrTitle;
+    });
+});
+
 // Payment type selection
 const downpaymentAmount = <?= $downpaymentAmount ?>;
 const fullAmount = <?= $booking['total_amount'] ?>;
@@ -472,6 +500,14 @@ document.querySelector('input[name="proof_image"]').addEventListener('change', f
 </script>
 
 <style>
+.qr-clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.qr-clickable:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 .payment-option {
     cursor: pointer;
     transition: all 0.2s ease;
