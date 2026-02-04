@@ -20,6 +20,9 @@ $conn->query("CREATE TABLE IF NOT EXISTS `payment_settings` (
   UNIQUE KEY `payment_type` (`payment_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
 
+// Add missing columns if table was created earlier without them
+$conn->query("ALTER TABLE `payment_settings` ADD COLUMN IF NOT EXISTS `updated_by` int(11) DEFAULT NULL");
+
 // Insert default rows if empty
 $checkRows = $conn->query("SELECT COUNT(*) as cnt FROM payment_settings")->fetch_assoc()['cnt'];
 if ($checkRows == 0) {
