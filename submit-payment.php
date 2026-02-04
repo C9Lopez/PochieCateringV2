@@ -245,16 +245,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Amount Paid *</label>
-                            <div class="input-group">
-                                <span class="input-group-text">₱</span>
-                                <input type="number" name="amount" class="form-control" step="0.01" required 
-                                       value="<?= $paidAmount > 0 ? $remainingAmount : $downpaymentAmount ?>" min="1">
-                            </div>
+                            <label class="form-label">Payment Type *</label>
+                            
                             <?php if ($paidAmount > 0): ?>
-                            <small class="text-success"><i class="bi bi-check-circle me-1"></i>Downpayment paid. Remaining balance: <strong><?= formatPrice($remainingAmount) ?></strong></small>
+                            <!-- Already has downpayment - only show remaining balance option -->
+                            <div class="alert alert-success small mb-2">
+                                <i class="bi bi-check-circle me-1"></i>Downpayment of <?= formatPrice($paidAmount) ?> already paid.
+                            </div>
+                            <div class="payment-option selected p-3 border rounded bg-light">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_type" id="payRemaining" value="remaining" checked>
+                                    <label class="form-check-label w-100" for="payRemaining">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>Remaining Balance</strong>
+                                                <br><small class="text-muted">Complete your payment</small>
+                                            </div>
+                                            <span class="badge bg-success fs-5"><?= formatPrice($remainingAmount) ?></span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <input type="hidden" name="amount" value="<?= $remainingAmount ?>">
+                            
                             <?php else: ?>
-                            <small class="text-muted">Minimum 50% down payment: <?= formatPrice($downpaymentAmount) ?> | Full: <?= formatPrice($booking['total_amount']) ?></small>
+                            <!-- No payment yet - show downpayment and full payment options -->
+                            <div class="payment-options">
+                                <div class="payment-option p-3 border rounded mb-2" onclick="selectPaymentType('downpayment')">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="payment_type" id="payDownpayment" value="downpayment" checked>
+                                        <label class="form-check-label w-100" for="payDownpayment">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>50% Downpayment</strong>
+                                                    <br><small class="text-muted">Minimum required to confirm booking</small>
+                                                </div>
+                                                <span class="badge bg-warning text-dark fs-5"><?= formatPrice($downpaymentAmount) ?></span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-option p-3 border rounded" onclick="selectPaymentType('full')">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="payment_type" id="payFull" value="full">
+                                        <label class="form-check-label w-100" for="payFull">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>Full Payment</strong>
+                                                    <br><small class="text-muted">Pay the complete amount now</small>
+                                                </div>
+                                                <span class="badge bg-success fs-5"><?= formatPrice($booking['total_amount']) ?></span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden amount field that updates based on selection -->
+                            <input type="hidden" name="amount" id="paymentAmount" value="<?= $downpaymentAmount ?>">
                             <?php endif; ?>
                         </div>
                         
@@ -280,6 +329,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script>
+// Payment type selection
+const downpaymentAmount = <?= $downpaymentAmount ?>;
+const fullAmount = <?= $booking['total_amount'] ?>;
+
+function selectPaymentType(type) {
+    const options = document.querySelectorAll('.payment-option');
+    options.forEach(opt => opt.classList.remove('selected', 'border-primary', 'bg-light'));
+    
+    if (type === 'downpayment') {
+        document.getElementById('payDownpayment').checked = true;
+        document.getElementById('paymentAmount').value = downpaymentAmount;
+        document.getElementById('payDownpayment').closest('.payment-option').classList.add('selected', 'border-primary', 'bg-light');
+    } else {
+        document.getElementById('payFull').checked = true;
+        document.getElementById('paymentAmount').value = fullAmount;
+        document.getElementById('payFull').closest('.payment-option').classList.add('selected', 'border-primary', 'bg-light');
+    }
+}
+
+// Initialize selected state
+document.addEventListener('DOMContentLoaded', function() {
+    const checkedOption = document.querySelector('input[name="payment_type"]:checked');
+    if (checkedOption) {
+        checkedOption.closest('.payment-option').classList.add('selected', 'border-primary', 'bg-light');
+    }
+});
+
 // Copy to clipboard functionality
 document.querySelectorAll('.copy-btn').forEach(btn => {
     btn.addEventListener('click', function() {
@@ -320,5 +396,24 @@ document.querySelector('input[name="proof_image"]').addEventListener('change', f
     }
 });
 </script>
+
+<style>
+.payment-option {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.payment-option:hover {
+    border-color: #f97316 !important;
+    background-color: #fff8f5;
+}
+.payment-option.selected {
+    border-color: #f97316 !important;
+    background-color: #fff8f5 !important;
+}
+.payment-option .form-check-input:checked {
+    background-color: #f97316;
+    border-color: #f97316;
+}
+</style>
 
 <?php require_once 'includes/footer.php'; ?>
