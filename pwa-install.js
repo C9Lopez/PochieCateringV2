@@ -21,27 +21,35 @@ if (installBtn) {
         e.preventDefault();
         // Stash the event so it can be triggered later
         deferredPrompt = e;
-        // Make sure button is visible
-        installBtn.style.setProperty('display', 'inline-flex', 'important');
-        console.log('PWA install prompt is ready');
+        
+        // Show the button immediately since we have the prompt ready
+        if (installBtn) {
+            installBtn.style.setProperty('display', 'inline-flex', 'important');
+            // Optional: Auto-trigger prompt after first user interaction if you want it very fast
+            console.log('Native PWA prompt is ready to be triggered');
+        }
     });
 
-    installBtn.addEventListener('click', (e) => {
+    installBtn.addEventListener('click', async (e) => {
         if (deferredPrompt) {
-            // Use the native prompt if available
+            // Show the native install prompt
             deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the A2HS prompt');
-                    installBtn.style.setProperty('display', 'none', 'important');
-                } else {
-                    console.log('User dismissed the A2HS prompt');
-                }
-                deferredPrompt = null;
-            });
+            
+            // Wait for the user to respond to the prompt
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to install prompt: ${outcome}`);
+            
+            if (outcome === 'accepted') {
+                installBtn.style.setProperty('display', 'none', 'important');
+            }
+            deferredPrompt = null;
         } else {
-            // Fallback: show instructions for manual install
-            alert('Para i-install ang app:\n\n• Desktop: Click ang 3 dots (⋮) sa Chrome > "Install Pochie Catering Services..."\n\n• Mobile: Tap ang Share button > "Add to Home Screen"');
+            // Fallback if still not ready (usually due to HTTPS/Not Secure issue)
+            if (window.location.protocol === 'https:' && window.location.hostname === 'localhost') {
+                alert('Mabilis na Install Error: Naka-HTTPS ka sa localhost pero "Not Secure".\n\nSolution: Gamitin ang http://localhost/catering (walang "s") para lumabas ang mabilis na install prompt.');
+            } else {
+                alert('Para i-install:\n1. Click ang 3 dots (⋮)\n2. Click "Install Pochie Catering Services..."');
+            }
         }
     });
 
