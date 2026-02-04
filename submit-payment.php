@@ -244,9 +244,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="input-group">
                                 <span class="input-group-text">₱</span>
                                 <input type="number" name="amount" class="form-control" step="0.01" required 
-                                       value="<?= $booking['total_amount'] * 0.5 ?>" min="1">
+                                       value="<?= $paidAmount > 0 ? $remainingAmount : $downpaymentAmount ?>" min="1">
                             </div>
-                            <small class="text-muted">Minimum 50% down payment: <?= formatPrice($booking['total_amount'] * 0.5) ?></small>
+                            <?php if ($paidAmount > 0): ?>
+                            <small class="text-success"><i class="bi bi-check-circle me-1"></i>Downpayment paid. Remaining balance: <strong><?= formatPrice($remainingAmount) ?></strong></small>
+                            <?php else: ?>
+                            <small class="text-muted">Minimum 50% down payment: <?= formatPrice($downpaymentAmount) ?> | Full: <?= formatPrice($booking['total_amount']) ?></small>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="mb-3">
