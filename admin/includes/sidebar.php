@@ -549,6 +549,12 @@ body {
     justify-content: center;
 }
 
+/* Prevent horizontal scroll on all devices */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
 @media (max-width: 991.98px) {
     .sidebar {
         transform: translateX(-100%);
@@ -566,8 +572,104 @@ body {
     
     .main-content {
         margin-left: 0;
-        padding: 20px;
+        padding: 15px;
         padding-top: 70px;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+    
+    /* Fix tables on mobile */
+    .table-responsive {
+        margin: 0 -15px;
+        padding: 0 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Fix stat cards */
+    .stat-card .card-body {
+        padding: 15px;
+    }
+    
+    .stat-icon {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.2rem !important;
+    }
+    
+    /* Fix buttons wrapping */
+    .d-flex.gap-2 {
+        flex-wrap: wrap;
+    }
+    
+    /* Fix large text on mobile */
+    h3 {
+        font-size: 1.3rem;
+    }
+    
+    /* Card adjustments */
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    /* Modal adjustments for mobile */
+    .modal-dialog {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    /* Form adjustments */
+    .form-control, .form-select {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+@media (max-width: 575.98px) {
+    .main-content {
+        padding: 10px;
+        padding-top: 65px;
+    }
+    
+    /* Stack buttons vertically on very small screens */
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .d-flex.justify-content-between > div {
+        width: 100%;
+    }
+    
+    .d-flex.justify-content-between .d-flex.gap-2 {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .d-flex.justify-content-between .d-flex.gap-2 > * {
+        flex: 1;
+        text-align: center;
+    }
+    
+    /* Smaller badges */
+    .badge {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+    
+    /* Table cell text */
+    .table td, .table th {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+    
+    /* Action buttons in tables */
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 11px;
     }
 }
 </style>

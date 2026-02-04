@@ -48,14 +48,14 @@ $upcomingEvents = $conn->query("SELECT b.*, u.first_name, u.last_name, p.name as
     <?php include 'includes/sidebar.php'; ?>
     
     <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-2">
             <div>
                 <h3 class="mb-1">Dashboard</h3>
                 <p class="text-muted mb-0">Welcome back, <?= htmlspecialchars($_SESSION['user_name']) ?>!</p>
             </div>
-            <div class="d-flex gap-2">
-                <a href="export_all_pdf.php" class="btn btn-outline-danger">
-                    <i class="bi bi-file-earmark-pdf me-1"></i> Export All Data (PDF)
+            <div class="d-flex flex-wrap gap-2">
+                <a href="export_all_pdf.php" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
                 </a>
                 <span class="badge bg-primary d-flex align-items-center"><?= ucfirst(str_replace('_', ' ', getUserRole())) ?></span>
             </div>

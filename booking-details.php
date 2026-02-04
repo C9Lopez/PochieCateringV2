@@ -90,16 +90,18 @@ $payments = $paymentsStmt->get_result();
         </div>
     <?php endif; ?>
     
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
         <div>
-            <a href="<?= url('my-bookings.php') ?>" class="btn btn-outline-secondary mb-2"><i class="bi bi-arrow-left me-1"></i>Back to Bookings</a>
-            <a href="<?= url('export_booking_pdf.php?id=' . $bookingId) ?>" class="btn btn-danger mb-2 ms-2">
-                <i class="bi bi-file-earmark-pdf me-1"></i>Download PDF (Offline Copy)
-            </a>
-            <h2>Booking #<?= htmlspecialchars($booking['booking_number']) ?></h2>
-            <p class="text-muted mb-0">Submitted on <?= formatDateTime($booking['created_at']) ?></p>
+            <div class="d-flex flex-wrap gap-2 mb-2">
+                <a href="<?= url('my-bookings.php') ?>" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Back</a>
+                <a href="<?= url('export_booking_pdf.php?id=' . $bookingId) ?>" class="btn btn-danger btn-sm">
+                    <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+                </a>
+            </div>
+            <h2 class="mb-1">Booking #<?= htmlspecialchars($booking['booking_number']) ?></h2>
+            <p class="text-muted mb-0 small">Submitted on <?= formatDateTime($booking['created_at']) ?></p>
         </div>
-        <div>
+        <div class="d-flex flex-wrap gap-2">
             <?= getStatusBadge($booking['status']) ?>
             <?= getPaymentBadge($booking['payment_status']) ?>
         </div>
@@ -184,6 +186,7 @@ $payments = $paymentsStmt->get_result();
                     <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Selected Menu Items</h5>
                 </div>
                 <div class="card-body p-0">
+                    <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
@@ -215,6 +218,7 @@ $payments = $paymentsStmt->get_result();
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
                 </div>
             </div>
             <?php endif; ?>

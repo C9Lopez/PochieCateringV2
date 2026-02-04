@@ -287,6 +287,12 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             color: #94a3b8;
         }
         
+        /* Prevent horizontal scroll */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        
         @media (max-width: 991.98px) {
             .navbar-collapse {
                 background: white;
@@ -308,6 +314,76 @@ if (isLoggedIn() && getUserRole() === 'customer') {
                 min-width: 200px !important;
                 width: auto !important;
                 margin: 0 !important;
+            }
+            
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            /* Table responsiveness */
+            .table-responsive {
+                margin: 0 -15px;
+                padding: 0 15px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+        
+        @media (max-width: 575.98px) {
+            .top-bar {
+                font-size: 11px;
+                padding: 6px 0;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem !important;
+            }
+            
+            .navbar-brand img {
+                max-height: 32px !important;
+            }
+            
+            .notification-dropdown {
+                min-width: 280px !important;
+                right: -50px !important;
+            }
+            
+            /* Cards on mobile */
+            .card {
+                margin-bottom: 15px;
+            }
+            
+            /* Form inputs - prevent zoom on iOS */
+            .form-control, .form-select, input, textarea {
+                font-size: 16px !important;
+            }
+            
+            /* Buttons */
+            .btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            /* Section padding */
+            section, .py-5 {
+                padding-top: 2rem !important;
+                padding-bottom: 2rem !important;
+            }
+            
+            /* Headings */
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.25rem; }
+            
+            /* Footer adjustments */
+            .footer {
+                padding: 30px 0 15px;
+                text-align: center;
+            }
+            
+            .footer .col-md-4 {
+                margin-bottom: 20px;
             }
         }
     </style>
