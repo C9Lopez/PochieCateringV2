@@ -1,7 +1,7 @@
-const CACHE_NAME = 'catering-pwa-v5';
+const CACHE_NAME = 'catering-pwa-v6';
 const ASSETS_TO_CACHE = [
-  'manifest.json',
-  'globe.svg',
+  './manifest.json',
+  './index.php',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap'

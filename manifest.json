@@ -2,26 +2,23 @@
   "name": "Pochie Catering Services",
   "short_name": "Catering",
   "description": "Authentic Filipino catering services for all your special occasions.",
-  "start_url": "/catering/index.php",
+  "start_url": "./index.php",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#f97316",
   "icons": [
     {
-      "src": "globe.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "globe.svg",
+      "src": "./uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/jpeg",
+      "purpose": "any maskable"
     },
     {
-      "src": "globe.svg",
+      "src": "./uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg",
       "sizes": "512x512",
-      "type": "image/svg+xml"
+      "type": "image/jpeg",
+      "purpose": "any maskable"
     }
   ]
 }
