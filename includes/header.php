@@ -18,7 +18,7 @@ if (isLoggedIn() && getUserRole() === 'customer') {
     <title><?= htmlspecialchars($pageTitle ?? $settings['site_name'] ?? 'Pochie Catering Services') ?></title>
     
     <!-- PWA Meta Tags -->
-    <link rel="icon" href="uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg" type="image/jpg">
+    <link rel="icon" href="<?= url('uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg') ?>" type="image/jpg">
     <meta name="theme-color" content="#f97316">
     <link rel="manifest" href="<?= url('manifest.json') ?>">
     <link rel="apple-touch-icon" href="<?= url('globe.svg') ?>">
