@@ -1,9 +1,9 @@
-const CACHE_NAME = 'catering-pwa-v8';
+const CACHE_NAME = 'catering-pwa-v9';
 const ASSETS_TO_CACHE = [
   './',
   './index.php',
   './manifest.json',
-  './uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg',
+  './uploads/settings/69628cfe614bb_grok-image-79569daa-4caf-4592-bf72-0e39be7f9181.png',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap'

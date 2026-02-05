@@ -18,11 +18,11 @@ if (isLoggedIn() && getUserRole() === 'customer') {
     <title><?= htmlspecialchars($pageTitle ?? $settings['site_name'] ?? 'Pochie Catering Services') ?></title>
     
     <!-- PWA Meta Tags -->
-    <link rel="icon" href="<?= url('uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg') ?>" type="image/jpeg">
+    <link rel="icon" href="<?= url('uploads/settings/69628cfe614bb_grok-image-79569daa-4caf-4592-bf72-0e39be7f9181.png') ?>" type="image/png">
     <meta name="theme-color" content="#f97316">
     <link rel="manifest" href="<?= url('manifest.json') ?>">
-    <link rel="apple-touch-icon" href="<?= url('uploads/settings/69838c04de6ad_281903bf-3ae0-48b7-a44e-acbb35e98438.jpg') ?>">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="<?= url('uploads/settings/69628cfe614bb_grok-image-79569daa-4caf-4592-bf72-0e39be7f9181.png') ?>">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Pochie Catering">
     
