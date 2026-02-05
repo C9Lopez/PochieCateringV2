@@ -48,12 +48,13 @@ if ($selectedCategory) {
     }
     
     .card-title {
-        font-size: 13px !important;
+        font-size: 14px;
         margin-bottom: 5px;
     }
     
     .card-text {
-        font-size: 11px !important;
+        font-size: 11px;
+        line-height: 1.3;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -61,40 +62,23 @@ if ($selectedCategory) {
     }
     
     .card-footer {
-        padding: 10px 12px;
+        padding: 8px 12px;
     }
     
-    .card-footer .fw-bold {
+    .card-footer .fs-5 {
         font-size: 14px !important;
     }
     
     .card-footer small {
         font-size: 10px;
     }
-    
-    /* Category headers */
-    .col-12.mt-4 h3 {
-        font-size: 16px !important;
-    }
-    
-    /* CTA section */
-    .text-center.mt-5.p-5 {
-        padding: 25px !important;
-    }
-    
-    .text-center.mt-5 h4 {
-        font-size: 16px !important;
-    }
-    
-    .text-center.mt-5 p {
-        font-size: 13px;
-    }
 }
 
-@media (max-width: 374px) {
+/* Tablet styles */
+@media (min-width: 576px) and (max-width: 991.98px) {
     .col-md-4.col-lg-3 {
-        flex: 0 0 100%;
-        max-width: 100%;
+        flex: 0 0 33.333%;
+        max-width: 33.333%;
     }
     
     .card .card-img-top,
@@ -124,29 +108,14 @@ if ($selectedCategory) {
     </div>
     
     <div class="row g-4">
-        <?php 
-        $currentCategory = '';
-        while($item = $items->fetch_assoc()): 
-            if (!$selectedCategory && $currentCategory !== $item['category_name']):
-                $currentCategory = $item['category_name'];
-        ?>
-            <div class="col-12 mt-4">
-                <h3 class="border-bottom pb-2" style="color: var(--primary);">
-                    <i class="bi bi-circle-fill me-2" style="font-size: 0.5rem;"></i><?= htmlspecialchars($currentCategory) ?>
-                </h3>
-            </div>
-        <?php endif; ?>
-        
+        <?php while($item = $items->fetch_assoc()): ?>
         <div class="col-md-4 col-lg-3">
-            <div class="card h-100">
-                <?php if ($item['image']): ?>
-                    <img src="<?= url('uploads/menu/' . $item['image']) ?>" 
-                         class="card-img-top" style="height: 200px; object-fit: cover;" 
-                         alt="<?= htmlspecialchars($item['name']) ?>">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <?php if($item['image']): ?>
+                    <img src="<?= url('uploads/menu/' . $item['image']) ?>" class="card-img-top" alt="<?= htmlspecialchars($item['name']) ?>" style="height: 200px; object-fit: cover;">
                 <?php else: ?>
-                    <div class="card-img-top d-flex align-items-center justify-content-center" 
-                         style="height: 200px; background: linear-gradient(135deg, #fed7aa, #fdba74); font-size: 4rem;">
-                        🍲
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="bi bi-image text-muted fs-1"></i>
                     </div>
                 <?php endif; ?>
                 <div class="card-body">

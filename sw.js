@@ -1,7 +1,5 @@
-const CACHE_NAME = 'catering-pwa-v10';
+const CACHE_NAME = 'catering-pwa-v13';
 const ASSETS_TO_CACHE = [
-  'https://pochiecatering.store/',
-  'https://pochiecatering.store/index.php',
   'https://pochiecatering.store/manifest.json',
   'https://pochiecatering.store/globe.svg',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
@@ -38,7 +36,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event - Network First for pages
+// Fetch Event - Network First for pages (do not cache HTML responses to avoid stale layout)
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   
@@ -48,21 +46,15 @@ self.addEventListener('fetch', (event) => {
   // Skip chrome-extension and other non-http(s) requests
   if (!url.protocol.startsWith('http')) return;
 
+  // Exclude Admin Panel from Service Worker Caching entirely
+  if (url.pathname.includes('/admin/')) {
+    return; // Let the network handle it directly
+  }
+
   // For navigation requests (HTML pages) - Network First
   if (event.request.mode === 'navigate' || url.pathname.endsWith('.php')) {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request)
-            .then(cached => cached || caches.match('https://pochiecatering.store/index.php'));
-        })
+      fetch(event.request).catch(() => caches.match(event.request))
     );
     return;
   }

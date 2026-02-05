@@ -255,7 +255,67 @@ $siteAddress = $settings['site_address'] ?? 'Metro Manila, Philippines';
         document.body.appendChild(t);
         setTimeout(() => t.remove(), 3000);
     }
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register("<?= url('sw.js') ?>").catch(err => console.log('SW failed:', err)); }); }
-    document.addEventListener('DOMContentLoaded', () => { updateDisplayTime(); setInterval(updateDisplayTime, 1000); checkCookieConsent(); loadCookiePreferences(); });
+    if ('serviceWorker' in navigator) { 
+        window.addEventListener('load', () => { 
+            navigator.serviceWorker.register("<?= url('sw.js') ?>?v=<?= time() ?>").then(registration => {
+                // Check for updates
+                registration.onupdatefound = () => {
+                    const installingWorker = registration.installing;
+                    installingWorker.onstatechange = () => {
+                        if (installingWorker.state === 'installed') {
+                            if (navigator.serviceWorker.controller) {
+                                console.log('New content is available; please refresh.');
+                                // Optional: Force refresh or show notification
+                            } else {
+                                console.log('Content is cached for offline use.');
+                            }
+                        }
+                    };
+                };
+            }).catch(err => {
+                console.warn('Service Worker registration failed:', err);
+                // If registration fails (e.g. SSL error), unregister existing workers to avoid stale cache
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }); 
+        }); 
+    }
+    document.addEventListener('DOMContentLoaded', () => { 
+        updateDisplayTime(); 
+        setInterval(updateDisplayTime, 1000); 
+        checkCookieConsent(); 
+        loadCookiePreferences(); 
+        
+        // Force layout recalculation
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 100);
+    });
+    (function(){ 
+        function fix() { 
+            var m = document.querySelector('meta[name="viewport"]'); 
+            if (m) { 
+                var c = m.getAttribute('content') || ''; 
+                if (!/width=device-width/.test(c) || !/initial-scale=1/.test(c)) { 
+                    m.setAttribute('content','width=device-width, initial-scale=1'); 
+                } 
+            } 
+            // Trigger multiple resize events to ensure layout catches up
+            [50, 100, 300, 500].forEach(delay => {
+                setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, delay);
+            });
+        } 
+        window.addEventListener('pageshow', fix); 
+        window.addEventListener('orientationchange', fix); 
+        window.addEventListener('load', fix);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') fix();
+        });
+    })();
 </script>
 <script src="<?= url('pwa-install.js') ?>"></script>
+</body>
+</html>

@@ -633,12 +633,15 @@ if ($promotionsResult) {
         <nav class="navbar navbar-expand-lg">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center" href="<?= url('index.php') ?>">
-                    <?php if (!empty($settings['site_logo'])): ?>
+                    <?php 
+                    $logoPath = !empty($settings['site_logo']) ? __DIR__ . '/uploads/settings/' . $settings['site_logo'] : null;
+                    if (!empty($settings['site_logo']) && file_exists($logoPath)): 
+                    ?>
                         <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="<?= htmlspecialchars($siteName) ?>" style="max-height: 40px;" class="me-2">
                     <?php else: ?>
                         <span class="me-2">🍲</span>
                     <?php endif; ?>
-                    <?= htmlspecialchars($siteName) ?>
+                    <span class="fw-bold"><?= htmlspecialchars($siteName) ?></span>
                 </a>
                 
                 <div class="d-flex align-items-center order-lg-last">

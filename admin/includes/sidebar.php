@@ -312,7 +312,7 @@ body {
     position: fixed;
     top: 16px;
     left: 16px;
-    z-index: 1001;
+    z-index: 9999;
     width: 44px;
     height: 44px;
     border-radius: 10px;
@@ -675,18 +675,40 @@ html, body {
 </style>
 
 <script>
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-}
+// Expose toggleSidebar to window scope
+window.toggleSidebar = function() {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+        console.log('Sidebar toggled:', sidebar.classList.contains('active'));
+    } else {
+        console.error('Sidebar element not found');
+    }
+};
 
-document.addEventListener('click', function(e) {
+document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const toggle = document.querySelector('.sidebar-toggle');
     
-    if (window.innerWidth < 992) {
-        if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-            sidebar.classList.remove('active');
+    // Ensure toggle is visible on mobile if needed
+    function checkToggleVisibility() {
+        if (window.innerWidth < 992) {
+            if (toggle) toggle.style.display = 'flex';
+        } else {
+            if (toggle) toggle.style.display = 'none';
         }
     }
+    
+    window.addEventListener('resize', checkToggleVisibility);
+    checkToggleVisibility();
+    
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth < 992 && sidebar && toggle) {
+            if (!sidebar.contains(e.target) && !toggle.contains(e.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        }
+    });
 });
 </script>

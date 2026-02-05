@@ -138,7 +138,7 @@ $termsHistory = $conn->query("
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Site Name</label>
-                                <input type="text" name="site_name" class="form-control" value="<?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?>">
+                                <input type="text" name="site_name" class="form-control" value="<?= htmlspecialchars($settings['site_name'] ?? ' ') ?>">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Facebook Page URL</label>

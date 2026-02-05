@@ -29,6 +29,22 @@ if (isLoggedIn() && getUserRole() === 'customer') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        // Force Viewport for Mobile
+        (function() {
+            var meta = document.querySelector('meta[name="viewport"]');
+            if (!meta) {
+                meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                document.getElementsByTagName('head')[0].appendChild(meta);
+            } else {
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+            }
+        })();
+    </script>
+
     <style>
         :root {
             --primary: #f97316;
@@ -39,6 +55,18 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             --dark: #1e293b;
         }
         
+        /* Global Reset for Responsiveness */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+            width: 100%;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
@@ -536,12 +564,15 @@ if (isLoggedIn() && getUserRole() === 'customer') {
 
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?= url('index.php') ?>">
-                <?php if (!empty($settings['site_logo'])): ?>
-                    <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="<?= htmlspecialchars($settings['site_name'] ?? 'Logo') ?>" style="max-height: 40px;" class="me-2">
+                <?php 
+                $logoPath = !empty($settings['site_logo']) ? dirname(__DIR__) . '/uploads/settings/' . $settings['site_logo'] : null;
+                if (!empty($settings['site_logo']) && file_exists($logoPath)): 
+                ?>
+                    <img src="<?= url('uploads/settings/' . $settings['site_logo']) ?>" alt="<?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?>" style="max-height: 40px;" class="me-2">
                 <?php else: ?>
                     <span class="me-2">🍲</span>
                 <?php endif; ?>
-                <?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?>
+                <span class="fw-bold"><?= htmlspecialchars($settings['site_name'] ?? 'Pochie Catering Services') ?></span>
             </a>
 
             <div class="d-flex align-items-center order-lg-last">
