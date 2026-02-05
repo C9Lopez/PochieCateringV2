@@ -284,6 +284,153 @@ include 'includes/header.php';
         .modal-header .btn-close { filter: brightness(0) invert(1); opacity: 1; }
         .modal-body { padding: 30px; font-size: 14px; line-height: 1.8; color: #475569; }
         .policy-content { white-space: pre-wrap; font-family: 'Poppins', sans-serif; }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 575.98px) {
+            .auth-page-wrapper {
+                padding: 15px 10px;
+                min-height: calc(100vh - 100px);
+            }
+            
+            .register-container {
+                max-width: 100%;
+            }
+            
+            .register-card {
+                border-radius: 16px;
+            }
+            
+            .register-header {
+                padding: 20px 15px;
+            }
+            
+            .register-header .logo {
+                font-size: 28px;
+            }
+            
+            .register-header .logo img {
+                max-height: 45px !important;
+            }
+            
+            .register-header h1 {
+                font-size: 18px !important;
+            }
+            
+            .register-header p {
+                font-size: 12px;
+            }
+            
+            .register-body {
+                padding: 20px 15px;
+            }
+            
+            .step-indicator {
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+            
+            .step {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .form-label {
+                font-size: 13px;
+                margin-bottom: 5px;
+            }
+            
+            .form-control {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            /* Name fields side by side on mobile */
+            .row .col-6 .form-group {
+                margin-bottom: 15px;
+            }
+            
+            /* Consent boxes */
+            .consent-box {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .consent-title {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+            
+            .consent-text {
+                font-size: 11px;
+                line-height: 1.5;
+                margin-bottom: 10px;
+            }
+            
+            .form-check-label {
+                font-size: 12px;
+            }
+            
+            .form-check-input {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .btn-register {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            /* Verification code inputs */
+            .verification-input {
+                gap: 6px !important;
+            }
+            
+            .verification-input input {
+                width: 40px !important;
+                height: 50px !important;
+                font-size: 20px !important;
+            }
+            
+            .text-center.pb-4 {
+                font-size: 13px;
+                padding-bottom: 15px !important;
+            }
+        }
+        
+        @media (max-width: 374px) {
+            .register-header h1 {
+                font-size: 16px !important;
+            }
+            
+            .register-header {
+                padding: 15px 12px;
+            }
+            
+            .register-body {
+                padding: 15px 12px;
+            }
+            
+            .verification-input input {
+                width: 35px !important;
+                height: 45px !important;
+                font-size: 18px !important;
+            }
+            
+            .consent-text {
+                font-size: 10px;
+            }
+            
+            .step {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+        }
     </style>
 
 <div class="auth-page-wrapper">

@@ -20,6 +20,94 @@ $claimedPromo = $_SESSION['claimed_promo'] ?? null;
 $packages = $conn->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY base_price");
 ?>
 
+<style>
+/* Mobile responsive styles for packages page */
+@media (max-width: 575.98px) {
+    .alert {
+        padding: 15px;
+    }
+    
+    .alert .fs-1 {
+        font-size: 2rem !important;
+        margin-bottom: 10px;
+    }
+    
+    .alert.d-flex {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .alert .me-4 {
+        margin-right: 0 !important;
+    }
+    
+    .alert h4 {
+        font-size: 16px !important;
+    }
+    
+    .alert p {
+        font-size: 13px;
+    }
+    
+    /* Package cards */
+    .card .display-4 {
+        font-size: 2rem !important;
+    }
+    
+    .card h3 {
+        font-size: 1.25rem !important;
+    }
+    
+    .card .card-body {
+        padding: 20px;
+    }
+    
+    /* FAQ section */
+    .accordion-button {
+        font-size: 14px;
+        padding: 15px;
+    }
+    
+    .accordion-body {
+        font-size: 13px;
+        padding: 15px;
+    }
+    
+    /* Custom package section */
+    .mt-5.p-5 {
+        padding: 20px !important;
+    }
+    
+    .mt-5 h4 {
+        font-size: 16px !important;
+    }
+    
+    .mt-5 p {
+        font-size: 13px;
+    }
+    
+    .mt-5 .row {
+        text-align: center;
+    }
+    
+    .mt-5 .text-md-end {
+        text-align: center !important;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 374px) {
+    .card .display-4 {
+        font-size: 1.75rem !important;
+    }
+    
+    .badge {
+        font-size: 9px !important;
+        padding: 4px 8px !important;
+    }
+}
+</style>
+
 <div class="container py-5">
     <?php if ($claimedPromo): ?>
     <div class="alert alert-success alert-dismissible fade show mb-5 rounded-4 border-0 shadow-sm d-flex align-items-center p-4">

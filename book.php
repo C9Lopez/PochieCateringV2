@@ -218,6 +218,110 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 1.1rem;
         }
     }
+    
+    /* Mobile responsiveness for booking form */
+    @media (max-width: 575.98px) {
+        .col-lg-8, .col-lg-4 {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        
+        .card {
+            border-radius: 12px;
+        }
+        
+        .card-header {
+            padding: 15px;
+        }
+        
+        .card-header h5 {
+            font-size: 14px !important;
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        /* Form layout adjustments */
+        .col-md-6, .col-md-4 {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            font-size: 13px;
+        }
+        
+        .form-label small {
+            display: block;
+            margin-top: 2px;
+        }
+        
+        /* Date legend */
+        .date-legend {
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 11px;
+        }
+        
+        /* Menu items grid */
+        .menu-item-card {
+            padding: 12px !important;
+        }
+        
+        .menu-item-card label {
+            font-size: 13px;
+        }
+        
+        .menu-item-card small {
+            font-size: 11px;
+        }
+        
+        /* Quantity controls */
+        .quantity-control .input-group {
+            max-width: 120px;
+        }
+        
+        /* Summary card - sticky on mobile */
+        .col-lg-4 .card.sticky-top {
+            position: relative !important;
+            top: 0 !important;
+            margin-top: 20px;
+        }
+        
+        #summaryContent {
+            font-size: 13px;
+        }
+        
+        #totalAmount {
+            font-size: 1.3rem !important;
+        }
+        
+        #selectedItemsList {
+            font-size: 12px;
+        }
+        
+        /* Submit button */
+        .btn-lg {
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+    }
+    
+    /* Extra small devices */
+    @media (max-width: 374px) {
+        .card-header h5 {
+            font-size: 13px !important;
+        }
+        
+        .menu-item-card {
+            padding: 10px !important;
+        }
+        
+        .col-md-6.col-lg-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
     </style>
 
 <div class="container py-5">

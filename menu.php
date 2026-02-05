@@ -12,6 +12,98 @@ if ($selectedCategory) {
 }
 ?>
 
+<style>
+/* Mobile responsive styles for menu page */
+@media (max-width: 575.98px) {
+    /* Category buttons */
+    .d-flex.flex-wrap.gap-2 {
+        gap: 8px !important;
+    }
+    
+    .d-flex.flex-wrap.gap-2 .btn {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    
+    /* Menu cards - 2 columns on mobile */
+    .col-md-4.col-lg-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 6px;
+    }
+    
+    .card .card-img-top,
+    .card .card-img-top + div {
+        height: 120px !important;
+    }
+    
+    .card-body {
+        padding: 12px;
+    }
+    
+    .card-body .badge {
+        font-size: 9px;
+        padding: 3px 6px;
+        margin-bottom: 5px !important;
+    }
+    
+    .card-title {
+        font-size: 13px !important;
+        margin-bottom: 5px;
+    }
+    
+    .card-text {
+        font-size: 11px !important;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .card-footer {
+        padding: 10px 12px;
+    }
+    
+    .card-footer .fw-bold {
+        font-size: 14px !important;
+    }
+    
+    .card-footer small {
+        font-size: 10px;
+    }
+    
+    /* Category headers */
+    .col-12.mt-4 h3 {
+        font-size: 16px !important;
+    }
+    
+    /* CTA section */
+    .text-center.mt-5.p-5 {
+        padding: 25px !important;
+    }
+    
+    .text-center.mt-5 h4 {
+        font-size: 16px !important;
+    }
+    
+    .text-center.mt-5 p {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 374px) {
+    .col-md-4.col-lg-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .card .card-img-top,
+    .card .card-img-top + div {
+        height: 150px !important;
+    }
+}
+</style>
+
 <div class="container py-5">
     <div class="text-center mb-5">
         <h1 class="section-title">Our Menu</h1>

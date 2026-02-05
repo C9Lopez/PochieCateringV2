@@ -377,6 +377,12 @@ if ($promotionsResult) {
             color: var(--primary);
         }
         
+        /* Prevent horizontal scroll */
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        
         @media (max-width: 991px) {
             .navbar .dropdown {
                 position: relative !important;
@@ -396,6 +402,214 @@ if ($promotionsResult) {
             }
             .navbar .dropdown-menu-end.show {
                 display: block !important;
+            }
+            
+            .navbar-collapse {
+                background: white;
+                padding: 15px;
+                border-radius: 12px;
+                margin-top: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+            
+            section { padding: 50px 0; }
+        }
+        
+        /* iPhone SE and small mobile devices (375px and below) */
+        @media (max-width: 575.98px) {
+            .top-bar {
+                font-size: 11px;
+                padding: 6px 0;
+            }
+            
+            .top-bar .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            .navbar {
+                padding: 10px 0;
+            }
+            
+            .navbar-brand {
+                font-size: 1rem !important;
+                max-width: 200px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            
+            .navbar-brand img {
+                max-height: 30px !important;
+            }
+            
+            /* Hero Section - Critical for iPhone SE */
+            .hero {
+                min-height: 85vh;
+                padding: 30px 0;
+            }
+            
+            .hero h1 {
+                font-size: 28px !important;
+                line-height: 1.2;
+                margin-bottom: 15px;
+            }
+            
+            .hero p {
+                font-size: 14px !important;
+                margin-bottom: 20px;
+                line-height: 1.6;
+            }
+            
+            .hero .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .hero .btn.me-3 {
+                margin-right: 0 !important;
+            }
+            
+            /* Section Titles */
+            .section-title {
+                font-size: 24px !important;
+            }
+            
+            .section-subtitle {
+                font-size: 14px !important;
+                margin-bottom: 30px;
+            }
+            
+            section { padding: 40px 0; }
+            
+            /* Feature Cards */
+            .feature-card {
+                padding: 25px 20px;
+            }
+            
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+            
+            .feature-card h4 {
+                font-size: 16px;
+            }
+            
+            .feature-card p {
+                font-size: 13px;
+            }
+            
+            /* Package Cards */
+            .package-header {
+                padding: 20px;
+            }
+            
+            .package-header h4 {
+                font-size: 18px;
+            }
+            
+            .package-price {
+                font-size: 28px;
+            }
+            
+            .package-body {
+                padding: 20px;
+            }
+            
+            /* Menu Cards */
+            .menu-img {
+                height: 150px;
+            }
+            
+            .menu-body {
+                padding: 15px;
+            }
+            
+            .menu-body h5 {
+                font-size: 14px;
+            }
+            
+            /* Promo Cards */
+            .promo-img {
+                height: 180px;
+            }
+            
+            .promo-body {
+                padding: 20px;
+            }
+            
+            .promo-body h4 {
+                font-size: 18px;
+            }
+            
+            .promo-body p {
+                font-size: 13px;
+            }
+            
+            .promo-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .promo-footer .btn {
+                width: 100%;
+            }
+            
+            /* CTA Section */
+            .cta-section h2 {
+                font-size: 26px !important;
+            }
+            
+            .cta-section p {
+                font-size: 14px;
+            }
+            
+            /* Container padding */
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            /* Buttons general */
+            .btn-lg {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            /* Cards margin */
+            .card, .package-card, .menu-card, .promo-card, .feature-card {
+                margin-bottom: 15px;
+            }
+            
+            /* Form inputs - prevent zoom on iOS */
+            .form-control, .form-select, input, textarea, select {
+                font-size: 16px !important;
+            }
+        }
+        
+        /* Extra small devices like iPhone SE in landscape or very narrow screens */
+        @media (max-width: 374px) {
+            .hero h1 {
+                font-size: 24px !important;
+            }
+            
+            .hero p {
+                font-size: 13px !important;
+            }
+            
+            .section-title {
+                font-size: 20px !important;
+            }
+            
+            .navbar-brand {
+                font-size: 0.9rem !important;
+                max-width: 150px;
             }
         }
     </style>

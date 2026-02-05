@@ -336,12 +336,25 @@ if (isLoggedIn() && getUserRole() === 'customer') {
                 padding: 6px 0;
             }
             
+            .top-bar .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            .navbar {
+                padding: 10px 0;
+            }
+            
             .navbar-brand {
-                font-size: 1.1rem !important;
+                font-size: 1rem !important;
+                max-width: 180px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             
             .navbar-brand img {
-                max-height: 32px !important;
+                max-height: 30px !important;
             }
             
             .notification-dropdown {
@@ -355,13 +368,18 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             }
             
             /* Form inputs - prevent zoom on iOS */
-            .form-control, .form-select, input, textarea {
+            .form-control, .form-select, input, textarea, select {
                 font-size: 16px !important;
             }
             
             /* Buttons */
             .btn {
                 padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .btn-lg {
+                padding: 10px 18px;
                 font-size: 14px;
             }
             
@@ -372,9 +390,26 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             }
             
             /* Headings */
-            h1 { font-size: 1.75rem; }
-            h2 { font-size: 1.5rem; }
-            h3 { font-size: 1.25rem; }
+            h1 { font-size: 1.5rem !important; }
+            h2 { font-size: 1.35rem !important; }
+            h3 { font-size: 1.15rem !important; }
+            h4 { font-size: 1rem !important; }
+            
+            /* Section titles */
+            .section-title {
+                font-size: 1.4rem !important;
+            }
+            
+            .section-title::after {
+                width: 40px;
+                height: 3px;
+            }
+            
+            /* Container padding */
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
             
             /* Footer adjustments */
             .footer {
@@ -384,6 +419,99 @@ if (isLoggedIn() && getUserRole() === 'customer') {
             
             .footer .col-md-4 {
                 margin-bottom: 20px;
+            }
+            
+            /* Table responsiveness */
+            .table-responsive {
+                margin: 0 -15px;
+                padding: 0 15px;
+            }
+            
+            .table td, .table th {
+                font-size: 12px;
+                padding: 10px 8px;
+                white-space: nowrap;
+            }
+            
+            /* Alert adjustments */
+            .alert {
+                padding: 12px 15px;
+                font-size: 13px;
+            }
+            
+            /* Modal adjustments */
+            .modal-dialog {
+                margin: 10px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            /* Auth pages */
+            .auth-page-wrapper {
+                padding: 20px 15px;
+            }
+            
+            .login-container, .register-container {
+                max-width: 100%;
+            }
+            
+            .login-header, .register-header {
+                padding: 25px 20px;
+            }
+            
+            .login-header h1, .register-header h1 {
+                font-size: 20px !important;
+            }
+            
+            .login-body, .register-body {
+                padding: 25px 20px;
+            }
+            
+            /* Badge adjustments */
+            .badge {
+                font-size: 10px;
+                padding: 5px 10px;
+            }
+            
+            /* Display text */
+            .display-4 {
+                font-size: 2rem !important;
+            }
+            
+            /* Row on mobile - stack columns */
+            .row > [class*="col-md-6"]:not(.row > .col-6),
+            .row > [class*="col-lg-"] {
+                margin-bottom: 15px;
+            }
+        }
+        
+        /* Extra small devices (below 375px like iPhone SE) */
+        @media (max-width: 374px) {
+            .navbar-brand {
+                font-size: 0.9rem !important;
+                max-width: 140px;
+            }
+            
+            h1 { font-size: 1.35rem !important; }
+            h2 { font-size: 1.2rem !important; }
+            
+            .section-title {
+                font-size: 1.2rem !important;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            
+            .top-bar {
+                font-size: 10px;
+            }
+            
+            .display-4 {
+                font-size: 1.75rem !important;
             }
         }
     </style>

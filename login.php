@@ -96,6 +96,77 @@ include 'includes/header.php';
     .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); }
     .forgot-link { text-align: right; margin-top: -15px; margin-bottom: 20px; }
     .forgot-link a { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 500; }
+    
+    /* Mobile responsive */
+    @media (max-width: 575.98px) {
+        .auth-page-wrapper {
+            padding: 20px 15px;
+            min-height: calc(100vh - 100px);
+        }
+        
+        .login-container {
+            max-width: 100%;
+        }
+        
+        .login-card {
+            border-radius: 16px;
+        }
+        
+        .login-header {
+            padding: 25px 20px;
+        }
+        
+        .login-header .logo {
+            font-size: 32px;
+        }
+        
+        .login-header .logo img {
+            max-height: 50px !important;
+        }
+        
+        .login-header h1 {
+            font-size: 20px !important;
+        }
+        
+        .login-header p {
+            font-size: 13px;
+        }
+        
+        .login-body {
+            padding: 25px 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            font-size: 14px;
+        }
+        
+        .btn-login {
+            padding: 12px;
+            font-size: 15px;
+        }
+        
+        .login-footer {
+            font-size: 14px;
+        }
+    }
+    
+    @media (max-width: 374px) {
+        .login-header h1 {
+            font-size: 18px !important;
+        }
+        
+        .login-header {
+            padding: 20px 15px;
+        }
+        
+        .login-body {
+            padding: 20px 15px;
+        }
+    }
 </style>
 
 <div class="auth-page-wrapper">
