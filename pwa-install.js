@@ -1,60 +1,80 @@
-let deferredPrompt;
+let deferredPrompt = null;
 const installBtn = document.getElementById('installAppBtn');
 
+// Listen for beforeinstallprompt IMMEDIATELY when script loads
+window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('beforeinstallprompt event fired!');
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show install button
+    if (installBtn) {
+        installBtn.style.setProperty('display', 'inline-flex', 'important');
+        installBtn.classList.add('pwa-ready');
+    }
+});
+
 if (installBtn) {
-    // Check if already in standalone mode (app installed and running)
+    // Check if already in standalone mode
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                          window.navigator.standalone === true;
     
     if (isStandalone) {
-        // Already running as installed app, hide button
         installBtn.style.setProperty('display', 'none', 'important');
-        console.log('App is running in standalone mode');
+        console.log('PWA: Running in standalone mode');
     } else {
-        // Show button - user can install
         installBtn.style.setProperty('display', 'inline-flex', 'important');
-        console.log('PWA install button shown');
     }
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent Chrome 67 and earlier from automatically showing the prompt
-        e.preventDefault();
-        // Stash the event so it can be triggered later
-        deferredPrompt = e;
-        
-        // Show the button immediately since we have the prompt ready
-        if (installBtn) {
-            installBtn.style.setProperty('display', 'inline-flex', 'important');
-            // Optional: Auto-trigger prompt after first user interaction if you want it very fast
-            console.log('Native PWA prompt is ready to be triggered');
-        }
-    });
-
-    installBtn.addEventListener('click', async (e) => {
+    installBtn.addEventListener('click', async () => {
         if (deferredPrompt) {
-            // Show the native install prompt
+            // Native install prompt available
             deferredPrompt.prompt();
-            
-            // Wait for the user to respond to the prompt
             const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to install prompt: ${outcome}`);
             
             if (outcome === 'accepted') {
                 installBtn.style.setProperty('display', 'none', 'important');
             }
             deferredPrompt = null;
         } else {
-            // Fallback if still not ready (usually due to HTTPS/Not Secure issue)
-            if (window.location.protocol === 'https:' && window.location.hostname === 'localhost') {
-                alert('Mabilis na Install Error: Naka-HTTPS ka sa localhost pero "Not Secure".\n\nSolution: Gamitin ang http://localhost/catering (walang "s") para lumabas ang mabilis na install prompt.');
-            } else {
-                alert('Para i-install:\n1. Click ang 3 dots (⋮)\n2. Click "Install Pochie Catering Services..."');
+            // Check for specific issues
+            const issues = [];
+            
+            // Check service worker
+            if (!('serviceWorker' in navigator)) {
+                issues.push('Service Worker not supported');
             }
+            
+            // Check if manifest exists
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            if (!manifestLink) {
+                issues.push('Manifest link not found');
+            }
+            
+            if (issues.length > 0) {
+                console.error('PWA Issues:', issues);
+            }
+            
+            // Use browser's native install if available (Chrome 76+)
+            if ('getInstalledRelatedApps' in navigator) {
+                const relatedApps = await navigator.getInstalledRelatedApps();
+                if (relatedApps.length > 0) {
+                    alert('Naka-install na ang app!');
+                    installBtn.style.setProperty('display', 'none', 'important');
+                    return;
+                }
+            }
+            
+            // Final fallback - manual instructions
+            alert('Para i-install ang app:\n\n' +
+                  'Desktop Chrome: Click ang icon sa address bar (tabi ng star) o 3 dots menu > "Install Pochie Catering Services"\n\n' +
+                  'Mobile: Tap Share > "Add to Home Screen"');
         }
     });
 
-    window.addEventListener('appinstalled', (evt) => {
-        console.log('PWA was installed.');
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA installed successfully');
         installBtn.style.setProperty('display', 'none', 'important');
+        deferredPrompt = null;
     });
 }
