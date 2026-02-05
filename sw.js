@@ -1,9 +1,9 @@
-const CACHE_NAME = 'catering-pwa-v9';
+const CACHE_NAME = 'catering-pwa-v10';
 const ASSETS_TO_CACHE = [
-  './',
-  './index.php',
-  './manifest.json',
-  './uploads/settings/69628cfe614bb_grok-image-79569daa-4caf-4592-bf72-0e39be7f9181.png',
+  'https://pochiecatering.store/',
+  'https://pochiecatering.store/index.php',
+  'https://pochiecatering.store/manifest.json',
+  'https://pochiecatering.store/globe.svg',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap'
@@ -15,10 +15,7 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE).catch(err => {
         console.log('Cache addAll error:', err);
-        // Try caching one by one
-        return Promise.allSettled(
-          ASSETS_TO_CACHE.map(url => cache.add(url).catch(e => console.log('Failed to cache:', url)))
-        );
+        return Promise.resolve();
       });
     })
   );
@@ -41,7 +38,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event - Network First for pages, Cache First for assets
+// Fetch Event - Network First for pages
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   
@@ -52,11 +49,10 @@ self.addEventListener('fetch', (event) => {
   if (!url.protocol.startsWith('http')) return;
 
   // For navigation requests (HTML pages) - Network First
-  if (event.request.mode === 'navigate') {
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('.php')) {
     event.respondWith(
       fetch(event.request)
         .then(response => {
-          // Clone and cache the response
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseClone);
@@ -64,19 +60,9 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => {
-          // If network fails, try cache, then fallback to index
           return caches.match(event.request)
-            .then(cached => cached || caches.match('./') || caches.match('./index.php'));
+            .then(cached => cached || caches.match('https://pochiecatering.store/index.php'));
         })
-    );
-    return;
-  }
-
-  // For PHP files - Network First
-  if (url.pathname.endsWith('.php')) {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => caches.match(event.request))
     );
     return;
   }
@@ -87,7 +73,6 @@ self.addEventListener('fetch', (event) => {
       if (response) return response;
       
       return fetch(event.request).then(networkResponse => {
-        // Cache new static assets
         if (networkResponse.ok) {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
